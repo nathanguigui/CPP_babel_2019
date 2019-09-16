@@ -6,5 +6,9 @@
  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
  conan_basic_setup()
 
- add_executable(md5 mdr5.cpp)
- target_link_libraries(md5 ${CONAN_LIBS})
+ set(CLIENT_SRC
+         client/src/main.cpp
+)
+
+ add_executable(client ${CLIENT_SRC})
+ target_link_libraries(client ${CONAN_LIBS})
