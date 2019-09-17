@@ -1,1 +1,10 @@
 build/
+graph_info.json
+*.pro
+Makefile
+*.stash
+*.ui
+cmake-build-debug/
+CMakeLists.txt.user
+conanbuildinfo.*
+conan.lock

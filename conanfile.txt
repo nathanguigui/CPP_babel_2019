@@ -1,6 +1,0 @@
- [requires]
- boost/1.71.0@conan/stable
- qt/5.13.1@bincrafters/stable
-
- [generators]
- cmake
