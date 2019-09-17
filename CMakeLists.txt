@@ -1,14 +1,24 @@
- cmake_minimum_required(VERSION 2.8.12)
- project(CPP_babel_2019)
+cmake_minimum_required(VERSION 3.1.0)
+project(CPP_babel_2019)
 
- add_definitions("-std=c++11")
+set(CMAKE_AUTOMOC ON)
+add_definitions("-std=c++11")
+
+set(CMAKE_VERBOSE_MAKEFILE TRUE)
 
  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
  conan_basic_setup()
 
- set(CLIENT_SRC
-         client/src/main.cpp
-)
 
- add_executable(client ${CLIENT_SRC})
- target_link_libraries(client ${CONAN_LIBS})
+include_directories(client/includes)
+
+set(CLIENT_SRC
+    client/src/main.cpp
+        client/src/mainwidget.cpp)
+
+find_package(Qt5Core CONFIG REQUIRED)
+find_package(Qt5OpenGL REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+add_executable(client ${CLIENT_SRC})
+target_link_libraries(client ${CONAN_LIBS} Qt5::Core Qt5::OpenGL Qt5::Widgets)
+
