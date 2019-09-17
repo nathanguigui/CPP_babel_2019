@@ -22,3 +22,14 @@ find_package(Qt5Widgets REQUIRED)
 add_executable(client ${CLIENT_SRC})
 target_link_libraries(client ${CONAN_LIBS} Qt5::Core Qt5::OpenGL Qt5::Widgets)
 
+include_directories(server/includes)
+
+set(SERVER_SRC
+        server/src/main.cpp
+        )
+
+set(CMAKE_MODULE_PATH ${CONAN_CMAKE_MODULE_PATH} ${CMAKE_MODULE_PATH})
+find_package(SQLite3 REQUIRED)
+add_executable(server ${SERVER_SRC})
+target_link_libraries(server ${CONAN_LIBS} sqlite3)
+
