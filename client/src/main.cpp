@@ -1,22 +1,15 @@
-#include <QCoreApplication>
-#include <QObject>
-#include <QString>
-#include <QTimer>
-#include <QtCore/QDebug>
-#include <QtWidgets/QtWidgets>
-#include <iostream>
-#include "main.hpp"
-#include <QtNetwork/QtNetwork>
-#include <QUdpSocket>
-#include <UdpNetwork.hpp>
+
+#include "mainWindow.hpp"
 
 int main(int argc, char *argv[])
 {
 
     qDebug() << "toto";
-        // Creates an instance of QApplication
-    QApplication a(argc, argv);
+    
+    // Creates an instance of QApplication
+    QApplication app(argc, argv);
 
+    //network
     std::cout << QNetworkInterface::interfaceFromName("wlp58s0").index();
     auto str = std::string("127.0.0.1");
     auto *socket = new UdpNetwork(str, 25565);
@@ -25,9 +18,10 @@ int main(int argc, char *argv[])
     socket->closeConnection();
 
     // This is our MainWidget class containing our GUI and functionality
-    MainWidget w;
-    w.show(); // Show main window
+    MainWindow window;
+    window.centerAndResize();
+    window.show(); // Show main window
 
     // run the application and return execs() return value/code
-    return a.exec();
+    return app.exec();
 }

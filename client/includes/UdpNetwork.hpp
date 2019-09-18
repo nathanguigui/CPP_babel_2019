@@ -10,7 +10,6 @@
 #include <QWidget>
 
 class UdpNetwork : public QWidget {
-    Q_OBJECT
 public:
     UdpNetwork(std::string &host, int port);
     ~UdpNetwork() = default;
