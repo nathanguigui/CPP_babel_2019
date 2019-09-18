@@ -10,9 +10,10 @@
 #include <iostream>
 #include <QtNetwork/QtNetwork>
 #include <QUdpSocket>
-#include <UdpNetwork.hpp>
 #include <QSize>
+#include <QTextEdit>
 
+class QTextEdit;
 class QPushButton;
 class QTextBrowser;
 
@@ -27,8 +28,9 @@ class MainWindow : public QWidget
         void centerAndResize();
 
     private:
-       QPushButton* button_;
-       QTextBrowser* textBrowser_;
+        QTextEdit* textBox_;
+        QPushButton* button_;
+        QTextBrowser* textBrowser_;
 };
 
 #endif // MAINWINDOW_H
