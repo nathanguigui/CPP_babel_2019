@@ -14,7 +14,7 @@ include_directories(client/includes)
 
 set(CLIENT_SRC
     client/src/main.cpp
-        client/src/mainwidget.cpp client/src/UdpNetwork.cpp)
+        client/src/mainwidget.cpp client/src/Network/UdpNetwork.cpp client/src/Network/SipManager.cpp)
 
 find_package(Qt5Core CONFIG REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
