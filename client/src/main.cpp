@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     mainWindow.centerAndResize();
 
     // splash screen
-    QMovie *splash = new QMovie("cube.gif");
+    QMovie *splash = new QMovie("../client/templates/cube.gif");
     QLabel *processLabel = new QLabel(&mainWindow);
 
     processLabel->resize(980, 580);
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 
     splash->start();
     processLabel->show();
-    QTimer::singleShot(5000, processLabel, SLOT(close()));
+    QTimer::singleShot(3500, processLabel, SLOT(close()));
     QTimer::singleShot(0, &mainWindow, SLOT(show()));
 
     // run the application and return execs() return value/code
