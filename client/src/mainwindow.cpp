@@ -9,32 +9,44 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
 {
 
    // button
-   button_ = new QPushButton("quit", this);
-
+   button_contact_ = new QPushButton("ajouter un contact", this);
+   button_send_ = new QPushButton("envoyer", this);
+   button_call_ = new QPushButton("appeler", this);
+   
    // text browser
    textBrowser_ = new QTextBrowser();
 
    // text box
    textBox_  = new QTextEdit();
 
+   // list view
+   list_ = new QListView();
+
    QGridLayout *mainLayout = new QGridLayout;
-   mainLayout->addWidget(button_,2,3);
+   mainLayout->addWidget(button_contact_,2,3);
+   mainLayout->addWidget(button_send_,2,1);
+   mainLayout->addWidget(button_call_,2,2);
    mainLayout->addWidget(textBrowser_,1,1);
    mainLayout->addWidget(textBox_,1,3);
+   mainLayout->addWidget(list_,1,2);
+
    this->setStyleSheet("background-color: rgb(38,38,38);");
-   button_->setStyleSheet("background-color: rgb(255, 255, 255);");
+   button_send_->setStyleSheet("background-color: rgb(255, 255, 255);");
+   button_contact_->setStyleSheet("background-color: rgb(255, 255, 255);");
+   button_call_->setStyleSheet("background-color: rgb(255, 255, 255);");
    textBox_->setStyleSheet("background-color: rgb(255, 255, 255);");
    textBrowser_->setStyleSheet("background-color: rgb(255, 255, 255);");
+   list_->setStyleSheet("background-color: rgb(255, 255, 255);");
    setLayout(mainLayout);
    setWindowTitle(tr("BABEL"));
-   connect(button_, SIGNAL (clicked()), QApplication::instance(), SLOT (quit()));
+   connect(button_contact_, SIGNAL (clicked()), QApplication::instance(), SLOT (quit()));
 }
 
 // Destructor
 MainWindow::~MainWindow()
 {
    delete textBox_;
-   delete button_;
+   delete button_contact_;
    delete textBrowser_;
 }
 
