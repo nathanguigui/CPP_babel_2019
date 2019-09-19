@@ -48,6 +48,21 @@ QString MainWindow::launchlogin()
    return login;
 }
 
+void MainWindow::launchSplashScreen()
+{
+   QMovie *splash = new QMovie("../client/templates/cube.gif");
+   QLabel *processLabel = new QLabel(this);
+   processLabel->resize(980, 580);
+   processLabel->setStyleSheet("background-color: rgb(38,38,38);");
+   processLabel->setMovie(splash);
+   processLabel->setWindowFlags(Qt::FramelessWindowHint);
+   processLabel->setAlignment(Qt::AlignCenter);
+   splash->start();
+   processLabel->show();
+   QTimer::singleShot(3500, processLabel, SLOT(close()));
+   QTimer::singleShot(0, this, SLOT(show()));
+}
+
 void MainWindow::centerAndResize()
 {
    QSize availableSize = qApp->desktop()->availableGeometry().size();

@@ -30,6 +30,7 @@ class MainWindow : public QWidget
         
         void centerAndResize();
         QString launchlogin();
+        void launchSplashScreen();
 
     private:
         QString login;

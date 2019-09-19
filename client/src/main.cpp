@@ -10,24 +10,12 @@ int main(int argc, char *argv[])
     // Creates an instance of QApplication
     QApplication app(argc, argv);  
     MainWindow mainWindow;
+    // launch login page
     mainWindow.launchlogin();
     mainWindow.centerAndResize();
 
     // splash screen
-    QMovie *splash = new QMovie("../client/templates/cube.gif");
-    QLabel *processLabel = new QLabel(&mainWindow);
-
-    processLabel->resize(980, 580);
-    processLabel->setStyleSheet("background-color: rgb(38,38,38);");
-    processLabel->setMovie(splash);
-    processLabel->setWindowFlags(Qt::FramelessWindowHint);
-    processLabel->setAlignment(Qt::AlignCenter);
-    //processLabel->setGeometry(QStyle::alignedRect(Qt::LeftToRight,Qt::AlignCenter,processLabel->size(),app.desktop()->availableGeometry()));
-
-    splash->start();
-    processLabel->show();
-    QTimer::singleShot(3500, processLabel, SLOT(close()));
-    QTimer::singleShot(0, &mainWindow, SLOT(show()));
+    mainWindow.launchSplashScreen();
 
     // run the application and return execs() return value/code
     return app.exec();
