@@ -26,6 +26,7 @@ include_directories(server/includes)
 
 set(SERVER_SRC
         server/src/main.cpp
+        server/src/Server.cpp
         )
 
 set(CMAKE_MODULE_PATH ${CONAN_CMAKE_MODULE_PATH} ${CMAKE_MODULE_PATH})
