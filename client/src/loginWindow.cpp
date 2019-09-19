@@ -4,10 +4,10 @@
 
 #include "loginWindow.hpp"
 
+
 // Constructor for main widget
 loginWindow::loginWindow(QWidget *parent): QWidget(parent)
 {
-
    // button
    button_ = new QPushButton("login", this);
 
@@ -19,7 +19,8 @@ loginWindow::loginWindow(QWidget *parent): QWidget(parent)
    mainLayout->addWidget(textBox_,1,1);
    setLayout(mainLayout);
    setWindowTitle(tr("LOGIN PAGE"));
-   connect(button_, SIGNAL(released()), this, SLOT(openMainWindow()));
+   QObject::connect(button_, SIGNAL(released()), this, SLOT(openMainWindow()));
+
 }
 
 // Destructor

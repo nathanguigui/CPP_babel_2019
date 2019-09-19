@@ -34,6 +34,20 @@ MainWindow::~MainWindow()
    delete textBrowser_;
 }
 
+QString MainWindow::launchlogin()
+{
+   QInputDialog *log = new QInputDialog(this);
+   log->setLabelText(tr("Enter login: "));
+   log->setWindowTitle(tr("Login"));
+   log->setTextEchoMode(QLineEdit::Password);
+   log->adjustSize();
+   log->move(QApplication::desktop()->screen()->rect().center() - log->rect().center());
+   if (log->exec() == QDialog::Accepted)
+      login = log->textValue();
+   qDebug() << login;
+   return login;
+}
+
 void MainWindow::centerAndResize()
 {
    QSize availableSize = qApp->desktop()->availableGeometry().size();

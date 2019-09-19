@@ -12,6 +12,9 @@
 #include <QUdpSocket>
 #include <QSize>
 #include <QTextEdit>
+#include <QSplashScreen>
+#include <QTimer>
+#include <QMovie>
 
 class QTextEdit;
 class QPushButton;
@@ -26,8 +29,10 @@ class MainWindow : public QWidget
         ~MainWindow(); // Destructor
         
         void centerAndResize();
+        QString launchlogin();
 
     private:
+        QString login;
         QTextEdit* textBox_;
         QPushButton* button_;
         QTextBrowser* textBrowser_;
