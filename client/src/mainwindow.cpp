@@ -23,12 +23,15 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
    list_ = new QListView();
 
    QGridLayout *mainLayout = new QGridLayout;
-   mainLayout->addWidget(button_contact_,2,3);
-   mainLayout->addWidget(button_send_,2,1);
-   mainLayout->addWidget(button_call_,2,2);
-   mainLayout->addWidget(textBrowser_,1,1);
-   mainLayout->addWidget(textBox_,1,3);
-   mainLayout->addWidget(list_,1,2);
+   mainLayout->setHorizontalSpacing(20);
+   mainLayout->setVerticalSpacing(20);
+   mainLayout->setContentsMargins(20, 20, 20, 20);
+   mainLayout->addWidget(button_contact_,14, 7, 1, 3);
+   mainLayout->addWidget(button_send_, 13, 6);
+   mainLayout->addWidget(button_call_, 14, 6);
+   mainLayout->addWidget(textBrowser_, 0, 1, 12, 6);
+   mainLayout->addWidget(textBox_, 13, 1, 2, 5);
+   mainLayout->addWidget(list_, 0, 7, 14, 3);
 
    this->setStyleSheet("background-color: rgb(38,38,38);");
    button_send_->setStyleSheet("background-color: rgb(255, 255, 255);");
