@@ -18,6 +18,7 @@ public:
 
 private:
     std::string getConnedtedInterface();
+    std::string createSipPacket(const std::string& requestOrStatusLine, const std::string& CSeq);
     UdpNetwork *udpNetwork;
     std::string host;
     std::string username;
