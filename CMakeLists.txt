@@ -1,26 +1,97 @@
 cmake_minimum_required(VERSION 3.1.0)
 project(CPP_babel_2019)
 
+include(${CMAKE_SOURCE_DIR}/build/conanbuildinfo.cmake)
+#conan_basic_setup(TARGETS)
+INCLUDE_DIRECTORIES(${CONAN_INCLUDE_DIRS})
+
 set(CMAKE_AUTOMOC ON)
-add_definitions("-std=c++11")
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11 -g3")
 
-set(CMAKE_VERBOSE_MAKEFILE TRUE)
+include_directories(
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
-
-
-include_directories(client/includes)
-
-set(CLIENT_SRC
-    client/src/main.cpp
-        client/src/mainwindow.cpp
-        client/src/loginWindow.cpp)
-
-find_package(Qt5Core CONFIG REQUIRED)
-find_package(Qt5OpenGL REQUIRED)
+find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Network REQUIRED)
-add_executable(client ${CLIENT_SRC})
-target_link_libraries(client ${CONAN_LIBS} Qt5::Core Qt5::OpenGL Qt5::Widgets Qt5::Network)
+
+set(CLIENT_SOURCES
+    client/src/main.cpp
+    client/src/mainwindow.cpp
+    client/src/loginWindow.cpp)
+
+set(CLIENT_HEADERS
+    client/includes/mainWindow.hpp
+    client/includes/loginWindow.hpp)
+
+set(CLIENT_LIBRARIES
+    Qt5::Core
+    Qt5::Widgets
+    Qt5::Network)
+
+add_executable(babel_client ${CLIENT_SOURCES} ${CLIENT_HEADERS})
+
+target_link_libraries(babel_client Qt5::Core Qt5::Widgets Qt5::Network)
+
+
+#include(${CMAKE_SOURCE_DIR}/build/conanbuildinfo.cmake)
+#conan_basic_setup(TARGETS)
+#file(COPY ${CMAKE_BINARY_DIR}/qt.conf DESTINATION ${CMAKE_SOURCE_DIR})
+#subdirs(.)
+#
+#set(CMAKE_AUTOUIC ON)
+#set(AUTOGEN_BUILD_DIR ${CMAKE_SOURCE_DIR/client/includes})
+#set(babel_client_SRCS main.cpp mainWindow.cpp loginWindow.cpp)
+#
+#find_package(Qt5Widgets CONFIG REQUIRED)
+#find_package(Qt5OpenGL REQUIRED)
+#find_package(Qt5Widgets REQUIRED)
+#find_package(Qt5Network REQUIRED)
+#
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
+#add_executable(babel_client ${babel_client_SRCS})
+#
+#target_include_directories(babel_client PUBLIC ${babel_SOURCE_DIR} PUBLIC ${babel_SOURCE_DIR}/client/includes)
+#target_link_libraries(babel_client ${CONAN_LIBS} Qt5::Core Qt5::OpenGL Qt5::Widgets Qt5::Network)
+
+
+
+
+#include_directories(${babel_source_dir}/client/includes)
+#include_directories(client/includes)
+#
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
+#set(CMAKE_INCLUDE_CURRENT_DIR ON)
+#set(CMAKE_AUTOMOC ON)
+#
+#
+#set(CMAKE_CXX_FLAGS "-Wall -fPIC -std=c++11")
+#target_link_libraries(babel_client ${CONAN_LIBS} Qt5::Core Qt5::OpenGL Qt5::Widgets Qt5::Network)
+
+
+#set(CMAKE_AUTOMOC ON)
+#add_definitions("-std=c++11")
+#
+#set(CMAKE_VERBOSE_MAKEFILE TRUE)
+#
+#include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+#conan_basic_setup()
+#
+#
+#include_directories(client/includes)
+#
+#set(CLIENT_SRC
+#    client/src/main.cpp
+#        client/src/mainwindow.cpp
+#        client/src/loginWindow.cpp)
+#
+#find_package(Qt5Core CONFIG REQUIRED)
+#find_package(Qt5OpenGL REQUIRED)
+#find_package(Qt5Widgets REQUIRED)
+#find_package(Qt5Network REQUIRED)
+#add_executable(client ${CLIENT_SRC})
+#target_link_libraries(CPP_babel_2019 ${CONAN_LIBS} Qt5::Core Qt5::OpenGL Qt5::Widgets Qt5::Network)
 

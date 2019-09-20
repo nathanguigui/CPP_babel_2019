@@ -2,7 +2,7 @@
 // Created by guigui on 9/17/19.
 //
 
-#include "mainWindow.hpp"
+#include "../includes/mainWindow.hpp"
 
 // Constructor for main widget
 MainWindow::MainWindow(QWidget *parent): QWidget(parent)
@@ -19,17 +19,23 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
 
    // list view
    list_ = new QListWidget();
-   list_messages_ = new QListView();
+   list_messages_ = new QListWidget();
+
+   QAction *quitter = new QAction("&Quitter", this);
+   QAction *deconnexion = new QAction("&Déconnexion", this);
+
 
    // ToolBar object
-    toolbar_ = new QToolBar();
-    toolbar_->addAction("Option");
-    toolbar_->addAction("Déconnexion");
-    toolbar_->addAction("Quitter");
-    toolbar_->setOrientation(Qt::Horizontal);
-    QBoxLayout *toolLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
-    toolLayout->setContentsMargins(0, 0, 0, 0);
-    toolLayout->addWidget(toolbar_);
+   toolbar_ = new QToolBar();
+   toolbar_->addAction("Option");
+   toolbar_->addAction(deconnexion);
+   toolbar_->addAction(quitter);
+   toolbar_->setOrientation(Qt::Horizontal);
+   QBoxLayout *toolLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
+   toolLayout->setContentsMargins(0, 0, 0, 0);
+   toolLayout->addWidget(toolbar_);
+   connect(quitter, &QAction::triggered, this, &QApplication::quit);
+   connect(deconnexion, &QAction::triggered, this, &MainWindow::launchlogin);
 
    QGridLayout *mainLayout = new QGridLayout;
    toolLayout->addLayout(mainLayout);
@@ -53,8 +59,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
    list_->setStyleSheet("background-color: rgb(255, 255, 255);");
    setLayout(mainLayout);
    setWindowTitle(tr("BABEL"));
-   connect(button_contact_, SIGNAL (clicked()), QApplication::instance(), SLOT (quit()));
-   connect(button_send_, SIGNAL (clicked()),  this, SLOT(viewMessage()));
+   QObject::connect(button_contact_, SIGNAL (released()), this, SLOT (addContact()));
 }
 
 // Destructor
@@ -82,6 +87,22 @@ QString MainWindow::launchlogin()
       exit(0);
    qDebug() << login;
    return login;
+}
+
+QString MainWindow::addContact()
+{
+   QInputDialog *contact = new QInputDialog(this);
+   contact->setLabelText(tr("Entrez le nom du contact:"));
+   contact->setWindowTitle(tr("Ajouter un contact"));
+   contact->adjustSize();
+   contact->setStyleSheet("background-color: rgb(255, 255, 255);");
+   contact->move(QApplication::desktop()->screen()->rect().center() - contact->rect().center());
+   if (contact->exec() == QDialog::Accepted)
+      nom_contact = contact->textValue();
+   else
+      return nom_contact;
+   qDebug() << nom_contact;
+   return nom_contact;
 }
 
 void MainWindow::launchSplashScreen()

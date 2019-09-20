@@ -2,7 +2,7 @@
 // Created by poirelZ
 //
 
-#include "loginWindow.hpp"
+#include "../includes/loginWindow.hpp"
 
 
 // Constructor for main widget

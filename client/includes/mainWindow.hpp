@@ -8,8 +8,6 @@
 #include <QtCore/QDebug>
 #include <QtWidgets/QtWidgets>
 #include <iostream>
-#include <QtNetwork/QtNetwork>
-#include <QUdpSocket>
 #include <QSize>
 #include <QTextEdit>
 #include <QSplashScreen>
@@ -23,13 +21,13 @@
 class QTextEdit;
 class QPushButton;
 class QTextBrowser;
-class QListView;
 class QListWidget;
 
 // This is the declaration of our MainWidget class
 // The definition/implementation is in mainwindow.cpp
 class MainWindow : public QWidget
 {
+    Q_OBJECT
     public:
         explicit MainWindow(QWidget *parent = 0); //Constructor
         ~MainWindow(); // Destructor
@@ -37,11 +35,14 @@ class MainWindow : public QWidget
         void centerAndResize();
         QString launchlogin();
         void launchSplashScreen();
+    public slots:
+        QString addContact();
 
     private:
         QString login;
+        QString nom_contact;
         QListWidget *list_;
-        QListView *list_messages_;
+        QListWidget *list_messages_;
         QTextEdit* textBox_;
         QPushButton* button_contact_;
         QPushButton* button_send_;

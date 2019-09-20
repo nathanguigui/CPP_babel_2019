@@ -1,6 +1,6 @@
 
-#include "mainWindow.hpp"
-#include "loginWindow.hpp"
+#include "../includes/mainWindow.hpp"
+#include "../includes/loginWindow.hpp"
 
 int main(int argc, char *argv[])
 {

@@ -8,8 +8,6 @@
 #include <QtCore/QDebug>
 #include <QtWidgets/QtWidgets>
 #include <iostream>
-#include <QtNetwork/QtNetwork> 
-#include <QUdpSocket>
 #include <QSize>
 #include <QTextEdit>
 #include "mainWindow.hpp"
