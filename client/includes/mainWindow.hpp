@@ -15,6 +15,10 @@
 #include <QSplashScreen>
 #include <QTimer>
 #include <QMovie>
+#include <QToolBar>
+#include <QIcon>
+#include <QAction>
+#include <QApplication>
 
 class QTextEdit;
 class QPushButton;
@@ -41,6 +45,7 @@ class MainWindow : public QWidget
         QPushButton* button_send_;
         QPushButton* button_call_;
         QTextBrowser* textBrowser_;
+        QToolBar *toolbar_;
 };
 
 #endif // MAINWINDOW_H
