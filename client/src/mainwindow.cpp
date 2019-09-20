@@ -21,7 +21,18 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
    list_ = new QListWidget();
    list_messages_ = new QListView();
 
+   // ToolBar object
+    toolbar_ = new QToolBar();
+    toolbar_->addAction("Option");
+    toolbar_->addAction("Déconnexion");
+    toolbar_->addAction("Quitter");
+    toolbar_->setOrientation(Qt::Horizontal);
+    QBoxLayout *toolLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
+    toolLayout->setContentsMargins(0, 0, 0, 0);
+    toolLayout->addWidget(toolbar_);
+
    QGridLayout *mainLayout = new QGridLayout;
+   toolLayout->addLayout(mainLayout);
    mainLayout->setHorizontalSpacing(20);
    mainLayout->setVerticalSpacing(20);
    mainLayout->setContentsMargins(20, 20, 20, 20);
@@ -31,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
    mainLayout->addWidget(list_messages_, 0, 1, 12, 6);
    mainLayout->addWidget(textBox_, 13, 1, 2, 5);
    mainLayout->addWidget(list_, 0, 7, 14, 3);
+   toolbar_->setStyleSheet("background-color: rgb(255,255,255);");
 
    this->setStyleSheet("background-color: rgb(38,38,38);");
    button_send_->setStyleSheet("background-color: rgb(30, 142, 152);");
