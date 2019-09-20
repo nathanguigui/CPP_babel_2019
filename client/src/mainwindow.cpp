@@ -12,7 +12,6 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
    button_contact_ = new QPushButton("ajouter un contact", this);
    button_send_ = new QPushButton("envoyer", this);
    button_call_ = new QPushButton("appeler", this);
-   
 
    // text box
    textBox_  = new QTextEdit();
@@ -50,13 +49,13 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
    mainLayout->addWidget(list_, 0, 7, 14, 3);
    toolbar_->setStyleSheet("background-color: rgb(255,255,255);");
 
-   this->setStyleSheet("background-color: rgb(38,38,38);");
-   button_send_->setStyleSheet("background-color: rgb(30, 142, 152);");
-   button_contact_->setStyleSheet("background-color: rgb(231, 156, 15);");
-   button_call_->setStyleSheet("background-color: rgb(214, 59, 50);");
-   textBox_->setStyleSheet("background-color: rgb(255, 255, 255);");
-   list_messages_->setStyleSheet("background-color: rgb(255, 255, 255);");
-   list_->setStyleSheet("background-color: rgb(255, 255, 255);");
+   this->setStyleSheet("background-color: #F7F7F7;");
+   button_send_->setStyleSheet("background-color: rgb(30, 142, 152);border: 1px solid black; border-radius: 10px; height: 40px; color: white; font-weight: bold;");
+   button_contact_->setStyleSheet("background-color: rgb(231, 156, 15); border: 1px solid black; border-radius: 10px; height: 30px; color: white; font-weight: bold;");
+   button_call_->setStyleSheet("background-color: crimson ; border: 1px solid black; border-radius: 10px;  height: 40px; color: white; font-weight: bold;");
+   textBox_->setStyleSheet("background-color: rgb(255, 255, 255);border: 1px solid black; border-radius: 7px;");
+   list_messages_->setStyleSheet("background-color: rgb(255, 255, 255); border: 1px solid black; border-radius: 7px;");
+   list_->setStyleSheet("background-color: rgb(255, 255, 255); border: 1px solid black; border-radius: 7px;");
    setLayout(mainLayout);
    setWindowTitle(tr("BABEL"));
    QObject::connect(button_contact_, SIGNAL (released()), this, SLOT (addContact()));

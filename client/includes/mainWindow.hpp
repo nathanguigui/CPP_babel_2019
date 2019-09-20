@@ -35,6 +35,7 @@ class MainWindow : public QWidget
         void centerAndResize();
         QString launchlogin();
         void launchSplashScreen();
+        
     public slots:
         QString addContact();
 
