@@ -20,6 +20,7 @@ class QTextEdit;
 class QPushButton;
 class QTextBrowser;
 class QListView;
+class QListWidget;
 
 // This is the declaration of our MainWidget class
 // The definition/implementation is in mainwindow.cpp
@@ -35,12 +36,12 @@ class MainWindow : public QWidget
 
     private:
         QString login;
-        QListView *list_;
+        QListWidget *list_;
+        QListView *list_messages_;
         QTextEdit* textBox_;
         QPushButton* button_contact_;
         QPushButton* button_send_;
         QPushButton* button_call_;
-        QTextBrowser* textBrowser_;
 };
 
 #endif // MAINWINDOW_H
