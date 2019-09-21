@@ -24,6 +24,7 @@ class QTextEdit;
 class QPushButton;
 class QTextBrowser;
 class QListWidget;
+class QLabel;
 
 // This is the declaration of our MainWidget class
 // The definition/implementation is in mainwindow.cpp
@@ -41,6 +42,7 @@ class MainWindow : public QWidget
     public slots:
         QString addContact();
         void showOptions();
+        //void setName();
 
     private:
         QString login;
@@ -51,8 +53,7 @@ class MainWindow : public QWidget
         QPushButton* button_contact_;
         QPushButton* button_send_;
         QPushButton* button_call_;
-        QTextBrowser* textBrowser_;
+        QLabel *contact_name_;
         QToolBar *toolbar_;
 };
-
 #endif // MAINWINDOW_H
