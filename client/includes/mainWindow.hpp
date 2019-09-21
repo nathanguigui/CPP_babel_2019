@@ -41,6 +41,8 @@ class MainWindow : public QWidget
     public slots:
         QString addContact();
         void showOptions();
+        void sendMessage();
+        void call();
 
     private:
         QString login;

@@ -61,6 +61,8 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
    setLayout(mainLayout);
    setWindowTitle(tr("BABEL"));
    QObject::connect(button_contact_, SIGNAL (released()), this, SLOT (addContact()));
+   QObject::connect(button_send_, SIGNAL(released()), this, SLOT(sendMessage()));
+   QObject::connect(button_call_, SIGNAL(released()), this, SLOT(call()));
 }
 
 // Destructor
@@ -104,6 +106,19 @@ QString MainWindow::addContact()
       return nom_contact;
    qDebug() << nom_contact;
    return nom_contact;
+}
+
+void MainWindow::sendMessage()
+{
+    QString message;
+    message = this->textBox_->toPlainText();
+    qDebug() << message;
+    this->textBox_->clear();
+}
+
+void MainWindow::call()
+{
+    qDebug() << "make a call";
 }
 
 void MainWindow::launchSplashScreen()
