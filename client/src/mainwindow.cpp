@@ -22,11 +22,12 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
 
    QAction *quitter = new QAction("&Quitter", this);
    QAction *deconnexion = new QAction("&Déconnexion", this);
+   QAction *options = new QAction("&Options", this);
 
 
    // ToolBar object
    toolbar_ = new QToolBar();
-   toolbar_->addAction("Option");
+   toolbar_->addAction(options);
    toolbar_->addAction(deconnexion);
    toolbar_->addAction(quitter);
    toolbar_->setOrientation(Qt::Horizontal);
@@ -35,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
    toolLayout->addWidget(toolbar_);
    connect(quitter, &QAction::triggered, this, &QApplication::quit);
    connect(deconnexion, &QAction::triggered, this, &MainWindow::launchlogin);
+   connect(options, &QAction::triggered, this, &MainWindow::showOptions);
 
    QGridLayout *mainLayout = new QGridLayout;
    toolLayout->addLayout(mainLayout);
@@ -49,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
    mainLayout->addWidget(list_, 0, 7, 14, 3);
    toolbar_->setStyleSheet("background-color: rgb(255,255,255);");
 
-   this->setStyleSheet("background-color: #F7F7F7;");
+   this->setStyleSheet("background-color: #F7F7F7;  background-image:");
    button_send_->setStyleSheet("background-color: rgb(30, 142, 152);border: 1px solid black; border-radius: 10px; height: 40px; color: white; font-weight: bold;");
    button_contact_->setStyleSheet("background-color: rgb(231, 156, 15); border: 1px solid black; border-radius: 10px; height: 30px; color: white; font-weight: bold;");
    button_call_->setStyleSheet("background-color: crimson ; border: 1px solid black; border-radius: 10px;  height: 40px; color: white; font-weight: bold;");
@@ -142,4 +144,11 @@ void MainWindow::centerAndResize()
          qApp->desktop()->availableGeometry()
       )
    );
+}
+
+void MainWindow::showOptions()
+{
+   OptionWindow *options = new OptionWindow();
+   options->centerAndResize();
+   options->show();
 }

@@ -17,6 +17,8 @@
 #include <QIcon>
 #include <QAction>
 #include <QApplication>
+#include "optionWindow.hpp"
+
 
 class QTextEdit;
 class QPushButton;
@@ -38,6 +40,7 @@ class MainWindow : public QWidget
         
     public slots:
         QString addContact();
+        void showOptions();
 
     private:
         QString login;

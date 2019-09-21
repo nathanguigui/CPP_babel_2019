@@ -21,11 +21,11 @@ find_package(Qt5Network REQUIRED)
 set(CLIENT_SOURCES
     client/src/main.cpp
     client/src/mainwindow.cpp
-    client/src/loginWindow.cpp)
+    client/src/optionWindow.cpp)
 
 set(CLIENT_HEADERS
     client/includes/mainWindow.hpp
-    client/includes/loginWindow.hpp)
+    client/includes/optionWindow.hpp)
 
 set(CLIENT_LIBRARIES
     Qt5::Core
