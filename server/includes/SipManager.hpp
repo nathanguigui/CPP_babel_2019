@@ -20,11 +20,13 @@ class SipManager {
         int create_account();
         int update_account();
         std::stringstream options_header(char *);
-        std::stringstream SipManager::OK_header(char *old_request)
+        std::stringstream OK_header(char *old_request);
+        std::stringstream notify_header(char *old_request);
 
     private:
         states is_connected;
         sqlite3 *_database;
         std::string ip;
         std::string username;
+        std::string tag_server;
 };
