@@ -9,7 +9,7 @@
 SipManager::SipManager(std::string &host, int port, std::string &username, std::string &localDeviceID,
                        std::string &callID)
         : host(host), port(port), username(username), localDeviceID(localDeviceID), callID(callID) {
-    this->udpNetwork = new UdpNetwork(host, port);
+    this->udpNetwork = new TcpNetwork(host, port);
     this->networkInterface = QNetworkInterface::interfaceFromName(this->getConnedtedInterface().c_str());
 }
 
@@ -45,9 +45,10 @@ std::string SipManager::getConnedtedInterface() {
             }
         }
     }
+    return ("wlp58s0");
 }
 
-UdpNetwork *SipManager::getUdpNetwork() const {
+TcpNetwork * SipManager::getTcpNetwork() const {
     return udpNetwork;
 }
 
@@ -58,9 +59,9 @@ const std::string &SipManager::getUsername() const {
 std::string SipManager::createSipPacket(const std::string& requestOrStatusLine, const std::string& CSeq) {
     auto ss = std::stringstream();
     ss << requestOrStatusLine;
-    ss << "Via: SIP/2.0/UDP " << getUdpNetwork()->getLocalHostWithDomain() << "\r\n";
+    ss << "Via: SIP/2.0/UDP " << getTcpNetwork()->getLocalHostWithDomain() << "\r\n";
     ss << "To: \"Test\"<sip:" << getUsername() << "@" << host << ":" << port << ">\r\n";
-    ss << "From: \"Test\"<sip:" << getUsername() << "@" << getUdpNetwork()->getLocalHostWithDomain() << ">;tag=" << this->localDeviceID << "\r\n";
+    ss << "From: \"Test\"<sip:" << getUsername() << "@" << getTcpNetwork()->getLocalHostWithDomain() << ">;tag=" << this->localDeviceID << "\r\n";
     ss << "Call-ID: " << this->callID << "\r\n";
     ss << CSeq;
     return (ss.str());
