@@ -18,3 +18,4 @@ main.hpp
 mocs_compilation.o
 windows/
 *.o
+doc/
