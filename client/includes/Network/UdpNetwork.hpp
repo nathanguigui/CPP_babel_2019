@@ -8,29 +8,30 @@
 #include <QtCore/QTextStream>
 #include <QUdpSocket>
 #include <QWidget>
+#include "IProtoNetwork.hpp"
 
-class UdpNetwork : public QWidget {
+class UdpNetwork : public QWidget, public IProtoNetwork {
 public:
     UdpNetwork(std::string &host, int port);
-    ~UdpNetwork();
+    ~UdpNetwork() override;
 
-    void sendData(std::string data);
+    void sendData(std::string data) override;
 
-    void closeConnection();
+    void closeConnection() override;
 
     QUdpSocket::SocketState getState();
 
-    const std::string &getConnectedHostname() const;
+    const std::string &getConnectedHostname() const override;
 
-    int getConnectedPort() const;
+    int getConnectedPort() const override;
 
-    const std::string getLocalIp() const;
+    const std::string getLocalIp() const override;
 
-    std::string getConnectedHostWithDomain() const;
+    std::string getConnectedHostWithDomain() const override;
 
-    std::string getLocalHostWithDomain() const;
+    std::string getLocalHostWithDomain() const override;
 
-    quint16 getLocalPort() const;
+    quint16 getLocalPort() const override;
 
 private slots:
     void handleError(int err);
