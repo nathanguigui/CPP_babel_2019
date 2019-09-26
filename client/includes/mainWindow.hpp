@@ -40,14 +40,14 @@ class MainWindow : public QWidget
         void launchSplashScreen();
         
     public slots:
-        QString addContact();
+        void addContact();
         void showOptions();
         void call();
         void sendMessage();
-        //void setName();
+        void setName(QListWidgetItem*);
     private:
         QString login;
-        QString nom_contact;
+        QListWidgetItem *nom_contact;
         QListWidget *list_;
         QListWidget *list_messages_;
         QTextEdit* textBox_;

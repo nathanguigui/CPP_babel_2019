@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
    // list view
    list_ = new QListWidget();
    list_messages_ = new QListWidget();
-   list_->setSelectionMode(QAbstractItemView::SingleSelection);
+//   list_->setSelectionMode(QAbstractItemView::SingleSelection);
 
    // com contact
    contact_name_ = new QLabel();
@@ -47,12 +47,12 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
    mainLayout->setHorizontalSpacing(20);
    mainLayout->setVerticalSpacing(20);
    mainLayout->setContentsMargins(20, 20, 20, 20);
-   mainLayout->addWidget(contact_name_,1, 1);
+   mainLayout->addWidget(contact_name_,0, 3);
    mainLayout->addWidget(button_contact_,14, 7, 1, 3);
    mainLayout->addWidget(button_send_, 13, 6);
    mainLayout->addWidget(button_call_, 14, 6);
-   mainLayout->addWidget(list_messages_, 1, 1, 12, 6);
-   mainLayout->addWidget(textBox_, 13, 1, 2, 5);
+   mainLayout->addWidget(list_messages_, 1, 0, 12, 7);
+   mainLayout->addWidget(textBox_, 13, 0, 2, 6);
    mainLayout->addWidget(list_, 0, 7, 14, 3);
    toolbar_->setStyleSheet("background-color: rgb(255,255,255);");
 
@@ -62,14 +62,14 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
    button_call_->setStyleSheet("background-color: crimson ; border: 1px solid black; border-radius: 10px;  height: 40px; color: white; font-weight: bold;");
    textBox_->setStyleSheet("background-color: rgb(255, 255, 255);border: 1px solid black; border-radius: 7px;");
    list_messages_->setStyleSheet("background-color: rgb(255, 255, 255); border: 1px solid black; border-radius: 7px;");
-   list_->setStyleSheet("background-color: rgb(255, 255, 255); border: 1px solid black; border-radius: 7px;");
-   contact_name_->setStyleSheet("background-color: #F7F7F7 ;border: 1px solid black; border-radius: 7px;");
+   list_->setStyleSheet("background-color: rgb(255, 255, 255); border: 1px solid black; border-radius: 7px; font-size: 20px");
+   contact_name_->setStyleSheet( "background-color: #f7f7f7 ; font-weight: bold; font-size: 25px;");
    setLayout(mainLayout);
    setWindowTitle(tr("BABEL"));
    QObject::connect(button_contact_, SIGNAL (released()), this, SLOT (addContact()));
    QObject::connect(button_send_, SIGNAL(released()), this, SLOT(sendMessage()));
    QObject::connect(button_call_, SIGNAL(released()), this, SLOT(call()));
-   //QObject::connect(list_, SIGNAL (itemSelectionChanged()), this, SLOT (setName()));
+   QObject::connect(list_, SIGNAL (itemClicked(QListWidgetItem*)), this, SLOT (setName(QListWidgetItem*)));
 }
 
 // Destructor
@@ -83,13 +83,13 @@ MainWindow::~MainWindow()
    delete list_;
 }
 
-//void MainWindow::setName()
-//{
-//   qDebug() << "toto";
-//   QString usr_name = list_->selectedItems();
-//   qDebug() << usr_name;
-//   contact_name_->setText(usr_name);
-//}
+void MainWindow::setName(QListWidgetItem *item)
+{
+   qDebug() << "toto";
+   QString usr_name = "toto";
+    qDebug() << item->text();
+   contact_name_->setText(item->text());
+}
 
 QString MainWindow::launchlogin()
 {
@@ -107,7 +107,7 @@ QString MainWindow::launchlogin()
    return login;
 }
 
-QString MainWindow::addContact()
+void MainWindow::addContact()
 {
    QInputDialog *contact = new QInputDialog(this);
    contact->setLabelText(tr("Contact name or login:"));
@@ -117,13 +117,13 @@ QString MainWindow::addContact()
    contact->move(QApplication::desktop()->screen()->rect().center() - contact->rect().center());
    if (contact->exec() == QDialog::Accepted)
    {
-      nom_contact = contact->textValue();
+      nom_contact = new QListWidgetItem(contact->textValue());
       this->list_->addItem(nom_contact);
    }
    else
-      return nom_contact;
-   qDebug() << nom_contact;
-   return nom_contact;
+      return;
+   qDebug() << nom_contact->text();
+   return;
 }
 
 void MainWindow::sendMessage()
