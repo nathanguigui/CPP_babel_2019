@@ -34,7 +34,8 @@ class MainWindow : public QWidget
     public:
         explicit MainWindow(QWidget *parent = 0); //Constructor
         ~MainWindow(); // Destructor
-        
+        QPushButton* button_send_;
+
         void centerAndResize();
         QString launchlogin();
         void launchSplashScreen();
@@ -52,7 +53,6 @@ class MainWindow : public QWidget
         QListWidget *list_messages_;
         QTextEdit* textBox_;
         QPushButton* button_contact_;
-        QPushButton* button_send_;
         QPushButton* button_call_;
         QLabel *contact_name_;
         QToolBar *toolbar_;

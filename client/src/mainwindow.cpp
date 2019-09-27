@@ -182,6 +182,7 @@ void MainWindow::centerAndResize()
 void MainWindow::showOptions()
 {
    OptionWindow *options = new OptionWindow();
+   options->setMainWindow(this);
    options->centerAndResize();
    options->show();
 }
