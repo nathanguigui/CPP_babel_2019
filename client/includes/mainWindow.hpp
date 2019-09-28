@@ -46,6 +46,7 @@ class MainWindow : public QWidget
         void call();
         void sendMessage();
         void setName(QListWidgetItem*);
+        
     private:
         QString login;
         QListWidgetItem *nom_contact;

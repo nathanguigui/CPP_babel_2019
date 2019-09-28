@@ -27,6 +27,8 @@
 class QTextEdit;
 class QPushButton;
 class MainWindow;
+class QGroupBox;
+class QString;
 
 class OptionWindow: public QWidget
 {
@@ -42,14 +44,31 @@ class OptionWindow: public QWidget
         void colorSend();
         void colorCall();
         void colorAdd();
+        void colorBack();
+        void imageMessages();
+        void imageContact();
+        void imageText();
 
     private:
         MainWindow *mainwindow;
         QPushButton *button_save;
         QPushButton *button_cancel;
-        QPushButton *button_col_send;
-        QPushButton *button_col_call;
-        QPushButton *button_col_add;
+
+        QPushButton *backgroundButton;
+        
+        QPushButton *message_button;
+        QPushButton *contact_button;
+        QPushButton *text_button;
+       
+        QGroupBox *WidgetImage();
+        QGroupBox *colorGroupBox();
+        QGroupBox *backgroundColorGroupBox();
+        QGroupBox *fontGroupBox();
+        QGroupBox *windowSizeGroupBox();
+
+        QStringList fileMessages;
+        QStringList fileContact;
+        QStringList fileText;
 };
 
 #endif
