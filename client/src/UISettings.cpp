@@ -32,6 +32,7 @@ void UISettings::createSettings()
     settings_.setValue("color", "#F7F7F7");
     settings_.setValue("font", "");
     settings_.setValue("fontSize", 15);
+    settings_.setValue("colorLabel", "#F7F7F7");
 
     settings_.endGroup();
 
@@ -64,6 +65,13 @@ QString UISettings::getMainWindow() const {
     return QString("background-color: %1; font-size: %2px;").arg(color).arg(fontsize);
 }
 
+QString UISettings::getLabel() const {
+    QSettings settings_(path[0], QSettings::NativeFormat);
+    QString color = settings_.value("MainWindow/color").toString();
+    int fontsize = settings_.value("MainWindow/fontSize").toInt();
+    return QString("background-color: %1 ; font-weight: bold; font-size: %2px;").arg(color).arg(fontsize + 10);
+}
+
 QString UISettings::getButtonCall() const {
     QSettings settings_(path[0], QSettings::NativeFormat);
     QString color = settings_.value("Button/call").toString();
@@ -90,7 +98,7 @@ QString UISettings::getMessage() const {
     if (path == "")
         return "background-color: rgb(255, 255, 255); border: 1px solid black; border-radius: 7px;";
     else {
-        return QString("background-img: url(%1); border: 1px solid black; border-radius: 7px;").arg(path);
+        return QString("background-image: url(%1); border: 1px solid black; border-radius: 7px;").arg(path);
     }
 }
 
@@ -101,7 +109,7 @@ QString UISettings::getContact() const {
     if (path == "")
         return "background-color: rgb(255, 255, 255); border: 1px solid black; border-radius: 7px";
     else
-        return QString("background-img: url(%1); border: 1px solid black; border-radius: 7px; font-size: 20px").arg(path);
+        return QString("background-image: url(%1); position: auto; border: 1px solid black; border-radius: 7px; font-size: 20px").arg(path);
 }
 
 //Img back of text box
@@ -111,7 +119,7 @@ QString UISettings::getText() const {
     if (path == "")
         return "background-color: rgb(255, 255, 255); border: 1px solid black; border-radius: 7px";
     else
-        return QString("background-img: url(%1); border: 1px solid black; border-radius: 7px; font-size: 20px").arg(path);
+        return QString("background-image: url(%1); border: 1px solid black; border-radius: 7px; font-size: 20px").arg(path);
 }
 
 void UISettings::setMainColor(QString color) {

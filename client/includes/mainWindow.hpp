@@ -41,7 +41,7 @@ class MainWindow : public QWidget
         void launchSplashScreen();
 
         //UPDATE
-        void updateMainColor(QString color) { settings_->setMainColor(color); this->setStyleSheet(settings_->getMainWindow()); };
+        void updateMainColor(QString color) { settings_->setMainColor(color); contact_name_->setStyleSheet(settings_->getLabel()); this->setStyleSheet(settings_->getMainWindow()); };
         void updateFont(QString font) { /* NEX UPDATE  */ };
         void updateSize(int size) { settings_->setSize(size); this->setStyleSheet(settings_->getMainWindow()); };
         void updateHeight(int height) { /*  NEXT UPDATE  */ };

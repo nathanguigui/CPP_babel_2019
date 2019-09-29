@@ -150,41 +150,27 @@ void OptionWindow::centerAndResize()
 
 void OptionWindow::imageMessages()
 {
-   QFileDialog dialog(this);
-   dialog.setFileMode(QFileDialog::AnyFile);
-   dialog.setNameFilter(tr("Images (*.png *.jpg)"));
-   dialog.setViewMode(QFileDialog::Detail);
-   if (dialog.exec()) {
-      fileMessages = dialog.selectedFiles();
-      //mainwindow->updateMessageBox(fileMessages);
-   } else
-      return;
+    QString file = QFileDialog::getOpenFileName(this, "Open an Image", QString(), "Images (*.png *.jpg *.jpeg)");
+    if (QFile(file).exists())
+        mainwindow->updateMessageBox(file);
 }
 
 void OptionWindow::imageContact()
 {
-   QFileDialog dialog(this);
+    QString file = QFileDialog::getOpenFileName(this, "Open an Image", QString(), "Images (*.png *.jpg *.jpeg)");
+/*   QFileDialog dialog(this);
    dialog.setFileMode(QFileDialog::AnyFile);
    dialog.setNameFilter(tr("Images (*.png *.jpg)"));
-   dialog.setViewMode(QFileDialog::Detail);
-   if (dialog.exec()) {
-      fileContact = dialog.selectedFiles();
-      //mainwindow->updateContactBox(fileContact);
-   } else
-      return;
+   dialog.setViewMode(QFileDialog::Detail);*/
+    if (QFile(file).exists())
+      mainwindow->updateContactBox(file);
 }
 
 void OptionWindow::imageText()
 {
-   QFileDialog dialog(this);
-   dialog.setFileMode(QFileDialog::AnyFile);
-   dialog.setNameFilter(tr("Images (*.png *.jpg)"));
-   dialog.setViewMode(QFileDialog::Detail);
-   if (dialog.exec()) {
-      fileText = dialog.selectedFiles();
-      //mainwindow->updateTextBox(fileText);
-   } else
-      return;
+    QString file = QFileDialog::getOpenFileName(this, "Open an Image", QString(), "Images (*.png *.jpg *.jpeg)");
+    if (QFile(file).exists())
+        mainwindow->updateTextBox(file);
 }
 
 void OptionWindow::colorBack()

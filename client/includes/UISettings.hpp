@@ -38,6 +38,7 @@ class UISettings :public QMainWindow {
 
         // GETTER
         QString getMainWindow() const;
+        QString getLabel() const;
 
         QString getButtonCall() const;
         QString getButtonSend() const;

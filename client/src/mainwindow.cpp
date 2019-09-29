@@ -67,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
    textBox_->setStyleSheet(settings_->getText());
    list_messages_->setStyleSheet(settings_->getMessage());
    list_->setStyleSheet(settings_->getContact());
-   contact_name_->setStyleSheet( "background-color: #f7f7f7 ; font-weight: bold; font-size: 25px;");
+   contact_name_->setStyleSheet(settings_->getLabel());
    setLayout(mainLayout);
    setWindowTitle(tr("BABEL"));
    QObject::connect(button_contact_, SIGNAL (released()), this, SLOT (addContact()));
