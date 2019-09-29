@@ -21,11 +21,13 @@ find_package(Qt5Network REQUIRED)
 set(CLIENT_SOURCES
     client/src/main.cpp
     client/src/mainwindow.cpp
-    client/src/optionWindow.cpp)
+    client/src/optionWindow.cpp
+    client/src/UISettings.cpp)
 
 set(CLIENT_HEADERS
     client/includes/mainWindow.hpp
-    client/includes/optionWindow.hpp)
+    client/includes/optionWindow.hpp
+    client/includes/UISettings.hpp )
 
 set(CLIENT_LIBRARIES
     Qt5::Core

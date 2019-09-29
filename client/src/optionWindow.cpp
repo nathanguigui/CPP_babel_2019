@@ -3,6 +3,7 @@
 //
 
 #include "../includes/optionWindow.hpp"
+#include "../includes/mainWindow.hpp"
 
 OptionWindow::OptionWindow(QWidget *parent): QWidget(parent)
 {
@@ -153,9 +154,10 @@ void OptionWindow::imageMessages()
    dialog.setFileMode(QFileDialog::AnyFile);
    dialog.setNameFilter(tr("Images (*.png *.jpg)"));
    dialog.setViewMode(QFileDialog::Detail);
-   if (dialog.exec())
+   if (dialog.exec()) {
       fileMessages = dialog.selectedFiles();
-   else
+      //mainwindow->updateMessageBox(fileMessages);
+   } else
       return;
 }
 
@@ -165,9 +167,10 @@ void OptionWindow::imageContact()
    dialog.setFileMode(QFileDialog::AnyFile);
    dialog.setNameFilter(tr("Images (*.png *.jpg)"));
    dialog.setViewMode(QFileDialog::Detail);
-   if (dialog.exec())
+   if (dialog.exec()) {
       fileContact = dialog.selectedFiles();
-   else
+      //mainwindow->updateContactBox(fileContact);
+   } else
       return;
 }
 
@@ -177,9 +180,10 @@ void OptionWindow::imageText()
    dialog.setFileMode(QFileDialog::AnyFile);
    dialog.setNameFilter(tr("Images (*.png *.jpg)"));
    dialog.setViewMode(QFileDialog::Detail);
-   if (dialog.exec())
+   if (dialog.exec()) {
       fileText = dialog.selectedFiles();
-   else
+      //mainwindow->updateTextBox(fileText);
+   } else
       return;
 }
 
@@ -189,6 +193,7 @@ void OptionWindow::colorBack()
    if( color.isValid() )
    {
       qDebug() << "Color Choosen : " << color.name();
+      mainwindow->updateMainColor(color.name());
       QString qss = QString("background-color: %1;border: 1px solid black; border-radius: 10px; height: 40px; color: white; font-weight: bold;").arg(color.name());
       backgroundButton->setStyleSheet(qss);
    }  
@@ -199,9 +204,9 @@ void OptionWindow::colorSend()
    QColor color = QColorDialog::getColor(Qt::yellow, this );
    if( color.isValid() )
    {
+      mainwindow->updateButtonSend(color.name());
       qDebug() << "Color Choosen : " << color.name();
       QString qss = QString("background-color: %1;border: 1px solid black; border-radius: 10px; height: 40px; color: white; font-weight: bold;").arg(color.name());
-      mainwindow->button_send_->setStyleSheet(qss);
    }
 }
 
@@ -210,6 +215,7 @@ void OptionWindow::colorCall()
    QColor color = QColorDialog::getColor(Qt::yellow, this );
    if( color.isValid() )
    {
+      mainwindow->updateButtonCall(color.name());
       qDebug() << "Color Choosen : " << color.name();
       QString qss = QString("background-color: %1;border: 1px solid black; border-radius: 10px; height: 40px; color: white; font-weight: bold;").arg(color.name());
    }
@@ -220,6 +226,7 @@ void OptionWindow::colorAdd()
    QColor color = QColorDialog::getColor(Qt::yellow, this );
    if( color.isValid() )
    {
+      mainwindow->updateButtonAdd(color.name());
       qDebug() << "Color Choosen : " << color.name();
       QString qss = QString("background-color: %1;border: 1px solid black; border-radius: 10px; height: 40px; color: white; font-weight: bold;").arg(color.name());
    }

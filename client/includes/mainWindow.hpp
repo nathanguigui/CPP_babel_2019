@@ -18,6 +18,7 @@
 #include <QAction>
 #include <QApplication>
 #include "optionWindow.hpp"
+#include "UISettings.hpp"
 
 
 class QTextEdit;
@@ -34,12 +35,26 @@ class MainWindow : public QWidget
     public:
         explicit MainWindow(QWidget *parent = 0); //Constructor
         ~MainWindow(); // Destructor
-        QPushButton* button_send_;
 
         void centerAndResize();
         QString launchlogin();
         void launchSplashScreen();
-        
+
+        //UPDATE
+        void updateMainColor(QString color) { settings_->setMainColor(color); this->setStyleSheet(settings_->getMainWindow()); };
+        void updateFont(QString font) { /* NEX UPDATE  */ };
+        void updateSize(int size) { settings_->setSize(size); this->setStyleSheet(settings_->getMainWindow()); };
+        void updateHeight(int height) { /*  NEXT UPDATE  */ };
+        void updateWidth(int width) { /* NEXT UPDATE  */ };
+
+        void updateButtonSend(QString color) { settings_->setButtonSend(color); button_send_->setStyleSheet(settings_->getButtonSend()); };
+        void updateButtonAdd(QString color) { settings_->setButtonAdd(color); button_contact_->setStyleSheet(settings_->getButtonAdd()); };
+        void updateButtonCall(QString color) { settings_->setButtonCall(color); button_call_->setStyleSheet(settings_->getButtonSend()); };
+
+        void updateMessageBox(QString url) { settings_->setMessage(url); list_messages_->setStyleSheet(settings_->getMessage()); };
+        void updateContactBox(QString url) { settings_->setContact(url); list_->setStyleSheet(settings_->getContact()); };
+        void updateTextBox(QString url) { settings_->setText(url); textBox_->setStyleSheet(settings_->getText()); };
+
     public slots:
         void addContact();
         void showOptions();
@@ -48,6 +63,7 @@ class MainWindow : public QWidget
         void setName(QListWidgetItem*);
         
     private:
+        UISettings *settings_;
         QString login;
         QListWidgetItem *nom_contact;
         QListWidget *list_;
@@ -55,6 +71,7 @@ class MainWindow : public QWidget
         QTextEdit* textBox_;
         QPushButton* button_contact_;
         QPushButton* button_call_;
+        QPushButton* button_send_;
         QLabel *contact_name_;
         QToolBar *toolbar_;
 };
