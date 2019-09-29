@@ -36,19 +36,27 @@ QGroupBox *OptionWindow::windowSizeGroupBox()
 {
    QGroupBox *sizeGroup = new QGroupBox(tr("Window's size"));
    QSlider *slider = new QSlider(Qt::Horizontal);
+   QSlider *slidervert = new QSlider(Qt::Horizontal);
    slider->setTickPosition(QSlider::TicksBothSides);
+   slidervert->setTickPosition(QSlider::TicksBothSides);
    slider->setTickInterval(1);
+   slidervert->setTickInterval(1);
    slider->setMinimum(0);
+   slidervert->setMinimum(0);
    slider->setMaximum(10);
+   slidervert->setMaximum(10);
    slider->setValue(5);
+   slidervert->setValue(5);
 
    QVBoxLayout *sizeLayout = new QVBoxLayout;
 
    sizeLayout->addWidget(slider);
+   sizeLayout->addWidget(slidervert);
 
    sizeGroup->setLayout(sizeLayout);
 
    int cursorValue = slider->value();
+   int cursorValueVert = slidervert->value();
 
    return sizeGroup;
 }
