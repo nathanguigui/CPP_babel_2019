@@ -16,10 +16,8 @@ UISettings::UISettings(QWidget *parent) {
     path = new QString(QApplication::applicationDirPath() + "/demosettings.ini");
     qDebug() << path[0];
     if (QFile(path[0]).exists()) {
-       qDebug() << "Already Exist";
        return;
     } else {
-        qDebug() << "Create settings";
         createSettings();
     }
 }
@@ -33,7 +31,7 @@ void UISettings::createSettings()
     settings_.setValue("height", 50);
     settings_.setValue("color", "#F7F7F7");
     settings_.setValue("font", "");
-    settings_.setValue("fontSize", 30);
+    settings_.setValue("fontSize", 15);
 
     settings_.endGroup();
 
