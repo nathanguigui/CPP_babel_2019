@@ -44,8 +44,7 @@ class MainWindow : public QWidget
         void updateMainColor(QString color) { settings_->setMainColor(color); contact_name_->setStyleSheet(settings_->getLabel()); this->setStyleSheet(settings_->getMainWindow()); };
         void updateFont(QString font) { /* NEX UPDATE  */ };
         void updateSize(int size) { settings_->setSize(size); this->setStyleSheet(settings_->getMainWindow()); };
-        void updateHeight(int height) { /*  NEXT UPDATE  */ };
-        void updateWidth(int width) { /* NEXT UPDATE  */ };
+        void updateWindowSize(int width, int height);
 
         void updateButtonSend(QString color) { settings_->setButtonSend(color); button_send_->setStyleSheet(settings_->getButtonSend()); };
         void updateButtonAdd(QString color) { settings_->setButtonAdd(color); button_contact_->setStyleSheet(settings_->getButtonAdd()); };

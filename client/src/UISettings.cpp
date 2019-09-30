@@ -14,7 +14,6 @@ class QFile;
 
 UISettings::UISettings(QWidget *parent) {
     path = new QString(QApplication::applicationDirPath() + "/demosettings.ini");
-    qDebug() << path[0];
     if (QFile(path[0]).exists()) {
        return;
     } else {
@@ -27,8 +26,8 @@ void UISettings::createSettings()
     QSettings settings_(path[0], QSettings::NativeFormat);
     settings_.beginGroup("MainWindow");
 
-    settings_.setValue("width", 50);
-    settings_.setValue("height", 50);
+    settings_.setValue("width", 5);
+    settings_.setValue("height", 5);
     settings_.setValue("color", "#F7F7F7");
     settings_.setValue("font", "");
     settings_.setValue("fontSize", 15);
@@ -51,7 +50,6 @@ void UISettings::createSettings()
     settings_.setValue("text", "");
 
     settings_.endGroup();
-    qDebug() << "I'm here !";
 }
 
 QString UISettings::getMainWindow() const {
@@ -59,10 +57,19 @@ QString UISettings::getMainWindow() const {
     QString color = settings_.value("MainWindow/color").toString();
     QString font = settings_.value("MainWindow/font").toString();
     int fontsize = settings_.value("MainWindow/fontSize").toInt();
-    int height = settings_.value("MainWindow/height").toInt();
-    int width = settings_.value("MainWindow/width").toInt();
-    qDebug() << color;
     return QString("background-color: %1; font-size: %2px;").arg(color).arg(fontsize);
+}
+
+int UISettings::getWidth() const {
+    QSettings settings_(path[0], QSettings::NativeFormat);
+    int width = settings_.value("MainWindow/width").toInt();
+    return width;
+}
+
+int UISettings::getHeight() const {
+    QSettings settings_(path[0], QSettings::NativeFormat);
+    int height = settings_.value("MainWindow/height").toInt();
+    return height;
 }
 
 QString UISettings::getLabel() const {
@@ -98,7 +105,7 @@ QString UISettings::getMessage() const {
     if (path == "")
         return "background-color: rgb(255, 255, 255); border: 1px solid black; border-radius: 7px;";
     else {
-        return QString("background-image: url(%1); border: 1px solid black; border-radius: 7px;").arg(path);
+        return QString("background-image: url(%1);width: auto; border: 1px solid black; border-radius: 7px;").arg(path);
     }
 }
 

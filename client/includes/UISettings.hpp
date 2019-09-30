@@ -38,6 +38,8 @@ class UISettings :public QMainWindow {
 
         // GETTER
         QString getMainWindow() const;
+        int getWidth() const;
+        int getHeight() const;
         QString getLabel() const;
 
         QString getButtonCall() const;
@@ -53,8 +55,8 @@ class UISettings :public QMainWindow {
         void setMainColor(QString);
         void setFont(QString);
         void setSize(int);
-        void setHeight(int);
-        void setWidth(int);
+        void setWidth(int width);
+        void setHeight(int height);
 
         void setButtonSend(QString);
         void setButtonCall(QString);

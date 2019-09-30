@@ -9,8 +9,6 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
 {
    //Settings
    settings_ = new UISettings();
-   qDebug() << settings_->getMainWindow();
-   qDebug() << settings_->getButtonCall();
 
    // button
    button_contact_ = new QPushButton("Add contact", this);
@@ -89,9 +87,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::setName(QListWidgetItem *item)
 {
-   qDebug() << "toto";
    QString usr_name = "toto";
-    qDebug() << item->text();
+   qDebug() << "Login = " << item->text();
    contact_name_->setText(item->text());
 }
 
@@ -140,6 +137,7 @@ void MainWindow::sendMessage()
 
 void MainWindow::call()
 {
+    updateWindowSize(7, 7);
     qDebug() << "make a call";
 }
 
@@ -168,8 +166,9 @@ void MainWindow::centerAndResize()
    int width = availableSize.width();
    int height = availableSize.height();
    qDebug() << "dimensions " << width << "x" << height;
-   width *= 0.5;
-   height *= 0.5;
+   qDebug() << settings_->getWidth();
+   width *= float(settings_->getWidth() / 10.0);
+   height *= float(settings_->getHeight() / 10.0);
    qDebug() << "Computed dimensions" << width << "x" << height;
    QSize newSize( width, height );
 
@@ -181,6 +180,26 @@ void MainWindow::centerAndResize()
          qApp->desktop()->availableGeometry()
       )
    );
+}
+
+void MainWindow::updateWindowSize(int width, int height) {
+   settings_->setHeight(height);
+   settings_->setWidth(width);
+    QSize availableSize = qApp->desktop()->availableGeometry().size();
+    int newWidth = availableSize.width();
+    int newHeight = availableSize.height();
+    newWidth *=  float(settings_->getWidth() / 10.0);
+    newHeight *= float(settings_->getHeight() / 10.0);
+    QSize newSize( newWidth, newHeight );
+
+    setGeometry(
+            QStyle::alignedRect(
+                    Qt::LeftToRight,
+                    Qt::AlignCenter,
+                    newSize,
+                    qApp->desktop()->availableGeometry()
+            )
+    );
 }
 
 void MainWindow::showOptions()
