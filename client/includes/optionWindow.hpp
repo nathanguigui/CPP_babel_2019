@@ -39,6 +39,8 @@ class OptionWindow: public QWidget
 
         void setMainWindow(MainWindow *m) { mainwindow = m; };
         void centerAndResize();
+        int width;
+        int height;
 
     public slots:
         void colorSend();
@@ -48,6 +50,8 @@ class OptionWindow: public QWidget
         void imageMessages();
         void imageContact();
         void imageText();
+        void updateSize();
+        void quitter();
 
     private:
         MainWindow *mainwindow;
@@ -69,6 +73,10 @@ class OptionWindow: public QWidget
         QStringList fileMessages;
         QStringList fileContact;
         QStringList fileText;
-};
 
+        QSlider *slider;
+        QSlider *slidervert;
+
+
+};
 #endif

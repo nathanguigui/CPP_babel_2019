@@ -137,7 +137,6 @@ void MainWindow::sendMessage()
 
 void MainWindow::call()
 {
-    updateWindowSize(7, 7);
     qDebug() << "make a call";
 }
 

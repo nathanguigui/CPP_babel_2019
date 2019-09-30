@@ -7,8 +7,7 @@
 
 OptionWindow::OptionWindow(QWidget *parent): QWidget(parent)
 {
-   button_save = new QPushButton("Save", this);
-   button_cancel = new QPushButton("Cancel", this);
+   button_save = new QPushButton("Ok", this);
 
    QGridLayout *mainLayout = new QGridLayout;
 
@@ -18,11 +17,10 @@ OptionWindow::OptionWindow(QWidget *parent): QWidget(parent)
    mainLayout->addWidget(fontGroupBox(), 3, 0, 1, 2);
    mainLayout->addWidget(windowSizeGroupBox(), 4, 0, 1, 2);
    mainLayout->addWidget(button_save, 5, 1);
-   mainLayout->addWidget(button_cancel, 5, 0);
    setLayout(mainLayout);
    setWindowTitle(tr("Settings"));
 
-   QObject::connect(button_cancel, SIGNAL (released()), this, SLOT (quit()));
+   QObject::connect(button_save, SIGNAL (released()), this, SLOT (quitter()));
 
 }
 
@@ -32,11 +30,27 @@ OptionWindow::~OptionWindow()
    delete button_cancel;
 }
 
+void OptionWindow::quitter()
+{
+   this->~OptionWindow();
+}
+
+void OptionWindow::updateSize()
+{
+   this->width = slider->value();
+   this->height = slidervert->value();
+   
+   mainwindow->updateWindowSize(this->width, this->height);
+}
+
 QGroupBox *OptionWindow::windowSizeGroupBox()
 {
    QGroupBox *sizeGroup = new QGroupBox(tr("Window's size"));
-   QSlider *slider = new QSlider(Qt::Horizontal);
-   QSlider *slidervert = new QSlider(Qt::Horizontal);
+   slider = new QSlider(Qt::Horizontal);
+   slidervert = new QSlider(Qt::Horizontal);
+   QLabel *horLabel = new QLabel(tr("width"));
+   QLabel *verLabel = new QLabel(tr("height"));
+   QPushButton *setSize = new QPushButton(tr("set size"));
    slider->setTickPosition(QSlider::TicksBothSides);
    slidervert->setTickPosition(QSlider::TicksBothSides);
    slider->setTickInterval(1);
@@ -50,13 +64,15 @@ QGroupBox *OptionWindow::windowSizeGroupBox()
 
    QVBoxLayout *sizeLayout = new QVBoxLayout;
 
+   sizeLayout->addWidget(horLabel);
    sizeLayout->addWidget(slider);
+   sizeLayout->addWidget(verLabel);
    sizeLayout->addWidget(slidervert);
+   sizeLayout->addWidget(setSize);
 
    sizeGroup->setLayout(sizeLayout);
 
-   int cursorValue = slider->value();
-   int cursorValueVert = slidervert->value();
+   QObject::connect(setSize, SIGNAL(released()), this, SLOT(updateSize()));
 
    return sizeGroup;
 }
@@ -88,8 +104,10 @@ QGroupBox *OptionWindow::fontGroupBox()
 {
    QGroupBox *fontGroup = new QGroupBox(tr("Font Style and Size"));
    QComboBox *style = new QComboBox(this);
-   QTextEdit *size = new QTextEdit(this);
+   QSpinBox *size = new QSpinBox(this);
    QVBoxLayout *fontLayout = new QVBoxLayout;
+
+   size->setValue(15);
 
    fontLayout->addWidget(style);
    fontLayout->addWidget(size);
