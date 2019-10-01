@@ -1,25 +1,25 @@
 //
-// Created by guigui on 9/18/19.
+// Created by guigui on 9/25/19.
 //
 
-#ifndef CPP_BABEL_2019_UDPNETWORK_HPP
-#define CPP_BABEL_2019_UDPNETWORK_HPP
+#ifndef CPP_BABEL_2019_TCPNETWORK_HPP
+#define CPP_BABEL_2019_TCPNETWORK_HPP
 
 #include <QtCore/QTextStream>
-#include <QUdpSocket>
-#include <QWidget>
 #include "IProtoNetwork.hpp"
+#include <QTcpSocket>
+#include <QWidget>
 
-class UdpNetwork : public QWidget, public IProtoNetwork {
+class TcpNetwork : public QObject, public IProtoNetwork {
 public:
-    UdpNetwork(std::string &host, int port);
-    ~UdpNetwork() override;
+    TcpNetwork(std::string &host, int port);
+    ~TcpNetwork() override;
 
     void sendData(std::string data) override;
 
     void closeConnection() override;
 
-    QUdpSocket::SocketState getState();
+    QTcpSocket::SocketState getState();
 
     const std::string &getConnectedHostname() const override;
 
@@ -36,9 +36,9 @@ public:
 private slots:
     void handleError(int err);
 private:
-    QUdpSocket *socket;
+    QTcpSocket *socket;
     std::string host;
     int port;
 };
 
-#endif //CPP_BABEL_2019_UDPNETWORK_HPP
+#endif //CPP_BABEL_2019_TCPNETWORK_HPP
