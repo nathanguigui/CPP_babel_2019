@@ -29,7 +29,11 @@ OptionWindow::OptionWindow(QWidget *parent): QWidget(parent)
 OptionWindow::~OptionWindow()
 {
    delete button_save;
-   delete button_cancel;
+   delete colorGroupBox();
+   delete backgroundColorGroupBox();
+   delete WidgetImage();
+   delete fontGroupBox();
+   delete windowSizeGroupBox();
 }
 
 void OptionWindow::quitter()
@@ -108,11 +112,11 @@ QGroupBox *OptionWindow::fontGroupBox()
 {
    QGroupBox *fontGroup = new QGroupBox(tr("Font Style and Size"));
    QComboBox *style = new QComboBox(this);
-   QSpinBox *size = new QSpinBox(this);
+   size = new QSpinBox(this);
    QVBoxLayout *fontLayout = new QVBoxLayout;
    QPushButton *setFont = new QPushButton(tr("set font size"));
 
-   size->setValue(15);
+   size->setValue(settings_->getFontSize());
 
    fontLayout->addWidget(style);
    fontLayout->addWidget(size);
@@ -120,16 +124,16 @@ QGroupBox *OptionWindow::fontGroupBox()
 
    fontGroup->setLayout(fontLayout);
 
-   //QObject::connect(setFont, SIGNAL(released()), this, SLOT(setFontSize()));
+   QObject::connect(setFont, SIGNAL(released()), this, SLOT(setFontSize()));
 
    return fontGroup;
 }
 
-//void OptionWindow::setFontSize()
-//{
-//   this->fontSize = size->value();
-//   settings_->setSize(this->fontSize);
-//}
+void OptionWindow::setFontSize()
+{
+   this->fontSize = size->value();
+   mainwindow->updateSize(this->fontSize);
+}
 
 QGroupBox *OptionWindow::backgroundColorGroupBox()
 {
@@ -138,6 +142,7 @@ QGroupBox *OptionWindow::backgroundColorGroupBox()
    QVBoxLayout *backgroundLayout = new QVBoxLayout;
 
    backgroundLayout->addWidget(backgroundButton);
+
 
    backgroundGroup->setLayout(backgroundLayout);
 
@@ -159,6 +164,12 @@ QGroupBox *OptionWindow::colorGroupBox()
    color_layout->addWidget(button_col_add);
    color_layout->addStretch(1);
    colorGroup->setLayout(color_layout);
+
+   QString colorSend = settings_->getButtonSend();
+   QString styleSend = QString("background-color: %1");
+   styleSend.arg(colorSend);
+
+   button_col_send->setStyleSheet(styleSend);
 
    QObject::connect(button_col_send, SIGNAL (released()), this, SLOT (colorSend()));
    QObject::connect(button_col_call, SIGNAL (released()), this, SLOT (colorCall()));

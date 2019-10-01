@@ -53,7 +53,7 @@ class OptionWindow: public QWidget
         void imageText();
         void updateSize();
         void quitter();
-        //void setFontSize();
+        void setFontSize();
 
     private:
         MainWindow *mainwindow;
@@ -80,6 +80,10 @@ class OptionWindow: public QWidget
         QSlider *slidervert;
 
         UISettings *settings_;
+
+        QSpinBox *size;
+
+        int fontSize;
 
 };
 #endif
