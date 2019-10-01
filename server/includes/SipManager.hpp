@@ -5,6 +5,7 @@
 #include <string>
 #include <boost/asio.hpp>
 
+std::string make_daytime_string();
 
 enum states {
     new_account = 1,

@@ -1,58 +1,54 @@
 #include <ctime>
 #include <iostream>
 #include <string>
-#include <boost/array.hpp>
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 #include <boost/asio.hpp>
-#include "SipManager.hpp"
+#include <set>
+#include <boost/array.hpp>
+#include <stdlib.h>
+#include <string.h>
+#include <boost/asio/basic_stream_socket.hpp>
 
-using boost::asio::ip::udp;
+using boost::asio::ip::tcp;
+class connection_manager;
 
-std::string make_daytime_string(char *recv_buffer_, SipManager);
-class udp_server
+class connection_handler : public boost::enable_shared_from_this<connection_handler>
 {
-public:
-  udp_server(boost::asio::io_service& io_service)
-    : socket_(io_service, udp::endpoint(udp::v4(), 25565))
-  {
-    start_receive();
-  }
+    public:
+        typedef boost::shared_ptr<connection_handler> pointer;
+        connection_handler(boost::asio::io_service& io_service): sock(io_service){ data = (char *)malloc(sizeof(char ) * max_length);}
+        static pointer create(boost::asio::io_service& io_service){return pointer(new connection_handler(io_service));}
+        tcp::socket& socket(){return sock;}
+        void start();
+        void handle_read(const boost::system::error_code& err, size_t bytes_transferred);
+        void handle_write(const boost::system::error_code& err, size_t bytes_transferred);
+    private:
+        tcp::socket sock;
+        std::string buffer;
+        enum { max_length = 8192};
+        char *data;
+};
 
-private:
-  void start_receive()
-  {
-    socket_.async_receive_from(
-        boost::asio::buffer(recv_buffer_), remote_endpoint_,
-        boost::bind(&udp_server::handle_receive, this,
-          boost::asio::placeholders::error,
-          boost::asio::placeholders::bytes_transferred));
-  }
+class connection_manager {
+    public:
+        connection_manager(){};
+        void start(connection_handler::pointer);
+        void stop(connection_handler::pointer);
+        void stop_all();
+    private:
+        std::set<connection_handler::pointer> connections_;
+};
 
-  void handle_receive(const boost::system::error_code& error,
-      std::size_t /*bytes_transferred*/)
-  {
-    if (!error || error == boost::asio::error::message_size)
-    {
-      boost::shared_ptr<std::string> message(
-          new std::string(make_daytime_string(recv_buffer_, sip)));
 
-      socket_.async_send_to(boost::asio::buffer(*message), remote_endpoint_,
-          boost::bind(&udp_server::handle_send, this, message,
-            boost::asio::placeholders::error,
-            boost::asio::placeholders::bytes_transferred));
-      start_receive();
-    }
-  }
+class Server {
+    public:
+    Server(boost::asio::io_service& io_service): io_context_(io_service), acceptor_(io_service, tcp::endpoint(tcp::v4(), 25565)){start_accept();}
+    void handle_accept(connection_handler::pointer new_connection, const boost::system::error_code& err);
+    private:
+        tcp::acceptor acceptor_;
+        boost::asio::io_context& io_context_;
+        void start_accept();
 
-    void handle_send(boost::shared_ptr<std::string> /*message*/,
-        const boost::system::error_code& /*error*/,
-        std::size_t /*bytes_transferred*/)
-    {
-    }
-
-    udp::socket socket_;
-    udp::endpoint remote_endpoint_;
-    char recv_buffer_[1024];
-    SipManager sip;
 };

@@ -1,9 +1,18 @@
 #include "Server.hpp"
 
-std::string make_daytime_string(char *recv_buffer_, SipManager sip)
+void Server::start_accept()
 {
-    if (strncmp(recv_buffer_, "REGISTER", 8) == 0) {
-        sip.trying_connection(recv_buffer_);
+    connection_handler::pointer new_connection = connection_handler::create(io_context_);
+
+    acceptor_.async_accept(new_connection->socket(),
+        boost::bind(&Server::handle_accept, this, new_connection,
+        boost::asio::placeholders::error));
+}
+void Server::handle_accept(connection_handler::pointer new_connection, const boost::system::error_code& err)
+{
+    if (!err)
+    {
+      new_connection->start();
     }
-    return ("Salut\n");
+    start_accept();
 }
