@@ -45,6 +45,7 @@ void UISettings::createSettings()
 
     settings_.beginGroup("ImgBackground");
 
+    settings_.setValue("active", 1);
     settings_.setValue("message", "");
     settings_.setValue("contact", "");
     settings_.setValue("text", "");
@@ -58,6 +59,12 @@ QString UISettings::getMainWindow() const {
     QString font = settings_.value("MainWindow/font").toString();
     int fontsize = settings_.value("MainWindow/fontSize").toInt();
     return QString("background-color: %1; font-size: %2px;").arg(color).arg(fontsize);
+}
+
+int UISettings::getFontSize() const {
+    QSettings settings_(path[0], QSettings::NativeFormat);
+    int size = settings_.value("MainWindow/fontSize").toInt();
+    return size;
 }
 
 int UISettings::getWidth() const {
@@ -97,15 +104,21 @@ QString UISettings::getButtonAdd() const {
     return QString("background-color: %1;border: 1px solid black; border-radius: 10px; height: 40px; color: white; font-weight: bold;").arg(color);
 }
 
+int UISettings::getActiveImage() const {
+    QSettings settings_(path[0], QSettings::NativeFormat);
+    int active = settings_.value("ImgBackground/active").toInt();
+    return active;
+}
+
 //Img back of list message box
 QString UISettings::getMessage() const {
     QSettings settings_(path[0], QSettings::NativeFormat);
     QString path = settings_.value("ImgBackground/message").toString();
 
-    if (path == "")
+    if (path == "" || getActiveImage() == 0)
         return "background-color: rgb(255, 255, 255); border: 1px solid black; border-radius: 7px;";
     else {
-        return QString("background-image: url(%1);width: auto; border: 1px solid black; border-radius: 7px;").arg(path);
+        return QString("border-image: url(%1) 0 0 0 0 stretch stretch; border: 1px solid black; border-radius: 7px;").arg(path);
     }
 }
 
@@ -113,20 +126,20 @@ QString UISettings::getMessage() const {
 QString UISettings::getContact() const {
     QSettings settings_(path[0], QSettings::NativeFormat);
     QString path = settings_.value("ImgBackground/contact").toString();
-    if (path == "")
+    if (path == "" || getActiveImage() == 0)
         return "background-color: rgb(255, 255, 255); border: 1px solid black; border-radius: 7px";
     else
-        return QString("background-image: url(%1); position: auto; border: 1px solid black; border-radius: 7px; font-size: 20px").arg(path);
+        return QString("border-image: url(%1) 0 0 0 0 stretch stretch; position: auto; border: 1px solid black; border-radius: 7px; font-size: 20px").arg(path);
 }
 
 //Img back of text box
 QString UISettings::getText() const {
     QSettings settings_(path[0], QSettings::NativeFormat);
     QString path = settings_.value("ImgBackground/text").toString();
-    if (path == "")
+    if (path == "" || getActiveImage() == 0)
         return "background-color: rgb(255, 255, 255); border: 1px solid black; border-radius: 7px";
     else
-        return QString("background-image: url(%1); border: 1px solid black; border-radius: 7px; font-size: 20px").arg(path);
+        return QString("border-image: url(%1) 0 0 0 0 stretch stretch; border: 1px solid black; border-radius: 7px; font-size: 20px").arg(path);
 }
 
 void UISettings::setMainColor(QString color) {
@@ -167,6 +180,11 @@ void UISettings::setButtonCall(QString color) {
 void UISettings::setButtonAdd(QString color) {
     QSettings settings_(path[0], QSettings::NativeFormat);
     settings_.setValue("Button/add", color);
+}
+
+void UISettings::setActiveImage(int value) {
+    QSettings settings_(path[0], QSettings::NativeFormat);
+    settings_.setValue("ImgBackground/active", value);
 }
 
 void UISettings::setMessage(QString url) {

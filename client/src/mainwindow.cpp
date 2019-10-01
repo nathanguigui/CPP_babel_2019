@@ -142,12 +142,15 @@ void MainWindow::call()
 
 void MainWindow::launchSplashScreen()
 {
+    QSize availableSize = qApp->desktop()->availableGeometry().size();
+    int width = availableSize.width();
+    int height = availableSize.height();
    QMovie *splash = new QMovie("../client/templates/cube.gif");
    QLabel *processLabel = new QLabel(this);
    //QMediaPlayer *sound = new QMediaPlayer;
    //sound->setMedia(QUrl::fromLocalFile("../client/templates/launch.mp3");
    //sound->setVolume(50);
-   processLabel->resize(980, 580);
+   processLabel->resize(width * float(settings_->getWidth() * 10.0), height * float(settings_->getHeight()) * 10.0);
    processLabel->setStyleSheet("background-color: rgb(38,38,38);");
    processLabel->setMovie(splash);
    processLabel->setWindowFlags(Qt::FramelessWindowHint);
@@ -164,11 +167,8 @@ void MainWindow::centerAndResize()
    QSize availableSize = qApp->desktop()->availableGeometry().size();
    int width = availableSize.width();
    int height = availableSize.height();
-   qDebug() << "dimensions " << width << "x" << height;
-   qDebug() << settings_->getWidth();
    width *= float(settings_->getWidth() / 10.0);
    height *= float(settings_->getHeight() / 10.0);
-   qDebug() << "Computed dimensions" << width << "x" << height;
    QSize newSize( width, height );
 
    setGeometry(
@@ -199,6 +199,13 @@ void MainWindow::updateWindowSize(int width, int height) {
                     qApp->desktop()->availableGeometry()
             )
     );
+}
+
+void MainWindow::updateActveImage(int value) {
+    settings_->setActiveImage(value);
+    list_messages_->setStyleSheet(settings_->getMessage());
+    list_->setStyleSheet(settings_->getContact());
+    textBox_->setStyleSheet(settings_->getText());
 }
 
 void MainWindow::showOptions()

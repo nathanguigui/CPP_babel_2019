@@ -37,31 +37,39 @@ class UISettings :public QMainWindow {
         void createSettings();
 
         // GETTER
+        ///Getter of settings about main window
         QString getMainWindow() const;
+        int getFontSize() const;
         int getWidth() const;
         int getHeight() const;
         QString getLabel() const;
 
+        ///Gettter about the button
         QString getButtonCall() const;
         QString getButtonSend() const;
         QString getButtonAdd() const;
 
+        ///Getter about the image background
+        int getActiveImage() const;
         QString getMessage() const;
         QString getContact() const;
         QString getText() const;
 
         //SETTER
-
+        ///Setter of main window
         void setMainColor(QString);
         void setFont(QString);
         void setSize(int);
         void setWidth(int width);
         void setHeight(int height);
 
+        ///Setter about color's buttons
         void setButtonSend(QString);
         void setButtonCall(QString);
         void setButtonAdd(QString);
 
+        ///Setter about the backroung image
+        void setActiveImage(int);
         void setMessage(QString);
         void setContact(QString);
         void setText(QString);
