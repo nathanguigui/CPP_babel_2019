@@ -7,6 +7,8 @@
 
 OptionWindow::OptionWindow(QWidget *parent): QWidget(parent)
 {
+   settings_ = new UISettings();
+
    button_save = new QPushButton("Ok", this);
 
    QGridLayout *mainLayout = new QGridLayout;
@@ -59,8 +61,8 @@ QGroupBox *OptionWindow::windowSizeGroupBox()
    slidervert->setMinimum(0);
    slider->setMaximum(10);
    slidervert->setMaximum(10);
-   slider->setValue(5);
-   slidervert->setValue(5);
+   slider->setValue(settings_->getWidth());
+   slidervert->setValue(settings_->getHeight());
 
    QVBoxLayout *sizeLayout = new QVBoxLayout;
 
@@ -85,6 +87,8 @@ QGroupBox *OptionWindow::WidgetImage()
    contact_button = new QPushButton("Background image for contact list", this);
    text_button = new QPushButton("Background image for text zone", this);
 
+   WidgetGroup->setCheckable(true);
+   WidgetGroup->setChecked(true);
    QVBoxLayout *imageLayout = new QVBoxLayout;
 
    imageLayout->addWidget(message_button);
@@ -106,16 +110,26 @@ QGroupBox *OptionWindow::fontGroupBox()
    QComboBox *style = new QComboBox(this);
    QSpinBox *size = new QSpinBox(this);
    QVBoxLayout *fontLayout = new QVBoxLayout;
+   QPushButton *setFont = new QPushButton(tr("set font size"));
 
    size->setValue(15);
 
    fontLayout->addWidget(style);
    fontLayout->addWidget(size);
+   fontLayout->addWidget(setFont);
 
    fontGroup->setLayout(fontLayout);
 
+   //QObject::connect(setFont, SIGNAL(released()), this, SLOT(setFontSize()));
+
    return fontGroup;
 }
+
+//void OptionWindow::setFontSize()
+//{
+//   this->fontSize = size->value();
+//   settings_->setSize(this->fontSize);
+//}
 
 QGroupBox *OptionWindow::backgroundColorGroupBox()
 {

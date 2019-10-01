@@ -23,6 +23,7 @@
 #include <QApplication>
 #include <QColorDialog>
 #include "mainWindow.hpp"
+#include "UISettings.hpp"
 
 class QTextEdit;
 class QPushButton;
@@ -52,6 +53,7 @@ class OptionWindow: public QWidget
         void imageText();
         void updateSize();
         void quitter();
+        //void setFontSize();
 
     private:
         MainWindow *mainwindow;
@@ -77,6 +79,7 @@ class OptionWindow: public QWidget
         QSlider *slider;
         QSlider *slidervert;
 
+        UISettings *settings_;
 
 };
 #endif
