@@ -29,6 +29,8 @@ set(SERVER_SRC
         server/src/main.cpp
         server/src/Server.cpp
         server/src/SipManager.cpp
+        server/src/tcp_connection.cpp
+        server/src/connection_manager.cpp
         )
 
 set(CMAKE_MODULE_PATH ${CONAN_CMAKE_MODULE_PATH} ${CMAKE_MODULE_PATH})
