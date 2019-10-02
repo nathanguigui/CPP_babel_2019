@@ -7,7 +7,7 @@ INCLUDE_DIRECTORIES(${CONAN_INCLUDE_DIRS})
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11 -g3")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11 -g3 -pthread")
 
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
@@ -40,6 +40,56 @@ add_executable(babel_client ${CLIENT_SOURCES} ${CLIENT_HEADERS})
 
 target_link_libraries(babel_client Qt5::Core Qt5::Widgets Qt5::Network)
 
+#include_directories(server/includes)
+
+set(SERVER_SRC
+        server/src/main.cpp
+        server/src/Server.cpp
+        server/src/SipManager.cpp
+        server/src/tcp_connection.cpp
+        server/src/connection_manager.cpp
+        )
+
+#set(CMAKE_MODULE_PATH ${CONAN_CMAKE_MODULE_PATH} ${CMAKE_MODULE_PATH})
+find_package(SQLite3 REQUIRED)
+add_executable(server ${SERVER_SRC})
+target_link_libraries(server sqlite3)
+
+#cmake_minimum_required(VERSION 3.1.0)
+#project(CPP_babel_2019)
+#
+#set(CMAKE_AUTOMOC ON)
+#add_definitions("-std=c++11")
+#
+#set(CMAKE_VERBOSE_MAKEFILE TRUE)
+#
+# include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+# conan_basic_setup()
+#
+#
+#include_directories(client/includes)
+#
+#set(CLIENT_SRC
+#    client/src/main.cpp
+#        client/src/mainwidget.cpp)
+#
+#find_package(Qt5Core CONFIG REQUIRED)
+#find_package(Qt5OpenGL REQUIRED)
+#find_package(Qt5Widgets REQUIRED)
+#add_executable(client ${CLIENT_SRC})
+#target_link_libraries(client ${CONAN_LIBS} Qt5::Core Qt5::OpenGL Qt5::Widgets)
+#
+#include_directories(server/includes)
+#
+#set(SERVER_SRC
+#        server/src/main.cpp
+#        )
+#
+#set(CMAKE_MODULE_PATH ${CONAN_CMAKE_MODULE_PATH} ${CMAKE_MODULE_PATH})
+#find_package(SQLite3 REQUIRED)
+#add_executable(server ${SERVER_SRC})
+#target_link_libraries(server ${CONAN_LIBS} sqlite3)
+#
 
 #include(${CMAKE_SOURCE_DIR}/build/conanbuildinfo.cmake)
 #conan_basic_setup(TARGETS)
@@ -99,18 +149,5 @@ target_link_libraries(babel_client Qt5::Core Qt5::Widgets Qt5::Network)
 #add_executable(client ${CLIENT_SRC})
 #target_link_libraries(CPP_babel_2019 ${CONAN_LIBS} Qt5::Core Qt5::OpenGL Qt5::Widgets Qt5::Network)
 
-include_directories(server/includes)
 
-set(SERVER_SRC
-        server/src/main.cpp
-        server/src/Server.cpp
-        server/src/SipManager.cpp
-        server/src/tcp_connection.cpp
-        server/src/connection_manager.cpp
-        )
-
-set(CMAKE_MODULE_PATH ${CONAN_CMAKE_MODULE_PATH} ${CMAKE_MODULE_PATH})
-find_package(SQLite3 REQUIRED)
-add_executable(server ${SERVER_SRC})
-target_link_libraries(server ${CONAN_LIBS} sqlite3)
 
