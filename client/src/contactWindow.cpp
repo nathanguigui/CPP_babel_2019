@@ -11,12 +11,14 @@ ContactWindow::ContactWindow(QWidget *parent): QWidget(parent)
     settings_ = new UISettings();
 
     buttonAdd = new QPushButton("Add contact", this);
+    buttonQuit = new QPushButton("Quit", this);
     contactList = new QListWidget();
 
     QGridLayout *contactLayout = new QGridLayout;
 
     contactLayout->addWidget(buttonAdd, 1, 0);
-    contactLayout->addWidget(contactList, 0, 0);
+    contactLayout->addWidget(contactList, 0, 0, 1, 2);
+    contactLayout->addWidget(buttonQuit, 1, 1);
 
     contactLayout->setHorizontalSpacing(20);
     contactLayout->setVerticalSpacing(20);
@@ -28,6 +30,7 @@ ContactWindow::ContactWindow(QWidget *parent): QWidget(parent)
     setLayout(contactLayout);
     setWindowTitle(tr("add contact"));
 
+    QObject::connect(buttonQuit, SIGNAL(released()), this, SLOT (quitter()));
     QObject::connect(buttonAdd, SIGNAL(released()), this, SLOT (addContact()));
 }
 
@@ -37,9 +40,18 @@ ContactWindow::~ContactWindow()
     delete contactList;
 }
 
-void ContactWindow::addContact()
+void ContactWindow::quitter()
 {
     this->~ContactWindow();
+}
+
+void ContactWindow::addContact()
+{
+    if (contactChosen != NULL) {
+        QListWidgetItem *it = contactList->takeItem(contactList->currentRow());
+        mainwindow->setContact(contactChosen);
+        delete it;
+    }
 }
 
 void ContactWindow::centerAndResize()
@@ -59,5 +71,22 @@ void ContactWindow::centerAndResize()
          qApp->desktop()->availableGeometry()
       )
    );
+}
+
+void ContactWindow::fillList(std::vector<std::string> contact)
+{
+    int i = 0;
+    while (i < contact.size())
+    {
+        QString str = QString::fromUtf8(contact[i].c_str());
+        contactList->addItem(str);
+        i++;
+    }
+   QObject::connect(contactList, SIGNAL (itemClicked(QListWidgetItem*)), this, SLOT (contactClicked(QListWidgetItem*)));
+}
+
+void ContactWindow::contactClicked(QListWidgetItem *item)
+{
+    contactChosen = item->text();
 }
 

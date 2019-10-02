@@ -56,6 +56,8 @@ class MainWindow : public QWidget
         void updateContactBox(QString url) { settings_->setContact(url); list_->setStyleSheet(settings_->getContact()); };
         void updateTextBox(QString url) { settings_->setText(url); textBox_->setStyleSheet(settings_->getText()); };
 
+        void setContact(QString name);
+
     public slots:
         void addContact();
         void showOptions();
