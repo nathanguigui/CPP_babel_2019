@@ -6,11 +6,14 @@
 #define CPP_BABEL_2019_TCPNETWORK_HPP
 
 #include <QtCore/QTextStream>
-#include "IProtoNetwork.hpp"
 #include <QTcpSocket>
 #include <QWidget>
+#include <QNetworkInterface>
+#include <sstream>
+#include "IProtoNetwork.hpp"
 
 class TcpNetwork : public QObject, public IProtoNetwork {
+    Q_OBJECT
 public:
     TcpNetwork(std::string &host, int port);
     ~TcpNetwork() override;
@@ -32,6 +35,10 @@ public:
     std::string getLocalHostWithDomain() const override;
 
     quint16 getLocalPort() const override;
+
+public slots:
+    void readyRead();
+    void connected();
 
 private slots:
     void handleError(int err);

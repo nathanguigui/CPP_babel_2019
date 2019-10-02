@@ -28,7 +28,7 @@ include_directories(server/includes)
 set(SERVER_SRC
         server/src/main.cpp
         server/src/Server.cpp
-        server/src/SipManager.cpp
+        server/src/SessionManager.cpp
         server/src/tcp_connection.cpp
         server/src/connection_manager.cpp
         )
