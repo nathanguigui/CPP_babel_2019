@@ -31,6 +31,7 @@ class MainWindow;
 class QGroupBox;
 class QString;
 class QListWidget;
+class QStringList;
 
 class ContactWindow: public QWidget
 {
@@ -41,18 +42,25 @@ class ContactWindow: public QWidget
 
         void setMainWindow(MainWindow *m) { mainwindow = m; };
         void centerAndResize();
+        void fillContact();
+        void fillList(std::vector<std::string> contact);
 
     public slots:
 
+        void contactClicked(QListWidgetItem *);
         void addContact();
+        void quitter();
 
     private:
         MainWindow *mainwindow;
 
         QPushButton *buttonAdd;
+        QPushButton *buttonQuit;
 
         QListWidget *contactList;
 
         UISettings *settings_;
+
+        QString contactChosen;
 };
 #endif

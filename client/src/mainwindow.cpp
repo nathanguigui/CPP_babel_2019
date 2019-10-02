@@ -90,9 +90,13 @@ MainWindow::~MainWindow()
 
 void MainWindow::setName(QListWidgetItem *item)
 {
-   QString usr_name = "toto";
    qDebug() << "Login = " << item->text();
    contact_name_->setText(item->text());
+}
+
+void MainWindow::setContact(QString name)
+{
+   list_->addItem(name);
 }
 
 QString MainWindow::launchlogin()
@@ -114,8 +118,16 @@ QString MainWindow::launchlogin()
 void MainWindow::addContact()
 {
    ContactWindow *contact = new ContactWindow();
+
+   std::vector<std::string> importContact;
+   importContact.push_back("daniel");
+   importContact.push_back("pierre");
+   importContact.push_back("snoop dog");
+   importContact.push_back("jacques chirac");
+   importContact.push_back("joachim rouas");
    contact->setMainWindow(this);
    contact->centerAndResize();
+   contact->fillList(importContact);
    contact->show();
 }
 
@@ -137,7 +149,7 @@ void MainWindow::launchSplashScreen()
    QSize availableSize = qApp->desktop()->availableGeometry().size();
    int width = availableSize.width();
    int height = availableSize.height();
-   QMovie *splash = new QMovie("../templates/cube.gif");
+   QMovie *splash = new QMovie("../templates/other.gif");
    QLabel *processLabel = new QLabel(this);
    if (!splash->isValid())
       std::cout << "file error" << std::endl;
