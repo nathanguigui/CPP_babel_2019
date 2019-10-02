@@ -50,7 +50,7 @@ class MainWindow : public QWidget
         void updateButtonAdd(QString color) { settings_->setButtonAdd(color); button_contact_->setStyleSheet(settings_->getButtonAdd()); };
         void updateButtonCall(QString color) { settings_->setButtonCall(color); button_call_->setStyleSheet(settings_->getButtonSend()); };
 
-        void updateActveImage(int value);
+        void updateActiveImage(int value);
         void updateMessageBox(QString url) { settings_->setMessage(url); list_messages_->setStyleSheet(settings_->getMessage()); };
         void updateContactBox(QString url) { settings_->setContact(url); list_->setStyleSheet(settings_->getContact()); };
         void updateTextBox(QString url) { settings_->setText(url); textBox_->setStyleSheet(settings_->getText()); };

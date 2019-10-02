@@ -54,6 +54,7 @@ class OptionWindow: public QWidget
         void updateSize();
         void quitter();
         void setFontSize();
+        void setImage();
 
     private:
         MainWindow *mainwindow;
@@ -71,6 +72,8 @@ class OptionWindow: public QWidget
         QGroupBox *backgroundColorGroupBox();
         QGroupBox *fontGroupBox();
         QGroupBox *windowSizeGroupBox();
+
+        QGroupBox *WidgetGroup;
 
         QStringList fileMessages;
         QStringList fileContact;

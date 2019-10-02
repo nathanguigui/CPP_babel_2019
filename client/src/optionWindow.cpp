@@ -85,7 +85,7 @@ QGroupBox *OptionWindow::windowSizeGroupBox()
 
 QGroupBox *OptionWindow::WidgetImage()
 {
-   QGroupBox *WidgetGroup = new QGroupBox(tr("Widget's Background Picture"));
+   WidgetGroup = new QGroupBox(tr("Widget's Background Picture"));
 
    message_button = new QPushButton("Background image for message", this);
    contact_button = new QPushButton("Background image for contact list", this);
@@ -105,7 +105,18 @@ QGroupBox *OptionWindow::WidgetImage()
    QObject::connect(contact_button, SIGNAL (released()), this, SLOT (imageContact()));
    QObject::connect(text_button, SIGNAL (released()), this, SLOT (imageText()));
 
+   QObject::connect(WidgetGroup, SIGNAL(clicked()), this, SLOT (setImage()));
+
    return WidgetGroup;
+}
+
+void OptionWindow::setImage()
+{
+   if (WidgetGroup->isChecked() == true)
+      mainwindow->updateActiveImage(1);
+   else
+      mainwindow->updateActiveImage(0);
+   
 }
 
 QGroupBox *OptionWindow::fontGroupBox()
@@ -164,12 +175,6 @@ QGroupBox *OptionWindow::colorGroupBox()
    color_layout->addWidget(button_col_add);
    color_layout->addStretch(1);
    colorGroup->setLayout(color_layout);
-
-   QString colorSend = settings_->getButtonSend();
-   QString styleSend = QString("background-color: %1");
-   styleSend.arg(colorSend);
-
-   button_col_send->setStyleSheet(styleSend);
 
    QObject::connect(button_col_send, SIGNAL (released()), this, SLOT (colorSend()));
    QObject::connect(button_col_call, SIGNAL (released()), this, SLOT (colorCall()));

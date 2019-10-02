@@ -201,7 +201,7 @@ void MainWindow::updateWindowSize(int width, int height) {
     );
 }
 
-void MainWindow::updateActveImage(int value) {
+void MainWindow::updateActiveImage(int value) {
     settings_->setActiveImage(value);
     list_messages_->setStyleSheet(settings_->getMessage());
     list_->setStyleSheet(settings_->getContact());
