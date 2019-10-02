@@ -1,16 +1,6 @@
 
 #include "../includes/mainWindow.hpp"
-#include <QCoreApplication>
-#include <QObject>
-#include <QString>
-#include <QTimer>
-#include <QtCore/QDebug>
-#include <QtWidgets/QtWidgets>
-#include <iostream>
-#include "main.hpp"
-#include <QtNetwork/QtNetwork>
-#include <QUdpSocket>
-#include <Network/SipManager.hpp>
+
 
 int main(int argc, char *argv[])
 {
