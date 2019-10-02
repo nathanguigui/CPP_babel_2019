@@ -19,6 +19,7 @@
 #include <QApplication>
 #include "optionWindow.hpp"
 #include "UISettings.hpp"
+#include "contactWindow.hpp"
 
 
 class QTextEdit;

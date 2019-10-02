@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
    // list view
    list_ = new QListWidget();
    list_messages_ = new QListWidget();
-//   list_->setSelectionMode(QAbstractItemView::SingleSelection);
+   // list_->setSelectionMode(QAbstractItemView::SingleSelection);
 
    // com contact
    contact_name_ = new QLabel();
@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
    QBoxLayout *toolLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
    toolLayout->setContentsMargins(0, 0, 0, 0);
    toolLayout->addWidget(toolbar_);
+   
    connect(quitter, &QAction::triggered, this, &QApplication::quit);
    connect(deconnexion, &QAction::triggered, this, &MainWindow::launchlogin);
    connect(options, &QAction::triggered, this, &MainWindow::showOptions);
@@ -68,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
    contact_name_->setStyleSheet(settings_->getLabel());
    setLayout(mainLayout);
    setWindowTitle(tr("BABEL"));
+
    QObject::connect(button_contact_, SIGNAL (released()), this, SLOT (addContact()));
    QObject::connect(button_send_, SIGNAL(released()), this, SLOT(sendMessage()));
    QObject::connect(button_call_, SIGNAL(released()), this, SLOT(call()));
@@ -110,21 +112,10 @@ QString MainWindow::launchlogin()
 
 void MainWindow::addContact()
 {
-   QInputDialog *contact = new QInputDialog(this);
-   contact->setLabelText(tr("Contact name or login:"));
-   contact->setWindowTitle(tr("Add contact"));
-   contact->adjustSize();
-   contact->setStyleSheet("background-color: rgb(255, 255, 255);");
-   contact->move(QApplication::desktop()->screen()->rect().center() - contact->rect().center());
-   if (contact->exec() == QDialog::Accepted)
-   {
-      nom_contact = new QListWidgetItem(contact->textValue());
-      this->list_->addItem(nom_contact);
-   }
-   else
-      return;
-   qDebug() << nom_contact->text();
-   return;
+   ContactWindow *contact = new ContactWindow();
+   contact->setMainWindow(this);
+   contact->centerAndResize();
+   contact->show();
 }
 
 void MainWindow::sendMessage()
@@ -142,21 +133,23 @@ void MainWindow::call()
 
 void MainWindow::launchSplashScreen()
 {
-    QSize availableSize = qApp->desktop()->availableGeometry().size();
-    int width = availableSize.width();
-    int height = availableSize.height();
-   QMovie *splash = new QMovie("../client/templates/cube.gif");
+   QSize availableSize = qApp->desktop()->availableGeometry().size();
+   int width = availableSize.width();
+   int height = availableSize.height();
+   QMovie *splash = new QMovie("../templates/cube.gif");
    QLabel *processLabel = new QLabel(this);
+   if (!splash->isValid())
+      std::cout << "file error" << std::endl;
    //QMediaPlayer *sound = new QMediaPlayer;
    //sound->setMedia(QUrl::fromLocalFile("../client/templates/launch.mp3");
    //sound->setVolume(50);
    processLabel->resize(width * float(settings_->getWidth() * 10.0), height * float(settings_->getHeight()) * 10.0);
    processLabel->setStyleSheet("background-color: rgb(38,38,38);");
-   processLabel->setMovie(splash);
    processLabel->setWindowFlags(Qt::FramelessWindowHint);
    processLabel->setAlignment(Qt::AlignCenter);
-   splash->start();
+   processLabel->setMovie(splash);
    processLabel->show();
+   splash->start();
    //QTimer::singleShot(3500, sound, SLOT(close()));
    QTimer::singleShot(3500, processLabel, SLOT(close()));
    QTimer::singleShot(0, this, SLOT(show()));

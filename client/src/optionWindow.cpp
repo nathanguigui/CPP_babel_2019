@@ -119,7 +119,6 @@ void OptionWindow::setImage()
       mainwindow->updateActiveImage(1);
    else
       mainwindow->updateActiveImage(0);
-   
 }
 
 QGroupBox *OptionWindow::fontGroupBox()
