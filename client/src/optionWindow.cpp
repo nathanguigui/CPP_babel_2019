@@ -92,7 +92,10 @@ QGroupBox *OptionWindow::WidgetImage()
    text_button = new QPushButton("Background image for text zone", this);
 
    WidgetGroup->setCheckable(true);
-   WidgetGroup->setChecked(true);
+   if (settings_->getActiveImage() == 1)
+      WidgetGroup->setChecked(true);
+   else
+      WidgetGroup->setChecked(false);
    QVBoxLayout *imageLayout = new QVBoxLayout;
 
    imageLayout->addWidget(message_button);
