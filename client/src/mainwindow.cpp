@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
    //Settings
    settings_ = new UISettings();
 
+   contact_list.insert( { "Sully", new contact("Sully", "1.1.1.1", true) } );
    // button
    button_contact_ = new QPushButton("Add contact", this);
    button_send_ = new QPushButton("Send", this);

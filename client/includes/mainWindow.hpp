@@ -17,9 +17,13 @@
 #include <QIcon>
 #include <QAction>
 #include <QApplication>
+#include <iostream>
+#include <iterator>
+#include <map>
 #include "optionWindow.hpp"
 #include "UISettings.hpp"
 #include "contactWindow.hpp"
+#include "contact.hpp"
 
 
 class QTextEdit;
@@ -75,5 +79,6 @@ class MainWindow : public QWidget
         QPushButton* button_send_;
         QLabel *contact_name_;
         QToolBar *toolbar_;
+        std::map<std::string, contact *> contact_list;
 };
 #endif // MAINWINDOW_H

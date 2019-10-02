@@ -23,13 +23,15 @@ set(CLIENT_SOURCES
     client/src/mainwindow.cpp
     client/src/optionWindow.cpp
     client/src/UISettings.cpp
-    client/src/contactWindow.cpp)
+    client/src/contactWindow.cpp
+    client/src/contact.cpp)
 
 set(CLIENT_HEADERS
     client/includes/mainWindow.hpp
     client/includes/optionWindow.hpp
     client/includes/UISettings.hpp
-    client/includes/contactWindow.hpp)
+    client/includes/contactWindow.hpp
+    client/includes/contact.hpp)
 
 set(CLIENT_LIBRARIES
     Qt5::Core
