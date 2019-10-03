@@ -32,6 +32,7 @@ class QPushButton;
 class QTextBrowser;
 class QListWidget;
 class QLabel;
+class contact;
 
 // This is the declaration of our MainWidget class
 // The definition/implementation is in mainwindow.cpp
@@ -51,6 +52,9 @@ class MainWindow : public QWidget
 
         void printAllMessages();
         void updateMessage();
+
+        void incomingCall(QString login);
+        void callPopup(QString login);
 
         //UPDATE
         void updateMainColor(QString color) { settings_->setMainColor(color); contact_name_->setStyleSheet(settings_->getLabel()); this->setStyleSheet(settings_->getMainWindow()); };

@@ -22,6 +22,7 @@
 #include <QAction>
 #include <QApplication>
 #include <vector>
+#include "mainWindow.hpp"
 
 class contact : public QWidget
 {
@@ -29,15 +30,23 @@ public:
     explicit contact(QString login, QString ip, bool state, QWidget *parent = 0);
     ~contact();
 
+    void setMainWindow(MainWindow *m) {mainWindow_ = m;}; // APPELER A CHAQUE NOUvEAU CONTACT
+    void setCallState(bool b) {callState_ = b;};
+    void setState(bool b) {state_ = b;};
+    bool getCallState() const { return callState_;};
+    bool getState() const {return state_; };
     std::vector<QString> getMessages() { return messages; };
     ///Message from = 0 = send, from = 1 = receive
     void addMessage(std::string message, int from);
     ///CallContact
+    void incomingCall();
+
 private:
+    bool callState_;
+    MainWindow *mainWindow_;
     QString loginName_;
     QString ip_;
     bool state_;
-    bool isSelected_;
     std::vector<QString> messages;
 };
 

@@ -8,8 +8,7 @@
 // Constructor for main widget
 MainWindow::MainWindow(QWidget *parent): QWidget(parent)
 {
-   //SIPManager
-
+   //shortcut
 
    //Settings
    settings_ = new UISettings();
@@ -111,10 +110,12 @@ void MainWindow::setAllContact()
       item->setText(QString(itr->first));
 
       // set green color if contact is connected
-      item->setBackground(Qt::green);
-      
+      if (itr->second->getState() == true)
+         item->setBackground(Qt::green);
+      else
+         item->setBackground(Qt::red);      
+
       // set red color if contact is disconnected
-      //item->setBackground(Qt::red);      
 
       list_->addItem(item);
 
@@ -125,6 +126,7 @@ void MainWindow::setAllContact()
 void MainWindow::addNewContact(std::string login, std::string ip, bool state) {
     contact *newContact = new contact(QString::fromStdString(login), QString::fromStdString(ip), state);
     contact_list.insert( {QString::fromStdString(login), new contact(QString::fromStdString(login), QString::fromStdString(ip), state) });
+    contact_list.find(QString::fromStdString(login))->second->setMainWindow(this);
     setAllContact();
 }
 
@@ -150,6 +152,37 @@ QString MainWindow::launchlogin()
    return login;
 }
 
+void MainWindow::callPopup(QString login)
+{
+   QMessageBox *call = new QMessageBox();
+   QString message = QString("in call with %1").arg(login);
+   call->setText(message);
+   call->setStandardButtons(QMessageBox::Close);
+   int ret = call->exec();
+
+   if (ret == QMessageBox::Close)
+	return;
+}
+
+void MainWindow::incomingCall(QString login)
+{
+   	QMessageBox *incoming = new QMessageBox();
+   	QString message = QString("%1 is calling you ").arg(login);
+   	incoming->setText(message);
+   	incoming->setStandardButtons(QMessageBox::Yes | QMessageBox::Ignore);
+   	incoming->setDefaultButton(QMessageBox::Yes);
+
+   	int ret = incoming->exec();
+
+   	switch (ret) {
+      	case QMessageBox::Yes:
+			callPopup(login);
+         	return;
+      	case QMessageBox::Ignore:
+         	return;
+   }
+}
+
 void MainWindow::addContact()
 {
    ContactWindow *contact = new ContactWindow();
@@ -172,7 +205,7 @@ void MainWindow::sendMessage()
     message = this->textBox_->toPlainText();
     if (message == "")
         return;
-    if (contact_name_) {
+    if (contact_name_->text() != QString::null) {
         contact_list.find(contact_name_->text())->second->addMessage(message.toStdString(), 0);
         updateMessage();
     }
@@ -198,8 +231,11 @@ void MainWindow::updateMessage()
 
 void MainWindow::call()
 {
+   	if (contact_name_->text() == QString::null)
+		return;
     contact_list.find(contact_name_->text())->second->addMessage("Ceci est un message test envoyé",1);
     updateMessage();
+	incomingCall(contact_name_->text());
     qDebug() << "make a call";
 }
 

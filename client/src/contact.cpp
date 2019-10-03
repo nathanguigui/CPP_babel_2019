@@ -7,6 +7,7 @@
 contact::contact(QString login, QString ip, bool state, QWidget *parent)
     : loginName_(login), ip_(ip), state_(state), QWidget(parent)
 {
+    callState_ = false;
     qDebug() <<"login Name : " << loginName_ << " IP : " << ip_;
 }
 
@@ -24,4 +25,9 @@ void contact::addMessage(std::string message, int from) {
 }
 contact::~contact() {
 
+}
+
+void contact::incomingCall()
+{
+    mainWindow_->incomingCall(loginName_);
 }
