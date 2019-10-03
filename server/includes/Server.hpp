@@ -10,9 +10,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <boost/asio/basic_stream_socket.hpp>
+#include "SipManager.hpp"
 
 using boost::asio::ip::tcp;
 class connection_manager;
+std::string convertToString(char* a);
 
 class connection_handler : public boost::enable_shared_from_this<connection_handler>
 {
@@ -25,6 +27,7 @@ class connection_handler : public boost::enable_shared_from_this<connection_hand
         void handle_read(const boost::system::error_code& err, size_t bytes_transferred);
         void handle_write(const boost::system::error_code& err, size_t bytes_transferred);
     private:
+        SipManager header_manager;
         tcp::socket sock;
         std::string buffer;
         enum { max_length = 8192};
@@ -44,11 +47,12 @@ class connection_manager {
 
 class Server {
     public:
-    Server(boost::asio::io_service& io_service): io_context_(io_service), acceptor_(io_service, tcp::endpoint(tcp::v4(), 25565)){start_accept();}
-    void handle_accept(connection_handler::pointer new_connection, const boost::system::error_code& err);
+        Server(boost::asio::io_service& io_service): manager_(),io_context_(io_service), acceptor_(io_service, tcp::endpoint(tcp::v4(), 25565)){start_accept();}
+        void handle_accept(connection_handler::pointer new_connection, const boost::system::error_code& err);
     private:
         tcp::acceptor acceptor_;
         boost::asio::io_context& io_context_;
         void start_accept();
+        connection_manager manager_;
 
 };

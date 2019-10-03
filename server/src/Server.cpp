@@ -12,7 +12,7 @@ void Server::handle_accept(connection_handler::pointer new_connection, const boo
 {
     if (!err)
     {
-      new_connection->start();
+      manager_.start(new_connection);
     }
     start_accept();
 }
