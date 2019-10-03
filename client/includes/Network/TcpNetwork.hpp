@@ -12,10 +12,12 @@
 #include <sstream>
 #include "IProtoNetwork.hpp"
 
+class SessionManager;
+
 class TcpNetwork : public QObject, public IProtoNetwork {
     Q_OBJECT
 public:
-    TcpNetwork(std::string &host, int port);
+    TcpNetwork(std::string &host, int port, void (*readCallback)(std::string, SessionManager *), SessionManager *manager);
     ~TcpNetwork() override;
 
     void sendData(std::string data) override;
@@ -46,6 +48,8 @@ private:
     QTcpSocket *socket;
     std::string host;
     int port;
+    SessionManager *sessionManager;
+    void (*readCallback)(std::string, SessionManager *manager);
 };
 
 #endif //CPP_BABEL_2019_TCPNETWORK_HPP

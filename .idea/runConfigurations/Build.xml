@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Build" type="CMakeRunConfiguration" factoryName="Application" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" RUN_PATH="$PROJECT_DIR$/build/bin/client" EXPLICIT_BUILD_TARGET_NAME="all">
+    <method v="2">
+      <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_External Tools_conan" />
+      <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_External Tools_make unix makefile" />
+      <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_External Tools_cmake build here" />
+    </method>
+  </configuration>
+</component>

@@ -14,6 +14,7 @@ struct SipParams {
     const std::string &CSeq;
     const std::string &data;
     const std::string &recipient;
+    const std::string &recipientUri;
 };
 
 class SessionManager {
@@ -25,8 +26,8 @@ public:
     const std::string &getUsername() const;
     TcpNetwork * getTcpNetwork() const;
 
+    void parsePacket(std::string packet);
 private:
-    void parsePacket(std::string &packet);
     std::string getConnectedInterface();
     std::string
     createSipPacket(SipParams &params);

@@ -6,10 +6,14 @@
 #include <iostream>
 #include "Network/SessionManager.hpp"
 
+void manageSipInput(std::string input, SessionManager *session) {
+    session->parsePacket(input);
+}
+
 SessionManager::SessionManager(std::string &host, int port, std::string &username, std::string &localDeviceID,
                                std::string &callID)
         : host(host), port(port), username(username), localDeviceID(localDeviceID), callID(callID) {
-    this->udpNetwork = new TcpNetwork(host, port);
+    this->udpNetwork = new TcpNetwork(host, port, manageSipInput, this);
     this->networkInterface = QNetworkInterface::interfaceFromName(this->getConnectedInterface().c_str());
 }
 
@@ -18,9 +22,9 @@ void SessionManager::Register() {
     requestLine << "REGISTER sip:" << host << " SIP/2.0\r\n";
     auto CSeq = std::stringstream();
     CSeq << "CSeq: 2 REGISTER\r\n";
-    auto recipient = std::stringstream();
-    recipient << getUsername() << "@" << host << ":" << port;
-    SipParams params = {requestLine.str(), CSeq.str(), "", recipient.str()};
+    auto recipientUri = std::stringstream();
+    recipientUri << getUsername() << "@" << host << ":" << port;
+    SipParams params = {requestLine.str(), CSeq.str(), "", getUsername(), recipientUri.str()};
     this->udpNetwork->sendData(this->createSipPacket(params));
 }
 
@@ -62,8 +66,8 @@ std::string SessionManager::createSipPacket(SipParams &params) {
     auto ss = std::stringstream();
     ss << params.requestOrStatusLine;
     ss << "Via: SIP/2.0/TCP " << getTcpNetwork()->getLocalHostWithDomain() << "\r\n";
-    ss << "To: <sip:" << params.recipient << ">\r\n";
-    ss << "From: <sip:" << getUsername() << "@" << getTcpNetwork()->getLocalHostWithDomain() << ">;tag=" << this->localDeviceID << "\r\n";
+    ss << "To: \"" << params.recipient << "\"<sip:" << params.recipientUri << ">\r\n";
+    ss << "From: \"" << getUsername() << "\"<sip:" << getUsername() << "@" << getTcpNetwork()->getLocalHostWithDomain() << ">;tag=" << this->localDeviceID << "\r\n";
     ss << "Call-ID: " << this->callID << "\r\n";
     ss << params.CSeq;
     ss << "Content-Length: " << params.data.length() << "\r\n";
@@ -77,10 +81,11 @@ void SessionManager::sendMessage(const std::string &message, const std::string &
     requestLine << "MESSAGE sip:" << target << "@babel.com SIP/2.0\r\n";
     auto CSeq = std::stringstream();
     CSeq << "CSeq: 1 MESSAGE\r\n";
-    SipParams params = {requestLine.str(), CSeq.str(), message, target};
+    auto targetUri = target;
+    SipParams params = {requestLine.str(), CSeq.str(), message, target, targetUri};
     this->udpNetwork->sendData(this->createSipPacket(params));
 }
 
-void SessionManager::parsePacket(std::string &packet) {
-
+void SessionManager::parsePacket(std::string packet) {
+    std::cout << packet;
 }
