@@ -8,3 +8,14 @@ cmake-build-debug/
 CMakeLists.txt.user
 conanbuildinfo.*
 conan.lock
+*.cmake
+UdpNetwork.hpp
+client/includes/Network/ef
+conan/
+feature_tests.o
+install/
+main.hpp
+mocs_compilation.o
+windows/
+*.o
+doc/
