@@ -4,6 +4,7 @@ SipManager::SipManager(std::string db_path)
 {
     sqlite3_open(db_path.c_str(), &_database);
     tag_server = "tag=823f843c";
+    port_server = "25565";
 }
 
 SipManager::~SipManager()
@@ -218,7 +219,7 @@ std::string SipManager::get_IP_in_request(std::string request)
 
 std::string SipManager::get_username_request(std::string request)
 {
-    request.erase(0, request.find("\"") + 1);
+    request.erase(0, request.find("From: \"") + 7);
     request.erase(request.find("\""), std::string::npos);
     return (request);
 }
@@ -251,14 +252,38 @@ std::string SipManager::get_callID(std::string request)
 
 void SipManager::trying_connection()
 {
-    response_header << "Trying 100\nVia: " << ip << ":" << port;
-    response_header << "\nFrom: \"" << username << "\"<" << hostname << "@" << server_ip << ">;tag=" << tag_cli;
-    response_header << "\nTo: \"" << username << "\"<" << hostname << "@" << server_ip << ">";
-    response_header << "\nCall-ID: " << call_id << "\n" << Cseq << "Allow: INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, SUBSCRIBE, NOTIFY";
-    response_header << "\nContact: <" << hostname << "@" << server_ip << ">";
-    response_header << "\nContent-Lenght: 0\n";
+    auto hdr = std::stringstream();
+    hdr << "100 Trying\nVia: " << ip << ":" << port;
+    hdr << "\r\nFrom: \"" << username << "\"<" << hostname << "@" << server_ip << ">;tag=" << tag_cli;
+    hdr << "\r\nTo: \"" << username << "\"<" << hostname << "@" << server_ip << ">";
+    hdr << "\r\nCall-ID: " << call_id << "\r\n" << Cseq << "Allow: INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, SUBSCRIBE, NOTIFY";
+    hdr << "\r\nContact: <" << hostname << "@" << server_ip << ">";
+    hdr << "\r\nContent-Lenght: 0\r\n";
+    response_header = hdr.str();
 }
 
+void SipManager::OK_header()
+{
+    auto hdr = std::stringstream();
+    hdr << "200 OK\r\nVia: " << ip << ":" << port;
+    hdr << "\r\nFrom: \"" << username << "\"<" << hostname << "@" << server_ip <<">;tag="<< tag_cli;
+    hdr << "\r\nTo: \"" << username << "\"<" << hostname << "@" << server_ip << ";tag=" << tag_server;
+    hdr << "\r\nCall-ID: " << call_id << "\r\n" << "CSeq: " << Cseq << "Contact: <" << hostname << "@" << ip << ":" << port << ">\r\n"; 
+    response_header = hdr.str();
+}
+
+void SipManager::notify_header()
+{
+    auto hdr = std::stringstream();
+    hdr << "NOTIFY " << hostname << "@" << ip << ":" << port;
+    hdr << "\r\nVia: " << server_ip << ":" << port_server;
+    hdr << "\r\nFrom: \"" << username << "\" <sip:" << username << "@" << ip << ";tag=" << tag_cli;
+    hdr <<  "\r\nTo: <sip:sip:" << hostname << "@" << server_ip << ">";
+    hdr << "\r\nContact: <sip:" << username <<"@" << server_ip; ">";
+    hdr << "\r\nCSeq: 102 NOTIFY";
+    hdr << "\r\nMessage_Waiting: Connected\r\n";
+    response_header = hdr.str();
+}
 
 /*std::string get_user_in_request(std::string request, int tag_id)
 {
@@ -295,29 +320,13 @@ std::stringstream SipManager::options_header(char *old_request)
     return ss;
 }
 
-std::stringstream SipManager::OK_header(char *old_request)
-{
-    auto ss = std::stringstream();
-    std::string request = convertToString(old_request);
-    ss << "SIP/2.0 200 OK\nVia: SIP/2.0/UDP " << ip << "\n";
-    ss << "From:" << get_user_in_request(request, 1) << "To:" << get_user_in_request(request, 0) << ";"<< tag_server;
-    ss << "\n"<< get_callID(request) << "CSeq: 2 REGISTER\n" <<"User-Agent:" << username;
-    ss << "\nAllow: INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, SUBSCRIBE, NOTIFY\n";
-    ss << "Supported: replaces\nExpires: 3600\nContact: " << get_user_in_request(request, 0).erase(0, username.size() + 2) << "\nDate: " << make_daytime_string() << "Content-Length: 0";
-    notify_header(old_request);
-    return ss;
-}
+
 
 std::stringstream SipManager::notify_header(char *old_request)
 {
     auto ss = std::stringstream();
     std::string request = convertToString(old_request);
-    ss << "NOTIFY sip:1010@" << ip << "\nVia: SIP/2.0/UDP" << get_IP_from_iface() << ":25565\nFrom: " << get_user_in_request(request, 1);
-    ss << "To: sip:sip:1010@" << get_IP_from_iface() << ":25565>;" << tag_server;
-    ss << "\nContact: " << get_user_in_request(request, 0).erase(0, username.size() + 2);
-    ss << get_callID << "\nCSeq: 102 NOTIFY\nUser-Agent: " << username << "\nMax-Forwards: 70\nEvent: message-summary\n";
-    ss << "Content-Type: application/simple-message-summary" << "Subscription-State: active\nContent-Length: <" << 10;
-    ss << "Messages-Waiting: no\nMessage-Account: sip:" << username << "@" << get_IP_from_iface();
+ 
     std::cout << ss.str() << std::endl;
     return (ss);
 }

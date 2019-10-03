@@ -18,7 +18,7 @@ void connection_handler::read_data()
 
 void connection_handler::write_data()
 {
-    buffer = header_manager.response_header.str();
+    buffer = header_manager.response_header;
     sock.async_write_some(
         boost::asio::buffer(buffer, max_length),
         boost::bind(&connection_handler::handle_write,
@@ -46,10 +46,32 @@ void connection_handler::handle_write(const boost::system::error_code& err, size
     start();
 }
 
+void connection_handler::handle_write_header(const boost::system::error_code& err, size_t bytes_transferred)
+{
+    buffer.clear();
+    header_manager.response_header.clear();
+}
+
+void connection_handler::write_header()
+{
+    buffer = header_manager.response_header;
+    std::cout << buffer << std::endl;
+    sock.async_write_some(
+        boost::asio::buffer(buffer, max_length),
+        boost::bind(&connection_handler::handle_write_header,
+            shared_from_this(),
+            boost::asio::placeholders::error,
+            boost::asio::placeholders::bytes_transferred));
+}
+
 void connection_handler::reply_to_msg()
 {
     if (header_manager.get_request_types() == request_types::REGISTER) {
         header_manager.trying_connection();
-        write_data();
+        write_header();
+        header_manager.OK_header();
+        write_header();
+        header_manager.notify_header();
+        write_header();
     }
 }

@@ -42,10 +42,10 @@ class SipManager {
         std::string get_callID(std::string request);
         std::string get_cseq(std::string request);
         std::stringstream options_header(char *);
-        std::stringstream OK_header(char *old_request);
-        std::stringstream notify_header(char *old_request);
+        void OK_header();
+        void notify_header();
         std::vector<std::string> my_friends;
-        std::stringstream response_header;
+        std::string response_header;
         request_types get_request_types(){return types;}
         std::string get_ip() {return ip;}
         std::string get_username() {return username;}
@@ -61,6 +61,7 @@ class SipManager {
         std::string username;
         std::string hostname;
         std::string port;
+        std::string port_server;
         std::string tag_cli;
         std::string tag_server;
         std::string call_id;
