@@ -20,6 +20,8 @@
 #include "optionWindow.hpp"
 #include "UISettings.hpp"
 #include "contactWindow.hpp"
+#include "Network/SessionManager.hpp"
+
 
 
 class QTextEdit;

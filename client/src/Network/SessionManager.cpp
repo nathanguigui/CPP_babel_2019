@@ -82,9 +82,5 @@ void SessionManager::sendMessage(const std::string &message, const std::string &
 }
 
 void SessionManager::parsePacket(std::string &packet) {
-    std::vector<std::string> lines;
-    boost::split(lines, packet, boost::is_any_of("\r\n"));
 
-    for (int i = 0; i < lines.size(); i ++)
-        boost::split()
 }

@@ -5,7 +5,7 @@
 #ifndef CPP_BABEL_2019_SESSIONMANAGER_HPP
 #define CPP_BABEL_2019_SESSIONMANAGER_HPP
 
-#include "Network/TcpNetwork.hpp"
+#include "TcpNetwork.hpp"
 #include <QtNetwork/QtNetwork>
 #include <boost/algorithm/string.hpp>
 

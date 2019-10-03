@@ -3,10 +3,14 @@
 //
 
 #include "../includes/mainWindow.hpp"
+#include "../includes/Network/SessionManager.hpp"
 
 // Constructor for main widget
 MainWindow::MainWindow(QWidget *parent): QWidget(parent)
 {
+   //SIPManager
+
+
    //Settings
    settings_ = new UISettings();
 
@@ -106,8 +110,14 @@ QString MainWindow::launchlogin()
    log->adjustSize();
    log->setStyleSheet("background-color: rgb(255, 255, 255);");
    log->move(QApplication::desktop()->screen()->rect().center() - log->rect().center());
-   if (log->exec() == QDialog::Accepted)
+   if (log->exec() == QDialog::Accepted) {
       login = log->textValue();
+      std::string str = login.toStdString();
+      std::string host = "127.0.0.1";
+      std::string device = "perceval";
+      std::string callId = "guigui";
+      auto *sessionManager = new SessionManager(host, 25565, str, device, callId);
+   }
    else
       exit(0);
    qDebug() << login;

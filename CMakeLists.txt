@@ -23,18 +23,28 @@ set(CLIENT_SOURCES
     client/src/mainwindow.cpp
     client/src/optionWindow.cpp
     client/src/UISettings.cpp
-    client/src/contactWindow.cpp)
+    client/src/contactWindow.cpp
+    client/src/Network/SessionManager.cpp
+    client/src/Network/TcpNetwork.cpp
+    client/src/Network/UdpNetwork.cpp
+    )
 
 set(CLIENT_HEADERS
     client/includes/mainWindow.hpp
     client/includes/optionWindow.hpp
     client/includes/UISettings.hpp
-    client/includes/contactWindow.hpp)
+    client/includes/contactWindow.hpp
+    client/includes/Network/SessionManager.hpp
+    client/includes/Network/TcpNetwork.hpp
+    client/includes/Network/UdpNetwork.hpp
+    )
 
 set(CLIENT_LIBRARIES
     Qt5::Core
     Qt5::Widgets
     Qt5::Network)
+
+include_directories(babel_client client/includes)
 
 add_executable(babel_client ${CLIENT_SOURCES} ${CLIENT_HEADERS})
 
@@ -45,7 +55,7 @@ target_link_libraries(babel_client Qt5::Core Qt5::Widgets Qt5::Network)
 set(SERVER_SRC
         server/src/main.cpp
         server/src/Server.cpp
-        server/src/SessionManager.cpp
+        server/src/SipManager.cpp
         server/src/tcp_connection.cpp
         server/src/connection_manager.cpp
         )
