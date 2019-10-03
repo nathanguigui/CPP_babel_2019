@@ -50,9 +50,14 @@ set(SERVER_SRC
         server/src/connection_manager.cpp
         )
 
+set(SERVER_HEADERS
+        server/includes/Server.hpp
+        server/includes/SipManager.hpp
+        )
+
 #set(CMAKE_MODULE_PATH ${CONAN_CMAKE_MODULE_PATH} ${CMAKE_MODULE_PATH})
 find_package(SQLite3 REQUIRED)
-add_executable(server ${SERVER_SRC})
+add_executable(server ${SERVER_SRC} ${SERVER_HEADERS})
 target_link_libraries(server sqlite3)
 
 #cmake_minimum_required(VERSION 3.1.0)
