@@ -5,8 +5,8 @@
 #include <QCoreApplication>
 #include <QSettings>
 #include <QApplication>
-#include "../includes/UISettings.hpp"
-#include "../includes/mainWindow.hpp"
+#include "UISettings.hpp"
+#include "mainWindow.hpp"
 #include <QStandardPaths>
 #include <QFile>
 

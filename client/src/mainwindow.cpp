@@ -2,8 +2,8 @@
 // Created by guigui on 9/17/19.
 //
 
-#include "../includes/mainWindow.hpp"
-#include "../includes/Network/SessionManager.hpp"
+#include "mainWindow.hpp"
+#include "Network/SessionManager.hpp"
 
 // Constructor for main widget
 MainWindow::MainWindow(QWidget *parent): QWidget(parent)

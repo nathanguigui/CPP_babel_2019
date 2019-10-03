@@ -2,9 +2,9 @@
 //
 //
 
-#include "../includes/contactWindow.hpp"
-#include "../includes/mainWindow.hpp"
-#include "../includes/optionWindow.hpp"
+#include "contactWindow.hpp"
+#include "mainWindow.hpp"
+#include "optionWindow.hpp"
 
 ContactWindow::ContactWindow(QWidget *parent): QWidget(parent)
 {

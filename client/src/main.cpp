@@ -1,5 +1,5 @@
 
-#include "../includes/mainWindow.hpp"
+#include "mainWindow.hpp"
 
 
 int main(int argc, char *argv[])

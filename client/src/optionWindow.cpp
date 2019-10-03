@@ -2,8 +2,8 @@
 //
 //
 
-#include "../includes/optionWindow.hpp"
-#include "../includes/mainWindow.hpp"
+#include "optionWindow.hpp"
+#include "mainWindow.hpp"
 
 OptionWindow::OptionWindow(QWidget *parent): QWidget(parent)
 {
