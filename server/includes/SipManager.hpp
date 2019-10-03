@@ -8,12 +8,6 @@
 #include <boost/algorithm/string.hpp> 
 
 
-enum states {
-    new_account = 1,
-    existing = 2,
-    connected = 3,
-};
-
 enum request_types {
     INVITE = 1,
     ACK = 2,
@@ -33,7 +27,7 @@ class SipManager {
         SipManager(std::string db_path = "../user.db");
         ~SipManager();
         void parse_header(std::string);
-        void trying_connection(char *request);
+        void trying_connection();
         int check_account_existing();
         int create_account();
         int update_account();
@@ -46,20 +40,30 @@ class SipManager {
         std::string get_port_request(std::string request);
         std::string get_tag_client_request(std::string request);
         std::string get_callID(std::string request);
+        std::string get_cseq(std::string request);
         std::stringstream options_header(char *);
         std::stringstream OK_header(char *old_request);
         std::stringstream notify_header(char *old_request);
         std::vector<std::string> my_friends;
+        std::stringstream response_header;
+        request_types get_request_types(){return types;}
+        std::string get_ip() {return ip;}
+        std::string get_username() {return username;}
+        std::string get_hostname() {return hostname;}
+        std::string get_port() {return port;}
+        std::string get_tag_cli() {return tag_cli;}
+        std::string get_tag_server() {return tag_server;}
+        std::string get_call_id() {return call_id;}
     private:
         request_types types;
         std::string ip;
+        std::string server_ip;
         std::string username;
         std::string hostname;
         std::string port;
         std::string tag_cli;
         std::string tag_server;
         std::string call_id;
-        std::stringstream response_header;
-        states is_connected;
+        std::string Cseq;
         sqlite3 *_database;
 };

@@ -24,8 +24,11 @@ class connection_handler : public boost::enable_shared_from_this<connection_hand
         static pointer create(boost::asio::io_service& io_service){return pointer(new connection_handler(io_service));}
         tcp::socket& socket(){return sock;}
         void start();
+        void write_data();
+        void read_data();
         void handle_read(const boost::system::error_code& err, size_t bytes_transferred);
         void handle_write(const boost::system::error_code& err, size_t bytes_transferred);
+        void reply_to_msg();
     private:
         SipManager header_manager;
         tcp::socket sock;

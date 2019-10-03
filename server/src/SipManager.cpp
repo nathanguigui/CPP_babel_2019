@@ -138,6 +138,25 @@ int SipManager::add_friends(std::string friend_username)
     get_friends(friend_username);
 }
 
+std::string get_IP_from_iface()
+{
+char hostbuffer[256]; 
+    char *IPbuffer; 
+    struct hostent *host_entry; 
+    int hostname; 
+  
+    // To retrieve hostname
+    hostname = gethostname(hostbuffer, sizeof(hostbuffer)); 
+  
+    // To retrieve host information 
+    host_entry = gethostbyname(hostbuffer); 
+  
+    // To convert an Internet network 
+    // address into ASCII string 
+    IPbuffer = inet_ntoa(*((struct in_addr*) 
+                           host_entry->h_addr_list[0])); 
+    return convertToString(IPbuffer); 
+}
 
 void SipManager::parse_header(std::string request)
 {
@@ -148,12 +167,18 @@ void SipManager::parse_header(std::string request)
     port = get_port_request(request);
     tag_cli = get_tag_client_request(request);
     call_id = get_callID(request);
-    add_friends("ref");
+    Cseq = get_cseq(request);
+    server_ip = get_IP_from_iface();
 }
 
 constexpr unsigned int str2int(const char* str, int h = 0)
 {
     return !str[h] ? 5381 : (str2int(str, h+1) * 33) ^ str[h];
+}
+std::string SipManager::get_cseq(std::string request)
+{
+    request.erase(0, request.find("CSeq:") + 6);
+    return (request.substr(0, request.find("\n")));
 }
 
 request_types SipManager::get_request_types_request(std::string request)
@@ -221,6 +246,20 @@ std::string SipManager::get_callID(std::string request)
     request.erase(0, request.find("Call-ID") + 9);
     return(request.erase(request.find("CSeq") - 3, std::string::npos));
 }
+
+
+
+void SipManager::trying_connection()
+{
+    response_header << "Trying 100\nVia: " << ip << ":" << port;
+    response_header << "\nFrom: \"" << username << "\"<" << hostname << "@" << server_ip << ">;tag=" << tag_cli;
+    response_header << "\nTo: \"" << username << "\"<" << hostname << "@" << server_ip << ">";
+    response_header << "\nCall-ID: " << call_id << "\n" << Cseq << "Allow: INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, SUBSCRIBE, NOTIFY";
+    response_header << "\nContact: <" << hostname << "@" << server_ip << ">";
+    response_header << "\nContent-Lenght: 0\n";
+}
+
+
 /*std::string get_user_in_request(std::string request, int tag_id)
 {
     request.erase(0, request.find("From:") + 6);
@@ -239,45 +278,8 @@ std::string get_callID(std::string request)
 
 
 
-std::string get_IP_from_iface()
-{
-char hostbuffer[256]; 
-    char *IPbuffer; 
-    struct hostent *host_entry; 
-    int hostname; 
-  
-    // To retrieve hostname
-    hostname = gethostname(hostbuffer, sizeof(hostbuffer)); 
-  
-    // To retrieve host information 
-    host_entry = gethostbyname(hostbuffer); 
-  
-    // To convert an Internet network 
-    // address into ASCII string 
-    IPbuffer = inet_ntoa(*((struct in_addr*) 
-                           host_entry->h_addr_list[0])); 
-    return convertToString(IPbuffer); 
-}
 
-std::string make_daytime_string()
-{
-  using namespace std; // For time_t, time and ctime;
-  time_t now = time(0);
-  return ctime(&now);
-}
 
-void SipManager::trying_connection(char *request)
-{
-    std::string test = convertToString(request);
-    auto ss = std::stringstream();
-    ss << "SIP/2.0 100 Trying\nVia: SIP/2.0/UDP ";
-    ip = get_IP_in_request(request);
-    username = get_username(test);
-    ss << ip << "\nFrom: " << get_user_in_request(test, 1) << "To: " << get_user_in_request(test, 0);
-    ss << "\n" << get_callID(test) << "CSeq: 2 REGISTER\n"<<"User-Agent: Asterisk PBX\n" << "Allow: INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, SUBSCRIBE, NOTIFY\nSupported: replaces\nContact: " << get_user_in_request(test, 0).erase(0, username.size() + 2) << "\nContent-Length: 0";
-    check_account_existing();
-    options_header(request);
-}
 
 std::stringstream SipManager::options_header(char *old_request)
 {
