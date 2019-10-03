@@ -59,7 +59,6 @@ class OptionWindow: public QWidget
     private:
         MainWindow *mainwindow;
         QPushButton *button_save;
-        QPushButton *button_cancel;
 
         QPushButton *backgroundButton;
         
@@ -74,10 +73,6 @@ class OptionWindow: public QWidget
         QGroupBox *windowSizeGroupBox();
 
         QGroupBox *WidgetGroup;
-
-        QStringList fileMessages;
-        QStringList fileContact;
-        QStringList fileText;
 
         QSlider *slider;
         QSlider *slidervert;

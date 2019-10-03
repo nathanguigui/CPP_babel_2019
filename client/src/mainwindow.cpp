@@ -44,7 +44,9 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
    QBoxLayout *toolLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
    toolLayout->setContentsMargins(0, 0, 0, 0);
    toolLayout->addWidget(toolbar_);
-   
+
+   setAllContact();
+
    connect(quitter, &QAction::triggered, this, &QApplication::quit);
    connect(deconnexion, &QAction::triggered, this, &MainWindow::launchlogin);
    connect(options, &QAction::triggered, this, &MainWindow::showOptions);
@@ -95,11 +97,22 @@ void MainWindow::setName(QListWidgetItem *item)
 {
    qDebug() << "Login = " << item->text();
    contact_name_->setText(item->text());
+   printAllMessages();
 }
 
-void MainWindow::setContact(QString name)
+void MainWindow::setAllContact()
 {
-   list_->addItem(name);
+    list_->clear();
+    std::map<QString, contact *>::iterator itr;
+    for (itr = contact_list.begin(); itr != contact_list.end(); itr++) {
+      list_->addItem(QString(itr->first));
+   }
+}
+
+void MainWindow::addNewContact(std::string login, std::string ip, bool state) {
+    contact *newContact = new contact(QString::fromStdString(login), QString::fromStdString(ip), state);
+    contact_list.insert( {QString::fromStdString(login), new contact(QString::fromStdString(login), QString::fromStdString(ip), state) });
+    setAllContact();
 }
 
 QString MainWindow::launchlogin()
@@ -144,12 +157,36 @@ void MainWindow::sendMessage()
 {
     QString message;
     message = this->textBox_->toPlainText();
+    if (message == "")
+        return;
+    if (contact_name_) {
+        contact_list.find(contact_name_->text())->second->addMessage(message.toStdString(), 0);
+        updateMessage();
+    }
     qDebug() << message;
     this->textBox_->clear();
 }
 
+void MainWindow::printAllMessages()
+{
+    list_messages_->clear();
+    std::vector<QString> messages = contact_list.find(contact_name_->text())->second->getMessages();
+    for (auto i = messages.begin(); i != messages.end(); i++)
+       list_messages_->addItem(*i);
+
+}
+
+void MainWindow::updateMessage()
+{
+   std::vector<QString> messages = contact_list.find(contact_name_->text())->second->getMessages();
+   auto i = messages.rbegin();
+   list_messages_->addItem(*i);
+}
+
 void MainWindow::call()
 {
+    contact_list.find(contact_name_->text())->second->addMessage("Ceci est un message test envoyé",1);
+    updateMessage();
     qDebug() << "make a call";
 }
 
@@ -158,13 +195,10 @@ void MainWindow::launchSplashScreen()
    QSize availableSize = qApp->desktop()->availableGeometry().size();
    int width = availableSize.width();
    int height = availableSize.height();
-   QMovie *splash = new QMovie("../templates/other.gif");
+   QMovie *splash = new QMovie("../templates/cube.gif");
    QLabel *processLabel = new QLabel(this);
    if (!splash->isValid())
       std::cout << "file error" << std::endl;
-   //QMediaPlayer *sound = new QMediaPlayer;
-   //sound->setMedia(QUrl::fromLocalFile("../client/templates/launch.mp3");
-   //sound->setVolume(50);
    processLabel->resize(width * float(settings_->getWidth() * 10.0), height * float(settings_->getHeight()) * 10.0);
    processLabel->setStyleSheet("background-color: rgb(38,38,38);");
    processLabel->setWindowFlags(Qt::FramelessWindowHint);

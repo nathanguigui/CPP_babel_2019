@@ -39,6 +39,7 @@ class UISettings :public QMainWindow {
         // GETTER
         ///Getter of settings about main window
         QString getMainWindow() const;
+        QString getBackgroundColor() const;
         int getFontSize() const;
         int getWidth() const;
         int getHeight() const;

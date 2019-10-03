@@ -6,6 +6,7 @@
 #include <QSettings>
 #include <QApplication>
 #include "../includes/UISettings.hpp"
+#include "../includes/mainWindow.hpp"
 #include <QStandardPaths>
 #include <QFile>
 
@@ -59,6 +60,12 @@ QString UISettings::getMainWindow() const {
     QString font = settings_.value("MainWindow/font").toString();
     int fontsize = settings_.value("MainWindow/fontSize").toInt();
     return QString("background-color: %1; font-size: %2px;").arg(color).arg(fontsize);
+}
+
+QString UISettings::getBackgroundColor() const {
+    QSettings settings_(path[0], QSettings::NativeFormat);
+    QString color = settings_.value("MainWindow/color").toString();
+    return color;
 }
 
 int UISettings::getFontSize() const {
@@ -204,5 +211,4 @@ void UISettings::setText(QString url) {
 
 UISettings::~UISettings()
 {
-
 }

@@ -216,10 +216,6 @@ void OptionWindow::imageMessages()
 void OptionWindow::imageContact()
 {
     QString file = QFileDialog::getOpenFileName(this, "Open an Image", QString(), "Images (*.png *.jpg *.jpeg)");
-/*   QFileDialog dialog(this);
-   dialog.setFileMode(QFileDialog::AnyFile);
-   dialog.setNameFilter(tr("Images (*.png *.jpg)"));
-   dialog.setViewMode(QFileDialog::Detail);*/
     if (QFile(file).exists())
       mainwindow->updateContactBox(file);
 }
