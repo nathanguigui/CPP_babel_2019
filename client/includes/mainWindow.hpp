@@ -45,6 +45,12 @@ class MainWindow : public QWidget
         QString launchlogin();
         void launchSplashScreen();
 
+        void setAllContact();
+        void addNewContact(std::string login, std::string ip, bool state);
+
+        void printAllMessages();
+        void updateMessage();
+
         //UPDATE
         void updateMainColor(QString color) { settings_->setMainColor(color); contact_name_->setStyleSheet(settings_->getLabel()); this->setStyleSheet(settings_->getMainWindow()); };
         void updateFont(QString font) { /* NEX UPDATE  */ };
@@ -59,8 +65,6 @@ class MainWindow : public QWidget
         void updateMessageBox(QString url) { settings_->setMessage(url); list_messages_->setStyleSheet(settings_->getMessage()); };
         void updateContactBox(QString url) { settings_->setContact(url); list_->setStyleSheet(settings_->getContact()); };
         void updateTextBox(QString url) { settings_->setText(url); textBox_->setStyleSheet(settings_->getText()); };
-
-        void setContact(QString name);
 
     public slots:
         void addContact();
@@ -81,6 +85,6 @@ class MainWindow : public QWidget
         QPushButton* button_send_;
         QLabel *contact_name_;
         QToolBar *toolbar_;
-        std::map<std::string, contact *> contact_list;
+        std::map<QString, contact *> contact_list;
 };
 #endif // MAINWINDOW_H

@@ -49,7 +49,7 @@ void ContactWindow::addContact()
 {
     if (contactChosen != NULL) {
         QListWidgetItem *it = contactList->takeItem(contactList->currentRow());
-        mainwindow->setContact(contactChosen);
+        mainwindow->addNewContact(contactChosen.toStdString(), "1.1.1.1", true);
         delete it;
     }
 }
