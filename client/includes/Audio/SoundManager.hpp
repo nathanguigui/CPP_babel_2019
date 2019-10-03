@@ -1,0 +1,8 @@
+//
+// Created by guigui on 9/25/19.
+//
+
+#ifndef CPP_BABEL_2019_SOUNDMANAGER_HPP
+#define CPP_BABEL_2019_SOUNDMANAGER_HPP
+
+#endif //CPP_BABEL_2019_SOUNDMANAGER_HPP

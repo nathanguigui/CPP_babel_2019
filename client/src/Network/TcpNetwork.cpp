@@ -5,11 +5,16 @@
 #include <iostream>
 #include <sstream>
 #include "Network/TcpNetwork.hpp"
-#include <qabstractsocket.h>
+#include <QAbstractSocket>
+#include <QtNetwork/QHostAddress>
 
 TcpNetwork::TcpNetwork(std::string &host, int port) {
     this->socket = new QTcpSocket();
+    connect(this->socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
+    connect(this->socket, SIGNAL(connected()), this, SLOT(connected()));
     socket->connectToHost(host.c_str(), port);
+    if (!socket->waitForConnected(3000))
+        qDebug() << "connection timeout\n";
 }
 
 TcpNetwork::~TcpNetwork() {
@@ -47,7 +52,12 @@ std::string TcpNetwork::getConnectedHostWithDomain() const {
 }
 
 std::string TcpNetwork::getLocalHostWithDomain() const {
-    return std::string();
+    const QHostAddress &localhost = QHostAddress(QHostAddress::LocalHost);
+    for (const QHostAddress &address: QNetworkInterface::allAddresses()) {
+    if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost)
+        return (address.toString().toStdString() + ":" + std::to_string(this->socket->localPort()));
+    }
+    return ("127.0.0.1:" + std::to_string(this->socket->localPort()));
 }
 
 quint16 TcpNetwork::getLocalPort() const {
@@ -56,4 +66,12 @@ quint16 TcpNetwork::getLocalPort() const {
 
 void TcpNetwork::handleError(int err) {
     std::cerr << "Error nb" << err << std::endl;
+}
+
+void TcpNetwork::readyRead() {
+    qDebug() << this->socket->readAll();
+}
+
+void TcpNetwork::connected() {
+    qDebug() << "Network connected\n";
 }
