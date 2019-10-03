@@ -105,7 +105,20 @@ void MainWindow::setAllContact()
     list_->clear();
     std::map<QString, contact *>::iterator itr;
     for (itr = contact_list.begin(); itr != contact_list.end(); itr++) {
-      list_->addItem(QString(itr->first));
+      
+      QListWidgetItem *item = new QListWidgetItem(list_);
+
+      item->setText(QString(itr->first));
+
+      // set green color if contact is connected
+      item->setBackground(Qt::green);
+      
+      // set red color if contact is disconnected
+      //item->setBackground(Qt::red);      
+
+      list_->addItem(item);
+
+      item->setSizeHint(QSize(item->sizeHint().width(), 30));
    }
 }
 

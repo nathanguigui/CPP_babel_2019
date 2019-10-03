@@ -136,7 +136,7 @@ QString UISettings::getContact() const {
     if (path == "" || getActiveImage() == 0)
         return "background-color: rgb(255, 255, 255); border: 1px solid black; border-radius: 7px";
     else
-        return QString("border-image: url(%1) 0 0 0 0 stretch stretch; position: auto; border: 1px solid black; border-radius: 7px; font-size: 20px").arg(path);
+        return QString("border-image: url(%1) 0 0 0 0 stretch stretch; position: auto; border: 1px solid black; border-radius: 7px; font-size: 20px;").arg(path);
 }
 
 //Img back of text box

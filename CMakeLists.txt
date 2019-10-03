@@ -36,7 +36,7 @@ set(CLIENT_HEADERS
     client/includes/contactWindow.hpp
     client/includes/Network/SessionManager.hpp
     client/includes/Network/TcpNetwork.hpp
-    client/includes/Network/UdpNetwork.hpp
+    client/includes/Network/UdpNetwork.hpp 
     client/includes/contact.hpp)
 
 set(CLIENT_LIBRARIES
