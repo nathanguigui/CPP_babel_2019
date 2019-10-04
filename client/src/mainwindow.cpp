@@ -158,6 +158,7 @@ void MainWindow::callPopup(QString login)
    QString message = QString("in call with %1").arg(login);
    call->setText(message);
    call->setStandardButtons(QMessageBox::Close);
+   call->setStyleSheet("border-image: url(../templates/micro.png) 0 0 0 0 stretch stretch");
    int ret = call->exec();
 
    if (ret == QMessageBox::Close)
