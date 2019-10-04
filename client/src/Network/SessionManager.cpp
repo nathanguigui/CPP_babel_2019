@@ -8,8 +8,9 @@
 
 SessionManager::SessionManager(std::string &host, int port, std::string &username, std::string &localDeviceID,
                                std::string &callID)
-        : host(host), port(port), username(username), localDeviceID(localDeviceID), callID(callID) {
-    this->udpNetwork = new TcpNetwork(host, port);
+        : host(host), port(port), username(username), localDeviceID(localDeviceID), callID(callID), registerOk(false),
+        pendingRequest(NONE), pendingResponse(NONE) {
+    this->udpNetwork = new TcpNetwork(host, port, SessionManager::manageSipParsing, this);
     this->networkInterface = QNetworkInterface::interfaceFromName(this->getConnectedInterface().c_str());
 }
 
@@ -18,9 +19,10 @@ void SessionManager::Register() {
     requestLine << "REGISTER sip:" << host << " SIP/2.0\r\n";
     auto CSeq = std::stringstream();
     CSeq << "CSeq: 2 REGISTER\r\n";
-    auto recipient = std::stringstream();
-    recipient << getUsername() << "@" << host << ":" << port;
-    SipParams params = {requestLine.str(), CSeq.str(), "", recipient.str()};
+    auto recipientUri = std::stringstream();
+    recipientUri << getUsername() << "@" << host << ":" << port;
+    SipParams params = {requestLine.str(), CSeq.str(), "", getUsername(), recipientUri.str()};
+    this->pendingRequest = REGISTER;
     this->udpNetwork->sendData(this->createSipPacket(params));
 }
 
@@ -62,8 +64,8 @@ std::string SessionManager::createSipPacket(SipParams &params) {
     auto ss = std::stringstream();
     ss << params.requestOrStatusLine;
     ss << "Via: SIP/2.0/TCP " << getTcpNetwork()->getLocalHostWithDomain() << "\r\n";
-    ss << "To: <sip:" << params.recipient << ">\r\n";
-    ss << "From: <sip:" << getUsername() << "@" << getTcpNetwork()->getLocalHostWithDomain() << ">;tag=" << this->localDeviceID << "\r\n";
+    ss << "To: \"" << params.recipient << "\"<sip:" << params.recipientUri << ">\r\n";
+    ss << "From: \"" << getUsername() << "\"<sip:" << getUsername() << "@" << getTcpNetwork()->getLocalHostWithDomain() << ">;tag=" << this->localDeviceID << "\r\n";
     ss << "Call-ID: " << this->callID << "\r\n";
     ss << params.CSeq;
     ss << "Content-Length: " << params.data.length() << "\r\n";
@@ -77,10 +79,55 @@ void SessionManager::sendMessage(const std::string &message, const std::string &
     requestLine << "MESSAGE sip:" << target << "@babel.com SIP/2.0\r\n";
     auto CSeq = std::stringstream();
     CSeq << "CSeq: 1 MESSAGE\r\n";
-    SipParams params = {requestLine.str(), CSeq.str(), message, target};
+    auto targetUri = target;
+    SipParams params = {requestLine.str(), CSeq.str(), message, target, targetUri};
     this->udpNetwork->sendData(this->createSipPacket(params));
 }
 
-void SessionManager::parsePacket(std::string &packet) {
+void SessionManager::parsePacket(const std::string& packet) {
+    std::vector<std::string> lines;
+    std::vector<std::string> tmp;
+    SipParsedMessage receivedMessage = {UNKNOWN, "", packet, -1};
+    boost::split(lines, packet, boost::is_any_of("\r\n"));
+    for (int i = 0; lines.size() > i; i++) {
+        if (i == 0) {   //start-line
+            boost::split(tmp, lines[i], boost::is_any_of(" "));
+            try {
+                receivedMessage.status = std::stoi(tmp[0]);
+                receivedMessage.type = RESPONSE;
+            } catch (std::invalid_argument) {
+                receivedMessage.request = tmp[0];
+                receivedMessage.type = REQUEST;
+            }
+        }
+    }
+    this->analyzeParsedMessage(receivedMessage);
+    std::cout << packet;
+}
 
+void SessionManager::manageSipParsing(std::string input, SessionManager *session) {
+    session->parsePacket(input);
+}
+
+void SessionManager::analyzeParsedMessage(SipParsedMessage &parsedMessage) {
+    if (!this->registerOk)
+        return this->handleRegister(parsedMessage);
+    if (parsedMessage.type == RESPONSE) {
+        if (parsedMessage.status == 100)
+            return;
+    }
+}
+
+void SessionManager::handleRegister(SipParsedMessage &parsedMessage) {
+    if (parsedMessage.status == 100) {
+        this->pendingRequest = NONE;
+        return;
+    }
+    if (parsedMessage.status == 200) {
+        this->registerOk = true;
+    }
+}
+
+bool SessionManager::isRegisterOk() const {
+    return registerOk;
 }

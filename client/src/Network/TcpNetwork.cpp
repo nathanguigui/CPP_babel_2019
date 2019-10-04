@@ -8,7 +8,8 @@
 #include <QAbstractSocket>
 #include <QtNetwork/QHostAddress>
 
-TcpNetwork::TcpNetwork(std::string &host, int port) {
+TcpNetwork::TcpNetwork(std::string &host, int port, void (*readCallback)(std::string, SessionManager *),
+                       SessionManager *manager) : readCallback(readCallback), sessionManager(manager) {
     this->socket = new QTcpSocket();
     connect(this->socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
     connect(this->socket, SIGNAL(connected()), this, SLOT(connected()));
@@ -69,7 +70,7 @@ void TcpNetwork::handleError(int err) {
 }
 
 void TcpNetwork::readyRead() {
-    qDebug() << this->socket->readAll();
+    this->readCallback(this->socket->readAll().toStdString(), this->sessionManager);
 }
 
 void TcpNetwork::connected() {
