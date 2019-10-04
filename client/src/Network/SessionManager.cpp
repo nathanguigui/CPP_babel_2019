@@ -84,7 +84,7 @@ void SessionManager::sendMessage(const std::string &message, const std::string &
     this->udpNetwork->sendData(this->createSipPacket(params));
 }
 
-void SessionManager::parsePacket(const std::string& packet) {
+void SessionManager::parsePacket(const std::string packet) {
     std::vector<std::string> lines;
     std::vector<std::string> tmp;
     SipParsedMessage receivedMessage = {UNKNOWN, "", packet, -1};
@@ -102,11 +102,11 @@ void SessionManager::parsePacket(const std::string& packet) {
         }
     }
     this->analyzeParsedMessage(receivedMessage);
-    std::cout << packet;
+    std::cout << "begin of the packet:\r\n" << packet << "\r\n\r\n";
 }
 
 void SessionManager::manageSipParsing(std::string input, SessionManager *session) {
-    session->parsePacket(input);
+    session->parseMultiplePacket(input);
 }
 
 void SessionManager::analyzeParsedMessage(SipParsedMessage &parsedMessage) {
@@ -130,4 +130,14 @@ void SessionManager::handleRegister(SipParsedMessage &parsedMessage) {
 
 bool SessionManager::isRegisterOk() const {
     return registerOk;
+}
+
+void SessionManager::parseMultiplePacket(const std::string multiplePacket) {
+    std::vector<std::string> lines;
+    std::vector<std::string> tmp;
+    SipParsedMessage receivedMessage = {UNKNOWN, "", multiplePacket, -1};
+    boost::split(lines, multiplePacket, boost::is_any_of("\t"));
+    std::cout << lines.size();
+    for (const auto& elem : lines)
+        this->parsePacket(elem);
 }

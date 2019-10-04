@@ -56,9 +56,10 @@ public:
     static void manageSipParsing(std::string input, SessionManager *session);
     bool isRegisterOk() const;
 private:
-    void parsePacket(const std::string& packet);
+    void parsePacket(const std::string packet);
     void analyzeParsedMessage(SipParsedMessage &parsedMessage);
     void handleRegister(SipParsedMessage &parsedMessage);
+    void parseMultiplePacket(const std::string multiplePacket);
     std::string getConnectedInterface();
     std::string
     createSipPacket(SipParams &params);
