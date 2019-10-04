@@ -17,6 +17,34 @@ struct SipParams {
     const std::string &recipientUri;
 };
 
+enum MessageType {
+    UNKNOWN,
+    REQUEST,
+    RESPONSE
+};
+
+enum RequestType {
+    NONE,
+    REGISTER,
+    INVITE,
+    ACK,
+    CANCEL,
+    BYE,
+    SUBSCRIBE,
+    NOTIFY,
+    MESSAGE,
+    INFO,
+    UPDATE,
+    OPTIONS,
+};
+
+struct SipParsedMessage {
+    MessageType type;
+    std::string request;
+    std::string packet;
+    int status;
+};
+
 class SessionManager {
 public:
     SessionManager(std::string &host, int port, std::string &username, std::string &localDeviceID, std::string &callID);
@@ -25,9 +53,12 @@ public:
     void sendMessage(const std::string &message, const std::string &target);
     const std::string &getUsername() const;
     TcpNetwork * getTcpNetwork() const;
-
-    void parsePacket(std::string packet);
+    static void manageSipParsing(std::string input, SessionManager *session);
+    bool isRegisterOk() const;
 private:
+    void parsePacket(const std::string& packet);
+    void analyzeParsedMessage(SipParsedMessage &parsedMessage);
+    void handleRegister(SipParsedMessage &parsedMessage);
     std::string getConnectedInterface();
     std::string
     createSipPacket(SipParams &params);
@@ -38,6 +69,10 @@ private:
     std::string callID;
     int port;
     QNetworkInterface networkInterface;
+
+    bool registerOk;
+    RequestType pendingRequest;
+    RequestType pendingResponse;
 };
 
 #endif //CPP_BABEL_2019_SESSIONMANAGER_HPP

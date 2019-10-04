@@ -2,6 +2,7 @@
 // Created by guigui on 9/17/19.
 //
 
+#include <client/includes/Network/SERVER_IP.hpp>
 #include "mainWindow.hpp"
 #include "Network/SessionManager.hpp"
 
@@ -141,10 +142,11 @@ QString MainWindow::launchlogin()
    if (log->exec() == QDialog::Accepted) {
       login = log->textValue();
       std::string str = login.toStdString();
-      std::string host = "127.0.0.1";
+      auto host = std::string(SERVER_IP);
       std::string device = "perceval";
       std::string callId = "guigui";
       auto *sessionManager = new SessionManager(host, 25565, str, device, callId);
+      sessionManager->Register();
    }
    else
       exit(0);

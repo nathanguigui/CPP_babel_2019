@@ -6,14 +6,11 @@
 #include <iostream>
 #include "Network/SessionManager.hpp"
 
-void manageSipInput(std::string input, SessionManager *session) {
-    session->parsePacket(input);
-}
-
 SessionManager::SessionManager(std::string &host, int port, std::string &username, std::string &localDeviceID,
                                std::string &callID)
-        : host(host), port(port), username(username), localDeviceID(localDeviceID), callID(callID) {
-    this->udpNetwork = new TcpNetwork(host, port, manageSipInput, this);
+        : host(host), port(port), username(username), localDeviceID(localDeviceID), callID(callID), registerOk(false),
+        pendingRequest(NONE), pendingResponse(NONE) {
+    this->udpNetwork = new TcpNetwork(host, port, SessionManager::manageSipParsing, this);
     this->networkInterface = QNetworkInterface::interfaceFromName(this->getConnectedInterface().c_str());
 }
 
@@ -25,6 +22,7 @@ void SessionManager::Register() {
     auto recipientUri = std::stringstream();
     recipientUri << getUsername() << "@" << host << ":" << port;
     SipParams params = {requestLine.str(), CSeq.str(), "", getUsername(), recipientUri.str()};
+    this->pendingRequest = REGISTER;
     this->udpNetwork->sendData(this->createSipPacket(params));
 }
 
@@ -86,6 +84,50 @@ void SessionManager::sendMessage(const std::string &message, const std::string &
     this->udpNetwork->sendData(this->createSipPacket(params));
 }
 
-void SessionManager::parsePacket(std::string packet) {
+void SessionManager::parsePacket(const std::string& packet) {
+    std::vector<std::string> lines;
+    std::vector<std::string> tmp;
+    SipParsedMessage receivedMessage = {UNKNOWN, "", packet, -1};
+    boost::split(lines, packet, boost::is_any_of("\r\n"));
+    for (int i = 0; lines.size() > i; i++) {
+        if (i == 0) {   //start-line
+            boost::split(tmp, lines[i], boost::is_any_of(" "));
+            try {
+                receivedMessage.status = std::stoi(tmp[0]);
+                receivedMessage.type = RESPONSE;
+            } catch (std::invalid_argument) {
+                receivedMessage.request = tmp[0];
+                receivedMessage.type = REQUEST;
+            }
+        }
+    }
+    this->analyzeParsedMessage(receivedMessage);
     std::cout << packet;
+}
+
+void SessionManager::manageSipParsing(std::string input, SessionManager *session) {
+    session->parsePacket(input);
+}
+
+void SessionManager::analyzeParsedMessage(SipParsedMessage &parsedMessage) {
+    if (!this->registerOk)
+        return this->handleRegister(parsedMessage);
+    if (parsedMessage.type == RESPONSE) {
+        if (parsedMessage.status == 100)
+            return;
+    }
+}
+
+void SessionManager::handleRegister(SipParsedMessage &parsedMessage) {
+    if (parsedMessage.status == 100) {
+        this->pendingRequest = NONE;
+        return;
+    }
+    if (parsedMessage.status == 200) {
+        this->registerOk = true;
+    }
+}
+
+bool SessionManager::isRegisterOk() const {
+    return registerOk;
 }

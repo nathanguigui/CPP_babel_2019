@@ -37,7 +37,7 @@ set(CLIENT_HEADERS
     client/includes/Network/SessionManager.hpp
     client/includes/Network/TcpNetwork.hpp
     client/includes/Network/UdpNetwork.hpp 
-    client/includes/contact.hpp)
+    client/includes/contact.hpp client/includes/Network/SERVER_IP.hpp)
 
 set(CLIENT_LIBRARIES
     Qt5::Core
