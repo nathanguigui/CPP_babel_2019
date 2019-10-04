@@ -43,7 +43,7 @@ class SipManager {
         std::string get_cseq(std::string request);
         std::stringstream options_header(char *);
         void OK_header();
-        void notify_header();
+        void notify_header(std::string message);
         std::vector<std::string> my_friends;
         std::string response_header;
         request_types get_request_types(){return types;}

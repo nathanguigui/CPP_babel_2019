@@ -184,7 +184,13 @@ std::string SipManager::get_cseq(std::string request)
 
 request_types SipManager::get_request_types_request(std::string request)
 {
-    std::string rtypes = request.substr(0, request.find(" "));
+    std::string rtypes;
+    try{
+        std::stoi(request.substr(0, request.find(" ")));
+        rtypes = request.substr(request.find(" "), request.find("\r\n"));
+    } catch (std::invalid_argument) {  
+        rtypes = request.substr(0, request.find(" "));
+    }
     switch (str2int(rtypes.c_str())) {
         case str2int("INVITE"):
             return request_types::INVITE;
@@ -245,7 +251,7 @@ std::string SipManager::get_tag_client_request(std::string request)
 std::string SipManager::get_callID(std::string request)
 {
     request.erase(0, request.find("Call-ID") + 9);
-    return(request.erase(request.find("CSeq") - 3, std::string::npos));
+    return(request.erase(request.find("CSeq") - 2, std::string::npos));
 }
 
 
@@ -258,7 +264,7 @@ void SipManager::trying_connection()
     hdr << "\r\nTo: \"" << username << "\"<" << hostname << "@" << server_ip << ">";
     hdr << "\r\nCall-ID: " << call_id << "\r\n" << Cseq << "Allow: INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, SUBSCRIBE, NOTIFY";
     hdr << "\r\nContact: <" << hostname << "@" << server_ip << ">";
-    hdr << "\r\nContent-Lenght: 0\r\n";
+    hdr << "\r\nContent-Length: 0\r\n\r\n\t";
     response_header = hdr.str();
 }
 
@@ -267,21 +273,21 @@ void SipManager::OK_header()
     auto hdr = std::stringstream();
     hdr << "200 OK\r\nVia: " << ip << ":" << port;
     hdr << "\r\nFrom: \"" << username << "\"<" << hostname << "@" << server_ip <<">;tag="<< tag_cli;
-    hdr << "\r\nTo: \"" << username << "\"<" << hostname << "@" << server_ip << ";tag=" << tag_server;
-    hdr << "\r\nCall-ID: " << call_id << "\r\n" << "CSeq: " << Cseq << "Contact: <" << hostname << "@" << ip << ":" << port << ">\r\n"; 
+    hdr << "\r\nTo: \"" << username << "\"<" << hostname << "@" << server_ip << ">;tag=" << tag_server;
+    hdr << "\r\nCall-ID: " << call_id << "\r\n" << "CSeq: " << Cseq << "Contact: <" << hostname << "@" << ip << ":" << port << ">\r\n" <<"Content-Length: 0\r\n\r\n\t"; 
     response_header = hdr.str();
 }
 
-void SipManager::notify_header()
+void SipManager::notify_header(std::string message)
 {
     auto hdr = std::stringstream();
     hdr << "NOTIFY " << hostname << "@" << ip << ":" << port;
     hdr << "\r\nVia: " << server_ip << ":" << port_server;
-    hdr << "\r\nFrom: \"" << username << "\" <sip:" << username << "@" << ip << ";tag=" << tag_cli;
-    hdr <<  "\r\nTo: <sip:sip:" << hostname << "@" << server_ip << ">";
+    hdr << "\r\nFrom: \"" << username << "\" <sip:" << username << "@" << ip << ">;tag=" << tag_cli;
+    hdr <<  "\r\nTo: <" << hostname << "@" << server_ip << ">";
     hdr << "\r\nContact: <sip:" << username <<"@" << server_ip; ">";
     hdr << "\r\nCSeq: 102 NOTIFY";
-    hdr << "\r\nMessage_Waiting: Connected\r\n";
+    hdr << "\r\nMessage_Waiting: " << message << "\r\n\r\n\t";
     response_header = hdr.str();
 }
 

@@ -56,22 +56,41 @@ void connection_handler::write_header()
 {
     buffer = header_manager.response_header;
     std::cout << buffer << std::endl;
-    sock.async_write_some(
-        boost::asio::buffer(buffer, max_length),
+    boost::asio::async_write(sock,
+        boost::asio::buffer(buffer, buffer.size()),
         boost::bind(&connection_handler::handle_write_header,
             shared_from_this(),
             boost::asio::placeholders::error,
             boost::asio::placeholders::bytes_transferred));
 }
 
+void wait_handler(const boost::system::error_code& error)
+{
+  if (!error)
+  {
+    // Wait succeeded.
+  }
+}
+
+void connection_handler::wait_for_write()
+{
+    sock.async_wait(boost::asio::ip::tcp::socket::wait_write, wait_handler);
+}
+
+void connection_handler::send_it()
+{
+    write_header();
+}
+
 void connection_handler::reply_to_msg()
 {
     if (header_manager.get_request_types() == request_types::REGISTER) {
         header_manager.trying_connection();
-        write_header();
+        send_it();
         header_manager.OK_header();
-        write_header();
-        header_manager.notify_header();
-        write_header();
+        send_it();
+        header_manager.notify_header("Connected");
+        send_it();
+        header_manager.check_account_existing();
     }
 }
