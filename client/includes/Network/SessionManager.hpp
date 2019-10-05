@@ -58,15 +58,28 @@ public:
     SessionManager(std::string &host, int port, std::string &username, std::string &localDeviceID, std::string &callID,
                    MainWindow *parent);
     ~SessionManager() = default;
+    /// Send Register request
     void Register();
+    /// Send Subscribe request to receive notifications
     void Subscribe();
+    /// Send Update Request to get the list of all contacts
     void Update();
+    /// Send message with Message Request to contact
     void sendMessage(const std::string &message, const std::string &target);
+
     const std::string &getUsername() const;
+
     TcpNetwork * getTcpNetwork() const;
+
     static void manageSipParsing(std::string input, SessionManager *session);
+    /// Return true if User is registred
     bool isRegisterOk() const;
+
     void updateData();
+    /// Return the list of all contact present in the server
+    const std::vector<ContactDetails> &getAllContacts() const;
+    /// Return the list of all friends of the current user
+    const std::vector<ContactDetails> &getAllFriends() const;
 private:
     void parsePacket(const std::string packet);
     void getMessageContent(SipParsedMessage &parsedMessage);
@@ -89,12 +102,6 @@ private:
     RequestType pendingRequest;
     RequestType pendingResponse;
     std::vector<ContactDetails> allContacts;
-public:
-    const std::vector<ContactDetails> &getAllContacts() const;
-
-    const std::vector<ContactDetails> &getAllFriends() const;
-
-private:
     std::vector<ContactDetails> allFriends;
     MainWindow *Parent;
 };

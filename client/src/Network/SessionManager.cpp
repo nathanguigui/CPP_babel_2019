@@ -191,9 +191,9 @@ void SessionManager::parseAllContact(SipParsedMessage &parsedMessage) {
     std::vector<std::string> tmpInfos;
     std::vector<ContactDetails> newAllContacts;
     int tmpStatus = 0;
-    /*boost::split(potentialUser, parsedMessage.content, boost::is_any_of(","));
+    boost::split(potentialUser, parsedMessage.content, boost::is_any_of(","));
     for (const auto &elem : potentialUser) {
-        boost::split(tmpInfos, potentialUser, boost::is_any_of(";"));
+        boost::split(tmpInfos, elem, boost::is_any_of(";"));
         if (tmpInfos.size() == 3) {
             try {
                 tmpStatus = std::stoi(tmpInfos[2]);
@@ -202,7 +202,8 @@ void SessionManager::parseAllContact(SipParsedMessage &parsedMessage) {
                 continue;
             }
         }
-    }*/
+    }
+    this->allContacts = newAllContacts;
 }
 
 void SessionManager::getMessageContent(SipParsedMessage &parsedMessage) {
