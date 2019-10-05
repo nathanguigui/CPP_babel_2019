@@ -8,6 +8,7 @@
 #include "TcpNetwork.hpp"
 #include <QtNetwork/QtNetwork>
 #include <boost/algorithm/string.hpp>
+#include "mainWindow.hpp"
 
 struct SipParams {
     const std::string &requestOrStatusLine;
@@ -43,26 +44,33 @@ struct SipParsedMessage {
     std::string request;
     std::string packet;
     int status;
+    std::string content;
 };
 
 class SessionManager {
 public:
-    SessionManager(std::string &host, int port, std::string &username, std::string &localDeviceID, std::string &callID);
+    SessionManager(std::string &host, int port, std::string &username, std::string &localDeviceID, std::string &callID,
+                   MainWindow *parent);
     ~SessionManager() = default;
     void Register();
+    void Subscribe();
+    void Update();
     void sendMessage(const std::string &message, const std::string &target);
     const std::string &getUsername() const;
     TcpNetwork * getTcpNetwork() const;
     static void manageSipParsing(std::string input, SessionManager *session);
     bool isRegisterOk() const;
+    void updateData();
 private:
     void parsePacket(const std::string packet);
+    void getMessageContent(SipParsedMessage &parsedMessage);
+    void sendOk(std::string codeSeq);
     void analyzeParsedMessage(SipParsedMessage &parsedMessage);
     void handleRegister(SipParsedMessage &parsedMessage);
     void parseMultiplePacket(const std::string multiplePacket);
+    void parseAllContact(SipParsedMessage &parsedMessage);
+    std::string createSipPacket(SipParams &params);
     std::string getConnectedInterface();
-    std::string
-    createSipPacket(SipParams &params);
     TcpNetwork *udpNetwork;
     std::string host;
     std::string username;
@@ -74,6 +82,7 @@ private:
     bool registerOk;
     RequestType pendingRequest;
     RequestType pendingResponse;
+    MainWindow *Parent;
 };
 
 #endif //CPP_BABEL_2019_SESSIONMANAGER_HPP
