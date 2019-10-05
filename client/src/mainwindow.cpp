@@ -100,26 +100,32 @@ void MainWindow::setName(QListWidgetItem *item)
    printAllMessages();
 }
 
+void MainWindow::importContact()
+{
+    const std::vector<ContactDetails> fromSettings = sessionManager_->getAllContacts();
+    std::vector<ContactDetails>::const_iterator it;
+    qDebug() << "Import Contact";
+    //qDebug() << "New Contact : " << QString::fromStdString(fromSettings[0].name);
+    for (it = fromSettings.begin(); it != fromSettings.end(); it++) {
+        qDebug() << "New Contact : " << QString::fromStdString(it->name);
+        addNewContact(it->name, it->ip, it->connected);
+    }
+    qDebug() << "End Import";
+    setAllContact();
+}
+
 void MainWindow::setAllContact()
 {
     list_->clear();
     std::map<QString, contact *>::iterator itr;
     for (itr = contact_list.begin(); itr != contact_list.end(); itr++) {
-      
       QListWidgetItem *item = new QListWidgetItem(list_);
-
       item->setText(QString(itr->first));
-
-      // set green color if contact is connected
       if (itr->second->getState() == true)
          item->setBackground(Qt::green);
       else
          item->setBackground(Qt::red);      
-
-      // set red color if contact is disconnected
-
       list_->addItem(item);
-
       item->setSizeHint(QSize(item->sizeHint().width(), 30));
    }
 }
@@ -129,6 +135,7 @@ void MainWindow::addNewContact(std::string login, std::string ip, bool state) {
     contact_list.insert( {QString::fromStdString(login), new contact(QString::fromStdString(login), QString::fromStdString(ip), state) });
     contact_list.find(QString::fromStdString(login))->second->setMainWindow(this);
     setAllContact();
+    qDebug() << "Added Contact : " << QString::fromStdString(login);
 }
 
 QString MainWindow::launchlogin()
@@ -141,15 +148,9 @@ QString MainWindow::launchlogin()
    log->move(QApplication::desktop()->screen()->rect().center() - log->rect().center());
    if (log->exec() == QDialog::Accepted) {
       login = log->textValue();
-      std::string str = login.toStdString();
-      auto host = std::string(SERVER_IP);
-      std::string device = "perceval";
-      std::string callId = "guigui";
-      auto *sessionManager = new SessionManager(host, 25565, str, device, callId, nullptr);
-      sessionManager->Register();
    }
    else
-      exit(0);
+       return ("NULL");
    qDebug() << login;
    return login;
 }
@@ -166,8 +167,9 @@ void MainWindow::callPopup(QString login)
 	return;
 }
 
-void MainWindow::incomingCall(QString login)
+void MainWindow::incomingCall(std::string stdlogin)
 {
+    QString login = QString::fromStdString(stdlogin);
    	QMessageBox *incoming = new QMessageBox();
    	QString message = QString("%1 is calling you ").arg(login);
    	incoming->setText(message);
@@ -231,13 +233,20 @@ void MainWindow::updateMessage()
    list_messages_->addItem(*i);
 }
 
+void MainWindow::addMessageFromContact(std::string login, std::string message)
+{
+    contact_list.find(contact_name_->text())->second->addMessage(message, 1);
+    if (contact_name_->text() == QString::fromStdString(login))
+        updateMessage();
+}
+
 void MainWindow::call()
 {
    	if (contact_name_->text() == QString::null)
 		return;
     contact_list.find(contact_name_->text())->second->addMessage("Ceci est un message test envoyé",1);
     updateMessage();
-	incomingCall(contact_name_->text());
+	incomingCall(contact_name_->text().toStdString());
     qDebug() << "make a call";
 }
 

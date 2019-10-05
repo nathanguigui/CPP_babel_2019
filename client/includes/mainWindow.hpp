@@ -24,6 +24,7 @@
 #include "UISettings.hpp"
 #include "contactWindow.hpp"
 #include "Network/SessionManager.hpp"
+#include "Network/SERVER_IP.hpp"
 #include "contact.hpp"
 
 
@@ -47,13 +48,16 @@ class MainWindow : public QWidget
         QString launchlogin();
         void launchSplashScreen();
 
+        void setManager(SessionManager *s) {sessionManager_ = s; };
+        void importContact();
         void setAllContact();
         void addNewContact(std::string login, std::string ip, bool state);
 
         void printAllMessages();
         void updateMessage();
+        void addMessageFromContact(std::string login, std::string message);
 
-        void incomingCall(QString login);
+        void incomingCall(std::string stdlogin);
         void callPopup(QString login);
 
         //UPDATE
@@ -79,6 +83,7 @@ class MainWindow : public QWidget
         void setName(QListWidgetItem*);
         
     private:
+        SessionManager *sessionManager_;
         UISettings *settings_;
         QString login;
         QListWidgetItem *nom_contact;
