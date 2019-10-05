@@ -145,7 +145,7 @@ QString MainWindow::launchlogin()
       auto host = std::string(SERVER_IP);
       std::string device = "perceval";
       std::string callId = "guigui";
-      auto *sessionManager = new SessionManager(host, 25565, str, device, callId);
+      auto *sessionManager = new SessionManager(host, 25565, str, device, callId, nullptr);
       sessionManager->Register();
    }
    else
