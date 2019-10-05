@@ -47,6 +47,12 @@ struct SipParsedMessage {
     std::string content;
 };
 
+struct ContactDetails {
+    std::string name;
+    std::string ip;
+    bool connected;
+};
+
 class SessionManager {
 public:
     SessionManager(std::string &host, int port, std::string &username, std::string &localDeviceID, std::string &callID,
@@ -82,6 +88,14 @@ private:
     bool registerOk;
     RequestType pendingRequest;
     RequestType pendingResponse;
+    std::vector<ContactDetails> allContacts;
+public:
+    const std::vector<ContactDetails> &getAllContacts() const;
+
+    const std::vector<ContactDetails> &getAllFriends() const;
+
+private:
+    std::vector<ContactDetails> allFriends;
     MainWindow *Parent;
 };
 

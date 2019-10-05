@@ -186,7 +186,23 @@ void SessionManager::parseMultiplePacket(const std::string multiplePacket) {
 
 void SessionManager::parseAllContact(SipParsedMessage &parsedMessage) {
     this->getMessageContent(parsedMessage);
-    std::cout << parsedMessage.content;
+    qDebug() << parsedMessage.content.c_str();
+    std::vector<std::string> potentialUser;
+    std::vector<std::string> tmpInfos;
+    std::vector<ContactDetails> newAllContacts;
+    int tmpStatus = 0;
+    boost::split(potentialUser, parsedMessage.content, boost::is_any_of(","));
+    for (const auto &elem : potentialUser) {
+        boost::split(tmpInfos, potentialUser, boost::is_any_of(";"));
+        if (tmpInfos.size() == 3) {
+            try {
+                tmpStatus = std::stoi(tmpInfos[2]);
+                newAllContacts.push_back({tmpInfos[0], tmpInfos[1], tmpStatus != 0});
+            } catch (std::invalid_argument) {
+                continue;
+            }
+        }
+    }
 }
 
 void SessionManager::getMessageContent(SipParsedMessage &parsedMessage) {
@@ -199,4 +215,12 @@ void SessionManager::getMessageContent(SipParsedMessage &parsedMessage) {
             return;
         }
     }
+}
+
+const std::vector<ContactDetails> &SessionManager::getAllContacts() const {
+    return allContacts;
+}
+
+const std::vector<ContactDetails> &SessionManager::getAllFriends() const {
+    return allFriends;
 }
