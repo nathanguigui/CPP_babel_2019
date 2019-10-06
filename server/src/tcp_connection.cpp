@@ -4,24 +4,37 @@ std::string make_daytime_string();
 
 void connection_handler::start()
 {
-  sock.async_read_some(
+    read_data();
+}
+void connection_handler::read_data()
+{
+    sock.async_read_some(
       boost::asio::buffer(data, max_length),
       boost::bind(&connection_handler::handle_read,
                   shared_from_this(),
                   boost::asio::placeholders::error,
                   boost::asio::placeholders::bytes_transferred));
-        sock.async_write_some(
+}
+
+void connection_handler::write_data()
+{
+    buffer = header_manager.response_header;
+    sock.async_write_some(
         boost::asio::buffer(buffer, max_length),
         boost::bind(&connection_handler::handle_write,
             shared_from_this(),
             boost::asio::placeholders::error,
             boost::asio::placeholders::bytes_transferred));
 }
+
 void connection_handler::handle_read(const boost::system::error_code& err, size_t bytes_transferred)
 {
-        buffer = "Wesh les zgegs";
+    std::string new_data;
     if (!err) {
-        std::cout << data << std::endl;
+        new_data = convertToString(data);
+        std::cout << new_data << std::endl;
+        header_manager.parse_header(new_data);
+        reply_to_msg(new_data);
         memset((char *) data, 0, max_length);
     } else {
         sock.close();
@@ -29,6 +42,75 @@ void connection_handler::handle_read(const boost::system::error_code& err, size_
 }
 void connection_handler::handle_write(const boost::system::error_code& err, size_t bytes_transferred)
 {
-    buffer.clear();
+    std::cout << buffer << std::endl;
     start();
+}
+
+void connection_handler::handle_write_header(const boost::system::error_code& err, size_t bytes_transferred)
+{
+    buffer.clear();
+    header_manager.response_header.clear();
+}
+
+void connection_handler::write_header()
+{
+    buffer = header_manager.response_header;
+    std::cout << buffer << std::endl;
+    boost::asio::async_write(sock,
+        boost::asio::buffer(buffer, buffer.size()),
+        boost::bind(&connection_handler::handle_write_header,
+            shared_from_this(),
+            boost::asio::placeholders::error,
+            boost::asio::placeholders::bytes_transferred));
+}
+
+void wait_handler(const boost::system::error_code& error)
+{
+  if (!error)
+  {
+    // Wait succeeded.
+  }
+}
+
+void connection_handler::wait_for_write()
+{
+    sock.async_wait(boost::asio::ip::tcp::socket::wait_write, wait_handler);
+}
+
+void connection_handler::send_it()
+{
+    write_header();
+}
+
+void connection_handler::reply_to_msg(std::string header)
+{
+        std::cout << header_manager.get_request_types()[header_manager.get_request_types().size() - 1] << std::endl;
+    if (header_manager.get_request_types()[header_manager.get_request_types().size() - 1] == request_types::REGISTER) {
+        header_manager.trying_connection();
+        send_it();
+        header_manager.OK_header();
+        send_it();
+        header_manager.notify_header("Connected");
+        send_it();
+        header_manager.check_account_existing();
+        header_manager.get_request_types().pop_back();
+        start();
+    } if (header_manager.get_request_types()[header_manager.get_request_types().size() - 1] == request_types::SUBSCRIBE) {
+        header_manager.notify_header("Connected");
+        send_it();
+        header_manager.OK_header();
+        send_it();
+        header_manager.get_request_types().pop_back();
+        start();
+    } if (header_manager.get_request_types()[header_manager.get_request_types().size() - 1] == request_types::UPDATE) {
+        header_manager.update_header();
+        send_it();
+        header_manager.get_request_types().pop_back();
+        start();
+    } if (header_manager.get_request_types()[header_manager.get_request_types().size() - 1] == request_types::ADD_FRIEND) {
+        header_manager.add_friend_header(header);
+        send_it();
+        header_manager.get_request_types().pop_back();
+        start();
+    }
 }

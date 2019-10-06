@@ -4,6 +4,7 @@ SipManager::SipManager(std::string db_path)
 {
     sqlite3_open(db_path.c_str(), &_database);
     tag_server = "tag=823f843c";
+    port_server = "25565";
 }
 
 SipManager::~SipManager()
@@ -82,35 +83,89 @@ int SipManager::check_account_existing()
     return (0);
 }
 
-std::string get_IP_in_request(std::string request)
+int parse_all_data(void *data, int argc, char **argv, char **azColName)
 {
-    request.erase(0, request.find("UDP") + 4);
-    return (request.erase(request.find("To:") -2, std::string::npos));
-}
-
-std::string get_user_in_request(std::string request, int tag_id)
-{
-    request.erase(0, request.find("From:") + 6);
-    if (tag_id == 1) {
-        return (request.erase(request.find("Call-ID"), std::string::npos));
-    } else {
-        return (request.erase(request.find(";tag"), std::string::npos));
+    int i = 0; 
+    SipManager *my_manager = static_cast<SipManager*>(data);
+    std::string buff;
+  
+    while (i < argc) {
+        if (my_manager->get_username().compare(convertToString(argv[i])) != 0) {
+            buff = convertToString(argv[i]) + ";";
+            buff = buff + convertToString(argv[i + 1]) + ";";
+            buff = buff + convertToString(argv[i + 2]);
+            my_manager->my_friends.push_back(buff);
+        }
+        i = i 
+        + 3;
     }
+    return 0; 
 }
 
-std::string get_callID(std::string request)
+void SipManager::get_all_data_from_db()
 {
-    request.erase(0, request.find("Call-ID"));
-    return(request.erase(request.find("CSeq"), std::string::npos));
+    char *data;
+    char *zErrMsg = 0;
+    std::string sql_request = "SELECT username, ip, state from user_db\n";
+    sqlite3_exec(_database, sql_request.c_str(), parse_all_data, this,&zErrMsg);
 }
 
-std::string get_username(std::string request)
+int parse_friends(void *data, int argc, char **argv, char **azColName)
 {
-    request.erase(0, request.find("\"") + 1);
-    request.erase(request.find("\""), std::string::npos);
-    return (request);
+    SipManager *my_manager = static_cast<SipManager*>(data);
+    std::string buff;
+    if (argc > 1) {
+        buff = convertToString(argv[argc - 1]);
+        boost::split(my_manager->my_friends, buff, boost::is_any_of(" "));
+    }
+    return 0;
 }
 
+void SipManager::get_friends(std::string _username)
+{
+    char *data; 
+    char *zErrMsg = 0;
+    std::string sql_request = "SELECT friend FROM user_db\nWHERE username == \"";
+    sql_request = sql_request + _username;
+    sql_request = sql_request + "\"";
+    sqlite3_exec(_database, sql_request.c_str(), parse_friends, this,&zErrMsg);
+}
+
+int handler_add_friends(void *data, int argc, char **argv, char **azColName)
+{}
+
+int SipManager::add_friends(std::string friend_username)
+{
+    char *data; 
+    char *zErrMsg = 0;
+
+    get_friends(username);
+    my_friends.push_back(friend_username);
+    std::string sql_request = "UPDATE user_db SET friend=\"";
+    for (int i = 0; i < my_friends.size(); i++) {
+        sql_request = sql_request + my_friends[i];
+        sql_request = sql_request + " ";
+    }
+    sql_request = sql_request + "\"";
+    sql_request = sql_request + "WHERE username==\"";
+    sql_request = sql_request + username;
+    sql_request = sql_request + "\"";
+    sqlite3_exec(_database, sql_request.c_str(), handler_add_friends, this,&zErrMsg);
+    my_friends.clear();
+    get_friends(friend_username);
+    my_friends.push_back(username);
+    sql_request = "UPDATE user_db SET friend=\"";
+    for (int i = 0; i < my_friends.size(); i++) {
+        sql_request = sql_request + my_friends[i];
+        sql_request = sql_request + " ";
+    }
+    sql_request = sql_request + "\"";
+    sql_request = sql_request + "WHERE username==\"";
+    sql_request = sql_request + friend_username;
+    sql_request = sql_request + "\"";
+    sqlite3_exec(_database, sql_request.c_str(), handler_add_friends, this,&zErrMsg);
+    get_friends(friend_username);
+}
 
 std::string get_IP_from_iface()
 {
@@ -132,24 +187,209 @@ char hostbuffer[256];
     return convertToString(IPbuffer); 
 }
 
-std::string make_daytime_string()
+void SipManager::parsePacket(std::string request)
 {
-  using namespace std; // For time_t, time and ctime;
-  time_t now = time(0);
-  return ctime(&now);
+    types.push_back(get_request_types_request(request));
+    if (types[types.size() -1] != request_types::ADD_FRIEND) {
+        ip = get_IP_in_request(request);
+        username = get_username_request(request);
+        hostname = get_hostname_request(request);
+        port = get_port_request(request);
+        tag_cli = get_tag_client_request(request);
+        call_id = get_callID(request);
+        Cseq = get_cseq(request);
+        server_ip = get_IP_from_iface();
+    }
 }
 
-void SipManager::trying_connection(char *request)
+void SipManager::parse_header(const std::string request)
 {
-    std::string test = convertToString(request);
-    auto ss = std::stringstream();
-    ss << "SIP/2.0 100 Trying\nVia: SIP/2.0/UDP ";
-    ip = get_IP_in_request(request);
-    username = get_username(test);
-    ss << ip << "\nFrom: " << get_user_in_request(test, 1) << "To: " << get_user_in_request(test, 0);
-    ss << "\n" << get_callID(test) << "CSeq: 2 REGISTER\n"<<"User-Agent: Asterisk PBX\n" << "Allow: INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, SUBSCRIBE, NOTIFY\nSupported: replaces\nContact: " << get_user_in_request(test, 0).erase(0, username.size() + 2) << "\nContent-Length: 0";
-    check_account_existing();
-    options_header(request);
+    std::vector<std::string> lines;
+    std::vector<std::string> tmp;
+    //SipParsedMessage receivedMessage = {UNKNOWN, "", multiplePacket, -1, ""};
+    boost::split(lines, request, boost::is_any_of("\t"));
+    for (const auto& elem : lines)
+        !elem.empty() ? this->parsePacket(elem) : void();
+}
+
+constexpr unsigned int str2int(const char* str, int h = 0)
+{
+    return !str[h] ? 5381 : (str2int(str, h+1) * 33) ^ str[h];
+}
+std::string SipManager::get_cseq(std::string request)
+{
+    request.erase(0, request.find("CSeq:") + 6);
+    return (request.substr(0, request.find("\n")));
+}
+
+request_types SipManager::get_request_types_request(std::string request)
+{
+    std::string rtypes;
+    try{
+        std::stoi(request.substr(0, request.find(" ")));
+        rtypes = request.substr(request.find(" "), request.find("\r\n"));
+    } catch (std::invalid_argument) {  
+        rtypes = request.substr(0, request.find(" "));
+    }
+    switch (str2int(rtypes.c_str())) {
+        case str2int("INVITE"):
+            return request_types::INVITE;
+        case str2int("ACK"):
+            return request_types::ACK;
+        case str2int("BYE"):
+            return request_types::BYE;
+        case str2int("CANCEL"):
+            return request_types::CANCEL;
+        case str2int("REGISTER"):
+            return request_types::REGISTER;
+        case str2int("OPTIONS"):
+            return request_types::OPTIONS;
+        case str2int("SUBSCRIBE"):
+            return request_types::SUBSCRIBE;
+        case str2int("NOTIFY"):
+            return request_types::NOTIFY;
+        case str2int("INFO"):
+            return request_types::INFO;
+        case str2int("MESSAGE"):
+            return request_types::MESSAGE;
+        case str2int("UPDATE"):
+            return request_types::UPDATE;
+        case str2int("ADD_FRIEND"):
+            return request_types::ADD_FRIEND;
+    }
+}
+
+std::string SipManager::get_IP_in_request(std::string request)
+{
+    request.erase(0, request.find("SIP/2.0/TCP") + 11);
+    return (request.substr(0, request.find("\r\n") - 2));
+}
+
+std::string SipManager::get_username_request(std::string request)
+{
+    request.erase(0, request.find("From: \"") + 7);
+    request.erase(request.find("\""), std::string::npos);
+    return (request);
+}
+
+std::string SipManager::get_hostname_request(std::string request)
+{
+    request.erase(0, request.find("\"<") + 2);
+    return(request.substr(0, request.find("@")));
+}
+
+std::string SipManager::get_port_request(std::string request)
+{
+    request.erase(0, request.find(ip));
+    request.erase(0, request.find(ip) + ip.size() + 1);
+    return (request.substr(0, request.find(">")));
+}
+std::string SipManager::get_tag_client_request(std::string request)
+{
+    request.erase(0, request.find(";tag=") + 5);
+    return(request.substr(0, request.find("Call-ID") - 1));
+}
+
+std::string SipManager::get_callID(std::string request)
+{
+    request.erase(0, request.find("Call-ID") + 9);
+    return(request.erase(request.find("CSeq") - 2, std::string::npos));
+}
+
+
+
+void SipManager::trying_connection()
+{
+    auto hdr = std::stringstream();
+    hdr << "100 Trying\nVia: " << ip << ":" << port;
+    hdr << "\r\nFrom: \"" << username << "\"<" << hostname << "@" << server_ip << ">;tag=" << tag_cli;
+    hdr << "\r\nTo: \"" << username << "\"<" << hostname << "@" << server_ip << ">";
+    hdr << "\r\nCall-ID: " << call_id << " \r\n" << Cseq << "Allow: INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, SUBSCRIBE, NOTIFY";
+    hdr << "\r\nContact: <" << hostname << "@" << server_ip << ">";
+    hdr << "\r\nContent-Length: 0\r\n\r\n\t";
+    response_header = hdr.str();
+}
+
+void SipManager::OK_header()
+{
+    auto hdr = std::stringstream();
+    hdr << "200 OK\r\nVia: " << ip << ":" << port;
+    hdr << "\r\nFrom: \"" << username << "\"<" << hostname << "@" << server_ip <<">;tag="<< tag_cli;
+    hdr << "\r\nTo: \"" << username << "\"<" << hostname << "@" << server_ip << ">;tag=" << tag_server;
+    hdr << "\r\nCall-ID: " << call_id << "\r\n" << "CSeq: " << Cseq << "Contact: <" << hostname << "@" << ip << ":" << port << ">\r\n" <<"Content-Length: 0\r\n\r\n\t"; 
+    response_header = hdr.str();
+}
+
+void SipManager::notify_header(std::string message)
+{
+    auto hdr = std::stringstream();
+    hdr << "NOTIFY " << hostname << "@" << ip << ":" << port;
+    hdr << "\r\nVia: " << server_ip << ":" << port_server;
+    hdr << "\r\nFrom: \"" << username << "\" <sip:" << username << "@" << ip << ">;tag=" << tag_cli;
+    hdr <<  "\r\nTo: <" << hostname << "@" << server_ip << ">";
+    hdr << "\r\nContact: <sip:" << username <<"@" << server_ip; ">";
+    hdr << "\r\nCSeq: 102 NOTIFY";
+    hdr << "\r\nMessage_Waiting: " << message << "\r\n\r\n\t";
+    response_header = hdr.str();
+}
+
+void SipManager::update_header()
+{
+    auto hdr = std::stringstream();
+    int i = 0;
+    get_all_data_from_db();
+    std::cout << "First part header\n";
+    hdr << "242 UPDATE\r\n" << hostname << "@" << ip << ":" << port;
+    hdr << "\r\nVia: " << server_ip << ":" << port_server;
+    hdr << "\r\nFrom: \"" << username << "\" <sip:" << username << "@" << ip << ">;tag=" << tag_cli;
+    hdr <<  "\r\nTo: <" << hostname << "@" << server_ip << ">";
+    hdr << "\r\nContact: <sip:" << username <<"@" << server_ip; ">";
+    hdr << "\r\nCSeq: 242 UPDATE";
+    hdr << "\r\nMessage_Waiting: ";
+    std::cout << "Middle part header\n";
+    for (i = 0; i < my_friends.size() - 1; i++) {
+        hdr << my_friends[i] << ","; 
+    }
+    hdr << my_friends[i] ; 
+    hdr << "\r\n";
+    my_friends.clear();
+    response_header = hdr.str();
+    std::cout << "Middle part header\n";
+}
+std::string SipManager::get_friend_username(std::string header_recv)
+{
+    header_recv.erase(0, header_recv.find("Message_Waiting: " + 17));
+    return(header_recv);
+}
+
+void SipManager::add_friend_header(std::string header_recv)
+{
+    auto hdr = std::stringstream();
+    std::string friend_username = get_friend_username(header_recv);
+    std::cout << "wesh l'equipe:" << friend_username << std::endl;
+    hdr << "243 ADD_FRIEND\r\n" << hostname << "@" << ip << ":" << port;
+    hdr << "\r\nVia: " << server_ip << ":" << port_server;
+    hdr << "\r\nFrom: \"" << username << "\" <sip:" << username << "@" << ip << ">;tag=" << tag_cli;
+    hdr <<  "\r\nTo: <" << hostname << "@" << server_ip << ">";
+    hdr << "\r\nContact: <sip:" << username <<"@" << server_ip; ">";
+    hdr << "\r\nCSeq: 243 ADD_FRIEND";
+    response_header = hdr.str();
+}
+
+/*std::string get_user_in_request(std::string request, int tag_id)
+{
+    request.erase(0, request.find("From:") + 6);
+    if (tag_id == 1) {
+        return (request.erase(request.find("Call-ID"), std::string::npos));
+    } else {
+        return (request.erase(request.find(";tag"), std::string::npos));
+    }
+}
+
+std::string get_callID(std::string request)
+{
+    request.erase(0, request.find("Call-ID"));
+    return(request.erase(request.find("CSeq"), std::string::npos));
 }
 
 std::stringstream SipManager::options_header(char *old_request)
@@ -166,29 +406,14 @@ std::stringstream SipManager::options_header(char *old_request)
     return ss;
 }
 
-std::stringstream SipManager::OK_header(char *old_request)
-{
-    auto ss = std::stringstream();
-    std::string request = convertToString(old_request);
-    ss << "SIP/2.0 200 OK\nVia: SIP/2.0/UDP " << ip << "\n";
-    ss << "From:" << get_user_in_request(request, 1) << "To:" << get_user_in_request(request, 0) << ";"<< tag_server;
-    ss << "\n"<< get_callID(request) << "CSeq: 2 REGISTER\n" <<"User-Agent:" << username;
-    ss << "\nAllow: INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, SUBSCRIBE, NOTIFY\n";
-    ss << "Supported: replaces\nExpires: 3600\nContact: " << get_user_in_request(request, 0).erase(0, username.size() + 2) << "\nDate: " << make_daytime_string() << "Content-Length: 0";
-    notify_header(old_request);
-    return ss;
-}
+
 
 std::stringstream SipManager::notify_header(char *old_request)
 {
     auto ss = std::stringstream();
     std::string request = convertToString(old_request);
-    ss << "NOTIFY sip:1010@" << ip << "\nVia: SIP/2.0/UDP" << get_IP_from_iface() << ":25565\nFrom: " << get_user_in_request(request, 1);
-    ss << "To: sip:sip:1010@" << get_IP_from_iface() << ":25565>;" << tag_server;
-    ss << "\nContact: " << get_user_in_request(request, 0).erase(0, username.size() + 2);
-    ss << get_callID << "\nCSeq: 102 NOTIFY\nUser-Agent: " << username << "\nMax-Forwards: 70\nEvent: message-summary\n";
-    ss << "Content-Type: application/simple-message-summary" << "Subscription-State: active\nContent-Length: <" << 10;
-    ss << "Messages-Waiting: no\nMessage-Account: sip:" << username << "@" << get_IP_from_iface();
+ 
     std::cout << ss.str() << std::endl;
     return (ss);
 }
+*/
