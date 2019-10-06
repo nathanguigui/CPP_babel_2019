@@ -7,10 +7,12 @@
 #include "Network/TcpNetwork.hpp"
 #include <QAbstractSocket>
 #include <QtNetwork/QHostAddress>
+#include <boost/thread/thread.hpp>
 
 TcpNetwork::TcpNetwork(std::string &host, int port, void (*readCallback)(std::string, SessionManager *),
-                       SessionManager *manager) : readCallback(readCallback), sessionManager(manager) {
+                       SessionManager *manager) : readCallback(readCallback), sessionManager(manager), host(host), port(port) {
     this->socket = new QTcpSocket();
+    this->socket->setSocketOption(QAbstractSocket::LowDelayOption, true);
     connect(this->socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
     connect(this->socket, SIGNAL(connected()), this, SLOT(connected()));
     socket->connectToHost(host.c_str(), port);

@@ -18,12 +18,11 @@ int main(int argc, char *argv[])
     auto host = std::string(SERVER_IP);
     std::string device = "perceval";
     std::string callId = "guigui";
-    auto *sessionManager = new SessionManager(host, 25565, str, device, callId, &mainWindow);
-    sessionManager->Register();
-    sessionManager->updateData();
-    mainWindow.setManager(sessionManager);
+    auto *asyncSession = new SessionManager(nullptr, host, 25565, str, device, callId);
+    asyncSession->Register();
     // splash screen
     mainWindow.launchSplashScreen();
+    asyncSession->AddFriend("ibytek");
     mainWindow.importContact();
     // run the application and return execs() return value/code
     return app.exec();

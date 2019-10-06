@@ -8,7 +8,6 @@
 #include "TcpNetwork.hpp"
 #include <QtNetwork/QtNetwork>
 #include <boost/algorithm/string.hpp>
-#include "mainWindow.hpp"
 
 struct SipParams {
     const std::string &requestOrStatusLine;
@@ -37,6 +36,7 @@ enum RequestType {
     INFO,
     UPDATE,
     OPTIONS,
+    ADD_FRIEND
 };
 
 struct SipParsedMessage {
@@ -53,11 +53,14 @@ struct ContactDetails {
     bool connected;
 };
 
-class SessionManager {
+class SessionManager : public QObject {
+    Q_OBJECT
 public:
-    SessionManager(std::string &host, int port, std::string &username, std::string &localDeviceID, std::string &callID,
-                   MainWindow *parent);
+    SessionManager(QObject *parent, std::string &host, int port, std::string &username, std::string &localDeviceID,
+                   std::string &callID);
     ~SessionManager() = default;
+
+public slots:
     /// Send Register request
     void Register();
     /// Send Subscribe request to receive notifications
@@ -66,7 +69,18 @@ public:
     void Update();
     /// Send message with Message Request to contact
     void sendMessage(const std::string &message, const std::string &target);
+    /// Send AddFriend Request to add a friend
+    void AddFriend(const std::string& name);
 
+signals:
+    /// Signal to tell auth completed
+    void RegisterDone();
+    /// Signal to tell AddFriend succeed
+    void AddFriendDone(const std::string &name);
+    /// Signal to tell Update completed
+    void UpdateDone(std::vector<ContactDetails>);
+
+public:
     const std::string &getUsername() const;
 
     TcpNetwork * getTcpNetwork() const;
@@ -74,12 +88,11 @@ public:
     static void manageSipParsing(std::string input, SessionManager *session);
     /// Return true if User is registred
     bool isRegisterOk() const;
-
-    void updateData();
     /// Return the list of all contact present in the server
     const std::vector<ContactDetails> &getAllContacts() const;
     /// Return the list of all friends of the current user
     const std::vector<ContactDetails> &getAllFriends() const;
+
 private:
     void parsePacket(const std::string packet);
     void getMessageContent(SipParsedMessage &parsedMessage);
@@ -103,7 +116,6 @@ private:
     RequestType pendingResponse;
     std::vector<ContactDetails> allContacts;
     std::vector<ContactDetails> allFriends;
-    MainWindow *Parent;
 };
 
 #endif //CPP_BABEL_2019_SESSIONMANAGER_HPP

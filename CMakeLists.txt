@@ -7,7 +7,7 @@ INCLUDE_DIRECTORIES(${CONAN_INCLUDE_DIRS})
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread -lboost_thread")
 
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
@@ -27,7 +27,7 @@ set(CLIENT_SOURCES
     client/src/Network/SessionManager.cpp
     client/src/Network/TcpNetwork.cpp
     client/src/Network/UdpNetwork.cpp
-    client/src/contact.cpp)
+    client/src/contact.cpp client/src/Network/AsyncSession.cpp)
 
 set(CLIENT_HEADERS
     client/includes/mainWindow.hpp
@@ -37,7 +37,7 @@ set(CLIENT_HEADERS
     client/includes/Network/SessionManager.hpp
     client/includes/Network/TcpNetwork.hpp
     client/includes/Network/UdpNetwork.hpp 
-    client/includes/contact.hpp client/includes/Network/SERVER_IP.hpp)
+    client/includes/contact.hpp client/includes/Network/SERVER_IP.hpp client/includes/Network/AsyncSession.hpp)
 
 set(CLIENT_LIBRARIES
     Qt5::Core

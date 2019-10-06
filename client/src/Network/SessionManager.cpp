@@ -5,11 +5,11 @@
 #include <iostream>
 #include "Network/SessionManager.hpp"
 
-SessionManager::SessionManager(std::string &host, int port, std::string &username, std::string &localDeviceID,
-                               std::string &callID,
-                               MainWindow *parent)
+SessionManager::SessionManager(QObject *parent, std::string &host, int port, std::string &username,
+                               std::string &localDeviceID,
+                               std::string &callID)
         : host(host), port(port), username(username), localDeviceID(localDeviceID), callID(callID), registerOk(false),
-        pendingRequest(NONE), pendingResponse(NONE), Parent(parent) {
+        pendingRequest(NONE), pendingResponse(NONE) {
     this->udpNetwork = new TcpNetwork(host, port, SessionManager::manageSipParsing, this);
     this->networkInterface = QNetworkInterface::interfaceFromName(this->getConnectedInterface().c_str());
 }
@@ -82,7 +82,7 @@ std::string SessionManager::createSipPacket(SipParams &params) {
     ss << params.CSeq;
     ss << "Content-Length: " << params.data.length() << "\r\n";
     if (params.data.length())
-        ss << "\r\n" << params.data << "\r\n";
+        ss << "\r\n" << params.data << "\r\n\t";
     return (ss.str());
 }
 
@@ -118,8 +118,18 @@ void SessionManager::Update() {
     this->udpNetwork->sendData(this->createSipPacket(params));
 }
 
-void SessionManager::updateData() {
-    this->Update();
+void SessionManager::AddFriend(const std::string& name) {
+    auto requestLine = std::stringstream();
+    requestLine << "ADD_FRIEND sip:" << host << " SIP/2.0\r\n";
+    auto CSeq = std::stringstream();
+    CSeq << "CSeq: ADD_FRIEND\r\n";
+    auto recipientUri = std::stringstream();
+    recipientUri << getUsername() << "@" << host << ":" << port;
+    auto content = std::stringstream();
+    content << "Message_Waiting: " << name;
+    SipParams params = {requestLine.str(), CSeq.str(), content.str(), getUsername(), recipientUri.str()};
+    this->pendingRequest = ADD_FRIEND;
+    this->udpNetwork->sendData(this->createSipPacket(params));
 }
 
 void SessionManager::parsePacket(const std::string packet) {
@@ -164,9 +174,9 @@ void SessionManager::handleRegister(SipParsedMessage &parsedMessage) {
         return;
     if (parsedMessage.status == 200) {
         this->registerOk = true;
+        emit RegisterDone();
         this->pendingRequest = NONE;
         //this->Subscribe();
-        this->updateData();
     }
 }
 
@@ -186,7 +196,6 @@ void SessionManager::parseMultiplePacket(const std::string multiplePacket) {
 
 void SessionManager::parseAllContact(SipParsedMessage &parsedMessage) {
     this->getMessageContent(parsedMessage);
-    qDebug() << parsedMessage.content.c_str();
     std::vector<std::string> potentialUser;
     std::vector<std::string> tmpInfos;
     std::vector<ContactDetails> newAllContacts;
@@ -203,16 +212,21 @@ void SessionManager::parseAllContact(SipParsedMessage &parsedMessage) {
             }
         }
     }
+    qDebug() << "Found " << newAllContacts.size() << "contacts\n";
+    for (const auto &contact : newAllContacts) {
+        qDebug() << contact.name.c_str() << " ";
+    }
+    qDebug() << "\n";
     this->allContacts = newAllContacts;
+    emit UpdateDone(newAllContacts);
 }
 
 void SessionManager::getMessageContent(SipParsedMessage &parsedMessage) {
     std::vector<std::string> lines;
     boost::split(lines, parsedMessage.packet, boost::is_any_of("\r\n"));
-    std::cout << lines.size();
     for (const auto& elem : lines) {
         if (elem.substr(0, 17) == "Message_Waiting: ") {
-            parsedMessage.content = elem;
+            parsedMessage.content = elem.substr(17);
             return;
         }
     }

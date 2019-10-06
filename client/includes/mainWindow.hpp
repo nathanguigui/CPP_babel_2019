@@ -23,7 +23,7 @@
 #include "optionWindow.hpp"
 #include "UISettings.hpp"
 #include "contactWindow.hpp"
-#include "Network/SessionManager.hpp"
+#include "Network/AsyncSession.hpp"
 #include "Network/SERVER_IP.hpp"
 #include "contact.hpp"
 
@@ -34,6 +34,7 @@ class QTextBrowser;
 class QListWidget;
 class QLabel;
 class contact;
+
 
 // This is the declaration of our MainWidget class
 // The definition/implementation is in mainwindow.cpp
@@ -48,7 +49,6 @@ class MainWindow : public QWidget
         QString launchlogin();
         void launchSplashScreen();
 
-        void setManager(SessionManager *s) {sessionManager_ = s; };
         void importContact();
         void setAllContact();
         void addNewContact(std::string login, std::string ip, bool state);
@@ -81,9 +81,11 @@ class MainWindow : public QWidget
         void call();
         void sendMessage();
         void setName(QListWidgetItem*);
+
+        /// Async auth completed
+        void handleAuthCompleted();
         
     private:
-        SessionManager *sessionManager_;
         UISettings *settings_;
         QString login;
         QListWidgetItem *nom_contact;
@@ -96,5 +98,9 @@ class MainWindow : public QWidget
         QLabel *contact_name_;
         QToolBar *toolbar_;
         std::map<QString, contact *> contact_list;
+        /// Async session management
+        AsyncSession asyncSession;
+        /// auth status
+        bool registerOk;
 };
 #endif // MAINWINDOW_H
