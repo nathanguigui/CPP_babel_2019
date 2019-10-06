@@ -7,7 +7,7 @@
 #include "Network/SessionManager.hpp"
 
 // Constructor for main widget
-MainWindow::MainWindow(QWidget *parent): QWidget(parent)
+MainWindow::MainWindow(QWidget *parent): QWidget(parent), registerOk(false)
 {
    //shortcut
 
@@ -76,6 +76,8 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
    setLayout(mainLayout);
    setWindowTitle(tr("BABEL"));
 
+   connect(&this->asyncSession, SIGNAL(RegisterDone()), this, SLOT(handleAuthCompleted()));
+
    QObject::connect(button_contact_, SIGNAL (released()), this, SLOT (addContact()));
    QObject::connect(button_send_, SIGNAL(released()), this, SLOT(sendMessage()));
    QObject::connect(button_call_, SIGNAL(released()), this, SLOT(call()));
@@ -102,7 +104,7 @@ void MainWindow::setName(QListWidgetItem *item)
 
 void MainWindow::importContact()
 {
-    const std::vector<ContactDetails> fromSettings = sessionManager_->getAllContacts();
+    /*const std::vector<ContactDetails> fromSettings = sessionManager_->getAllContacts();
     std::vector<ContactDetails>::const_iterator it;
     qDebug() << "Import Contact";
     //qDebug() << "New Contact : " << QString::fromStdString(fromSettings[0].name);
@@ -111,7 +113,7 @@ void MainWindow::importContact()
         addNewContact(it->name, it->ip, it->connected);
     }
     qDebug() << "End Import";
-    setAllContact();
+    setAllContact();*/
 }
 
 void MainWindow::setAllContact()
@@ -152,6 +154,10 @@ QString MainWindow::launchlogin()
    else
        return ("NULL");
    qDebug() << login;
+   auto host = std::string(SERVER_IP);
+   std::string device = "perceval";
+   std::string callId = "guigui";
+   this->asyncSession.delayRun(host, 25565, login.toStdString(), device, callId);
    return login;
 }
 
@@ -323,4 +329,9 @@ void MainWindow::showOptions()
    options->setMainWindow(this);
    options->centerAndResize();
    options->show();
+}
+
+void MainWindow::handleAuthCompleted() {
+    auto tmp = std::string("auth detected in mainwond\n");
+    qDebug() << tmp.c_str();
 }
