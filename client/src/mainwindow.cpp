@@ -77,6 +77,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent), registerOk(false)
    setWindowTitle(tr("BABEL"));
 
    connect(&this->asyncSession, SIGNAL(RegisterDone()), this, SLOT(handleAuthCompleted()));
+   connect(&this->asyncSession, SIGNAL(UpdateDone(std::vector<ContactDetails> details)), this , SLOT(addContact(std::vector<ContactDetails> details)));
 
    QObject::connect(button_contact_, SIGNAL (released()), this, SLOT (addContact()));
    QObject::connect(button_send_, SIGNAL(released()), this, SLOT(sendMessage()));
@@ -102,18 +103,16 @@ void MainWindow::setName(QListWidgetItem *item)
    printAllMessages();
 }
 
-void MainWindow::importContact()
+void MainWindow::importContact(std::vector<ContactDetails> details)
 {
-    /*const std::vector<ContactDetails> fromSettings = sessionManager_->getAllContacts();
     std::vector<ContactDetails>::const_iterator it;
     qDebug() << "Import Contact";
-    //qDebug() << "New Contact : " << QString::fromStdString(fromSettings[0].name);
-    for (it = fromSettings.begin(); it != fromSettings.end(); it++) {
+    for (it = details.begin(); it != details.end(); it++) {
         qDebug() << "New Contact : " << QString::fromStdString(it->name);
         addNewContact(it->name, it->ip, it->connected);
     }
     qDebug() << "End Import";
-    setAllContact();*/
+    setAllContact();
 }
 
 void MainWindow::setAllContact()
@@ -197,16 +196,15 @@ void MainWindow::incomingCall(std::string stdlogin)
 void MainWindow::addContact()
 {
    ContactWindow *contact = new ContactWindow();
-
-   std::vector<std::string> importContact;
-   importContact.push_back("daniel");
-   importContact.push_back("pierre");
-   importContact.push_back("snoop dog");
-   importContact.push_back("jacques chirac");
-   importContact.push_back("joachim rouas");
+   //std::vector<std::string> importContact;
+   //importContact.push_back("daniel");
+   //importContact.push_back("pierre");
+   //importContact.push_back("snoop dog");
+   //importContact.push_back("jacques chirac");
+   //importContact.push_back("joachim rouas");
    contact->setMainWindow(this);
    contact->centerAndResize();
-   contact->fillList(importContact);
+   this->asyncSession.asyncUpdate();
    contact->show();
 }
 
