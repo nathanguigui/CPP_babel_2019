@@ -34,7 +34,7 @@ void connection_handler::handle_read(const boost::system::error_code& err, size_
         new_data = convertToString(data);
         std::cout << new_data << std::endl;
         header_manager.parse_header(new_data);
-        reply_to_msg();
+        reply_to_msg(new_data);
         memset((char *) data, 0, max_length);
     } else {
         sock.close();
@@ -82,9 +82,10 @@ void connection_handler::send_it()
     write_header();
 }
 
-void connection_handler::reply_to_msg()
+void connection_handler::reply_to_msg(std::string header)
 {
-    if (header_manager.get_request_types() == request_types::REGISTER) {
+        std::cout << header_manager.get_request_types()[header_manager.get_request_types().size() - 1] << std::endl;
+    if (header_manager.get_request_types()[header_manager.get_request_types().size() - 1] == request_types::REGISTER) {
         header_manager.trying_connection();
         send_it();
         header_manager.OK_header();
@@ -92,5 +93,24 @@ void connection_handler::reply_to_msg()
         header_manager.notify_header("Connected");
         send_it();
         header_manager.check_account_existing();
+        header_manager.get_request_types().pop_back();
+        start();
+    } if (header_manager.get_request_types()[header_manager.get_request_types().size() - 1] == request_types::SUBSCRIBE) {
+        header_manager.notify_header("Connected");
+        send_it();
+        header_manager.OK_header();
+        send_it();
+        header_manager.get_request_types().pop_back();
+        start();
+    } if (header_manager.get_request_types()[header_manager.get_request_types().size() - 1] == request_types::UPDATE) {
+        header_manager.update_header();
+        send_it();
+        header_manager.get_request_types().pop_back();
+        start();
+    } if (header_manager.get_request_types()[header_manager.get_request_types().size() - 1] == request_types::ADD_FRIEND) {
+        header_manager.add_friend_header(header);
+        send_it();
+        header_manager.get_request_types().pop_back();
+        start();
     }
 }

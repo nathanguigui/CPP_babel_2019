@@ -36,7 +36,7 @@ if (ec)
         void read_data();
         void handle_read(const boost::system::error_code& err, size_t bytes_transferred);
         void handle_write(const boost::system::error_code& err, size_t bytes_transferred);
-        void reply_to_msg();
+        void reply_to_msg(std::string header);
         void write_header();
         void handle_write_header(const boost::system::error_code& err, size_t bytes_transferred);
         void wait_for_write();
@@ -62,7 +62,7 @@ class connection_manager {
 
 class Server {
     public:
-        Server(boost::asio::io_service& io_service): manager_(),io_context_(io_service), acceptor_(io_service, tcp::endpoint(boost::asio::ip::address::from_string("10.109.248.85"), 25565)){start_accept();}
+        Server(boost::asio::io_service& io_service): manager_(),io_context_(io_service), acceptor_(io_service, tcp::endpoint(boost::asio::ip::address::from_string("192.168.1.30"), 25565)){start_accept();}
         void handle_accept(connection_handler::pointer new_connection, const boost::system::error_code& err);
     private:
         tcp::acceptor acceptor_;
