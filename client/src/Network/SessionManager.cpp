@@ -174,6 +174,7 @@ void SessionManager::handleRegister(SipParsedMessage &parsedMessage) {
         return;
     if (parsedMessage.status == 200) {
         this->registerOk = true;
+        qDebug() << "regiter ok \n";
         emit RegisterDone();
         this->pendingRequest = NONE;
         //this->Subscribe();

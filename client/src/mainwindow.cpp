@@ -158,6 +158,7 @@ QString MainWindow::launchlogin()
    std::string device = "perceval";
    std::string callId = "guigui";
    this->asyncSession.delayRun(host, 25565, login.toStdString(), device, callId);
+   this->asyncSession.asyncRegister();
    return login;
 }
 
