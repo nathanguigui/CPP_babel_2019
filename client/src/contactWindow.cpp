@@ -8,6 +8,8 @@
 
 ContactWindow::ContactWindow(QWidget *parent): QWidget(parent)
 {
+    qRegisterMetaType<std::vector<ContactDetails>>("stdVectorContact");
+
     settings_ = new UISettings();
 
     buttonAdd = new QPushButton("Add contact", this);
@@ -73,16 +75,15 @@ void ContactWindow::centerAndResize()
    );
 }
 
-void ContactWindow::fillList(std::vector<std::string> contact)
+void ContactWindow::fillList(std::vector<ContactDetails> details)
 {
-    int i = 0;
-    while (i < contact.size())
-    {
-        QString str = QString::fromUtf8(contact[i].c_str());
-        contactList->addItem(str);
-        i++;
-    }
-   QObject::connect(contactList, SIGNAL (itemClicked(QListWidgetItem*)), this, SLOT (contactClicked(QListWidgetItem*)));
+    qDebug() << "it fckng work";
+    std::vector<ContactDetails>::const_iterator it;
+    for (it = details.begin(); it != details.end(); it++) {
+        std::cout << "New Contact : " << it->name;
+        contactList->addItem(QString::fromStdString(it->name));
+        }
+    QObject::connect(contactList, SIGNAL (itemClicked(QListWidgetItem*)), this, SLOT (contactClicked(QListWidgetItem*)));
 }
 
 void ContactWindow::contactClicked(QListWidgetItem *item)

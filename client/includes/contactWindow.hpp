@@ -22,8 +22,9 @@
 #include <QAction>
 #include <QApplication>
 #include <QColorDialog>
-#include "mainWindow.hpp"
+//#include "mainWindow.hpp"
 #include "UISettings.hpp"
+#include "Network/AsyncSession.hpp"
 
 class QTextEdit;
 class QPushButton;
@@ -32,6 +33,10 @@ class QGroupBox;
 class QString;
 class QListWidget;
 class QStringList;
+
+Q_DECLARE_METATYPE(std::vector<ContactDetails>);
+//Q_DECLARE_METATYPE(std::vector<ContactDetails>);
+
 
 class ContactWindow: public QWidget
 {
@@ -43,10 +48,10 @@ class ContactWindow: public QWidget
         void setMainWindow(MainWindow *m) { mainwindow = m; };
         void centerAndResize();
         void fillContact();
-        void fillList(std::vector<std::string> contact);
 
     public slots:
 
+        void fillList(std::vector<ContactDetails>);
         void contactClicked(QListWidgetItem *);
         void addContact();
         void quitter();
@@ -62,5 +67,8 @@ class ContactWindow: public QWidget
         UISettings *settings_;
 
         QString contactChosen;
+
+        AsyncSession asyncSession;
+
 };
 #endif

@@ -27,7 +27,8 @@ set(CLIENT_SOURCES
     client/src/Network/SessionManager.cpp
     client/src/Network/TcpNetwork.cpp
     client/src/Network/UdpNetwork.cpp
-    client/src/contact.cpp client/src/Network/AsyncSession.cpp)
+    client/src/contact.cpp
+    client/src/Network/AsyncSession.cpp)
 
 set(CLIENT_HEADERS
     client/includes/mainWindow.hpp
@@ -37,7 +38,9 @@ set(CLIENT_HEADERS
     client/includes/Network/SessionManager.hpp
     client/includes/Network/TcpNetwork.hpp
     client/includes/Network/UdpNetwork.hpp 
-    client/includes/contact.hpp client/includes/Network/SERVER_IP.hpp client/includes/Network/AsyncSession.hpp)
+    client/includes/contact.hpp
+    client/includes/Network/SERVER_IP.hpp
+    client/includes/Network/AsyncSession.hpp)
 
 set(CLIENT_LIBRARIES
     Qt5::Core

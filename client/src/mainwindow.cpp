@@ -9,8 +9,6 @@
 // Constructor for main widget
 MainWindow::MainWindow(QWidget *parent): QWidget(parent), registerOk(false)
 {
-   //shortcut
-
    //Settings
    settings_ = new UISettings();
 
@@ -76,8 +74,11 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent), registerOk(false)
    setLayout(mainLayout);
    setWindowTitle(tr("BABEL"));
 
+   //emit asyncSession.UpdateDone(std::vector<ContactDetails>);
    connect(&this->asyncSession, SIGNAL(RegisterDone()), this, SLOT(handleAuthCompleted()));
-   connect(&this->asyncSession, SIGNAL(UpdateDone(std::vector<ContactDetails> details)), this , SLOT(addContact(std::vector<ContactDetails> details)));
+   QObject::connect(&this->asyncSession, SIGNAL (UpdateDone(std::vector<ContactDetails>)), &contactWindow, SLOT(fillList(std::vector<ContactDetails>)));
+
+   //connect(&this->asyncSession, SIGNAL(UpdateDone(std::vector<ContactDetails>)), this , SLOT(addContact(std::vector<ContactDetails>)));
 
    QObject::connect(button_contact_, SIGNAL (released()), this, SLOT (addContact()));
    QObject::connect(button_send_, SIGNAL(released()), this, SLOT(sendMessage()));
@@ -196,17 +197,10 @@ void MainWindow::incomingCall(std::string stdlogin)
 
 void MainWindow::addContact()
 {
-   ContactWindow *contact = new ContactWindow();
-   //std::vector<std::string> importContact;
-   //importContact.push_back("daniel");
-   //importContact.push_back("pierre");
-   //importContact.push_back("snoop dog");
-   //importContact.push_back("jacques chirac");
-   //importContact.push_back("joachim rouas");
-   contact->setMainWindow(this);
-   contact->centerAndResize();
+   contactWindow.setMainWindow(this);
+   contactWindow.centerAndResize();
    this->asyncSession.asyncUpdate();
-   contact->show();
+   contactWindow.show();
 }
 
 void MainWindow::sendMessage()

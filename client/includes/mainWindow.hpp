@@ -35,7 +35,6 @@ class QListWidget;
 class QLabel;
 class contact;
 
-
 // This is the declaration of our MainWidget class
 // The definition/implementation is in mainwindow.cpp
 class MainWindow : public QWidget
@@ -49,7 +48,6 @@ class MainWindow : public QWidget
         QString launchlogin();
         void launchSplashScreen();
 
-        void importContact();
         void setAllContact();
         void addNewContact(std::string login, std::string ip, bool state);
 
@@ -81,6 +79,7 @@ class MainWindow : public QWidget
         void call();
         void sendMessage();
         void setName(QListWidgetItem*);
+        void importContact(std::vector<ContactDetails> details);
 
         /// Async auth completed
         void handleAuthCompleted();
@@ -100,6 +99,7 @@ class MainWindow : public QWidget
         std::map<QString, contact *> contact_list;
         /// Async session management
         AsyncSession asyncSession;
+        ContactWindow contactWindow;
         /// auth status
         bool registerOk;
 };

@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     std::string callId = "guigui";
     // splash screen
     mainWindow.launchSplashScreen();
-    mainWindow.importContact();
+    //mainWindow.importContact();
     // run the application and return execs() return value/code
     return app.exec();
 
