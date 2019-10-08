@@ -100,6 +100,7 @@ class MainWindow : public QWidget
         /// Async session management
         AsyncSession asyncSession;
         ContactWindow contactWindow;
+        bool firstTimeAddContact;
         /// auth status
         bool registerOk;
 };
