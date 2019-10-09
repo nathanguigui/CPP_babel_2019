@@ -22,12 +22,12 @@ class connection_handler : public boost::enable_shared_from_this<connection_hand
     public:
         typedef boost::shared_ptr<connection_handler> pointer;
         connection_handler(boost::asio::io_service& io_service): sock(io_service){ data = (char *)malloc(sizeof(char ) * max_length);boost::asio::ip::tcp::no_delay option(true);
-boost::system::error_code ec;
-sock.set_option(option, ec);
-if (ec)
-{
-  // An error occurred.
-}
+            boost::system::error_code ec;
+            sock.set_option(option, ec);
+            if (ec)
+            {
+              // An error occurred.
+            }
 }
         static pointer create(boost::asio::io_service& io_service){return pointer(new connection_handler(io_service));}
         tcp::socket& socket(){return sock;}

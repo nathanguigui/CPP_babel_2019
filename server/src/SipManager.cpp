@@ -31,7 +31,7 @@ int check_account_in_db(void *data, int argc, char **argv, char **azColName)
 
 int create_account_in_db(void *data, int argc, char **argv, char **azColName)
 {
-    std::cout << argc << std::endl;
+    //std::cout << argc << std::endl;
     return 1;
 }
 
@@ -114,8 +114,10 @@ int parse_friends(void *data, int argc, char **argv, char **azColName)
 {
     SipManager *my_manager = static_cast<SipManager*>(data);
     std::string buff;
-    if (argc > 1) {
+    if (argc >= 1) {
         buff = convertToString(argv[argc - 1]);
+        std::cout << buff <<std::endl;
+        //std::cout << buff << "<- Buffer\n";
         boost::split(my_manager->my_friends, buff, boost::is_any_of(" "));
     }
     return 0;
@@ -128,6 +130,7 @@ void SipManager::get_friends(std::string _username)
     std::string sql_request = "SELECT friend FROM user_db\nWHERE username == \"";
     sql_request = sql_request + _username;
     sql_request = sql_request + "\"";
+    //std::cout << sql_request << "Request Send to add my_friend\n";
     sqlite3_exec(_database, sql_request.c_str(), parse_friends, this,&zErrMsg);
 }
 
@@ -143,6 +146,7 @@ int SipManager::add_friends(std::string friend_username)
     my_friends.push_back(friend_username);
     std::string sql_request = "UPDATE user_db SET friend=\"";
     for (int i = 0; i < my_friends.size(); i++) {
+        ////std::cout << "Myfriends " << i << "[" << my_friends[i] << "]" << std::endl;
         sql_request = sql_request + my_friends[i];
         sql_request = sql_request + " ";
     }
@@ -152,6 +156,7 @@ int SipManager::add_friends(std::string friend_username)
     sql_request = sql_request + "\"";
     sqlite3_exec(_database, sql_request.c_str(), handler_add_friends, this,&zErrMsg);
     my_friends.clear();
+    sql_request.erase(0, std::string::npos);
     get_friends(friend_username);
     my_friends.push_back(username);
     sql_request = "UPDATE user_db SET friend=\"";
@@ -163,8 +168,9 @@ int SipManager::add_friends(std::string friend_username)
     sql_request = sql_request + "WHERE username==\"";
     sql_request = sql_request + friend_username;
     sql_request = sql_request + "\"";
+//    ////std::cout << sql_request << "Request Send to add FOR MY FRIEnD\n";
     sqlite3_exec(_database, sql_request.c_str(), handler_add_friends, this,&zErrMsg);
-    get_friends(friend_username);
+    get_friends(username);
 }
 
 std::string get_IP_from_iface()
@@ -338,7 +344,6 @@ void SipManager::update_header()
     auto hdr = std::stringstream();
     int i = 0;
     get_all_data_from_db();
-    std::cout << "First part header\n";
     hdr << "242 UPDATE\r\n" << hostname << "@" << ip << ":" << port;
     hdr << "\r\nVia: " << server_ip << ":" << port_server;
     hdr << "\r\nFrom: \"" << username << "\" <sip:" << username << "@" << ip << ">;tag=" << tag_cli;
@@ -346,7 +351,6 @@ void SipManager::update_header()
     hdr << "\r\nContact: <sip:" << username <<"@" << server_ip; ">";
     hdr << "\r\nCSeq: 242 UPDATE";
     hdr << "\r\nMessage_Waiting: ";
-    std::cout << "Middle part header\n";
     for (i = 0; i < my_friends.size() - 1; i++) {
         hdr << my_friends[i] << ","; 
     }
@@ -354,11 +358,11 @@ void SipManager::update_header()
     hdr << "\r\n";
     my_friends.clear();
     response_header = hdr.str();
-    std::cout << "Middle part header\n";
 }
 std::string SipManager::get_friend_username(std::string header_recv)
 {
-    header_recv.erase(0, header_recv.find("Message_Waiting: " + 17));
+    header_recv.erase(0, header_recv.find("Waiting: ") + 9);
+    header_recv.erase(header_recv.find("\n") - 1, std::string::npos);
     return(header_recv);
 }
 
@@ -366,7 +370,7 @@ void SipManager::add_friend_header(std::string header_recv)
 {
     auto hdr = std::stringstream();
     std::string friend_username = get_friend_username(header_recv);
-    std::cout << "wesh l'equipe:" << friend_username << std::endl;
+    add_friends(friend_username);
     hdr << "243 ADD_FRIEND\r\n" << hostname << "@" << ip << ":" << port;
     hdr << "\r\nVia: " << server_ip << ":" << port_server;
     hdr << "\r\nFrom: \"" << username << "\" <sip:" << username << "@" << ip << ">;tag=" << tag_cli;
@@ -413,7 +417,7 @@ std::stringstream SipManager::notify_header(char *old_request)
     auto ss = std::stringstream();
     std::string request = convertToString(old_request);
  
-    std::cout << ss.str() << std::endl;
+    //std::cout << ss.str() << std::endl;
     return (ss);
 }
 */
