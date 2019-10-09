@@ -26,7 +26,7 @@ void AsyncSession::run() {
     connect(this, SIGNAL(RegisterRequested()), &session, SLOT(Register()));
     connect(this, SIGNAL(UpdateRequested()), &session, SLOT(Update()));
     connect(this, SIGNAL(InfoRequested()), &session, SLOT(Info()));
-    connect(this, SIGNAL(AddFriendRequested(const ContactDetails)), &session, SLOT(AddFriend(const ContactDetails)));
+    connect(this, SIGNAL(AddFriendRequested(const std::string)), &session, SLOT(AddFriend(const std::string)));
     /// Response signals
     connect(&session, SIGNAL(RegisterDone()), this, SIGNAL(RegisterDone()));
     connect(&session, SIGNAL(UpdateDone(std::vector<ContactDetails>)), this, SIGNAL(UpdateDone(std::vector<ContactDetails>)));
