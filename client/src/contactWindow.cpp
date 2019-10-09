@@ -44,7 +44,7 @@ ContactWindow::~ContactWindow()
 
 void ContactWindow::quitter()
 {
-    this->~ContactWindow();
+    this->hide();
 }
 
 void ContactWindow::addContact()
@@ -77,8 +77,8 @@ void ContactWindow::centerAndResize()
 
 void ContactWindow::fillList(std::vector<ContactDetails> details)
 {
-    qDebug() << "it fckng work";
     std::vector<ContactDetails>::const_iterator it;
+    contactList->clear();
     for (it = details.begin(); it != details.end(); it++) {
         std::cout << "New Contact : " << it->name;
         contactList->addItem(QString::fromStdString(it->name));

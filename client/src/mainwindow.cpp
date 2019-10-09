@@ -9,6 +9,7 @@
 // Constructor for main widget
 MainWindow::MainWindow(QWidget *parent): QWidget(parent), registerOk(false)
 {
+
    //Settings
    settings_ = new UISettings();
 
