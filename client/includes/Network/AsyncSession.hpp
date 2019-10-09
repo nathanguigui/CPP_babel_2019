@@ -19,9 +19,11 @@ public:
     /// Async Register request
     void asyncRegister();
     /// Async AddFriend request
-    void asyncAddFriend(const std::string &name);
+    void asyncAddFriend(const ContactDetails details);
     /// Async Update request
     void asyncUpdate();
+    /// Async Info request
+    void asyncInfo();
 signals:
     /// Signal with worker thread
     void RegisterRequested();
@@ -32,9 +34,13 @@ signals:
     /// Signal to tell auth completed
     void UpdateDone(std::vector<ContactDetails>);
     /// Signal with worker thread
-    void AddFriendRequested(const std::string &name);
+    void AddFriendRequested(const ContactDetails details);
     /// Signal to tell AddFriend succeed
-    void AddFriendDone(const std::string &name);
+    void AddFriendDone(const ContactDetails details);
+    /// Signal with worker thread
+    void InfoRequested();
+    /// Signal to tell Info succeed
+    void InfoDone(std::vector<ContactDetails>);
 
 protected:
     void run() override;

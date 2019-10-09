@@ -67,10 +67,12 @@ public slots:
     void Subscribe();
     /// Send Update Request to get the list of all contacts
     void Update();
+    /// Send Info Request to get the list of all friends
+    void Info();
     /// Send message with Message Request to contact
     void sendMessage(const std::string &message, const std::string &target);
     /// Send AddFriend Request to add a friend
-    void AddFriend(const std::string& name);
+    void AddFriend(const ContactDetails details);
 
 signals:
     /// Signal to tell auth completed
@@ -79,6 +81,8 @@ signals:
     void AddFriendDone(const std::string &name);
     /// Signal to tell Update completed
     void UpdateDone(std::vector<ContactDetails>);
+    /// Signal to tell Info completed
+    void InfoDone(std::vector<ContactDetails>);
 
 public:
     const std::string &getUsername() const;
@@ -86,7 +90,7 @@ public:
     TcpNetwork * getTcpNetwork() const;
 
     static void manageSipParsing(std::string input, SessionManager *session);
-    /// Return true if User is registred
+    /// Return true if User is registered
     bool isRegisterOk() const;
     /// Return the list of all contact present in the server
     const std::vector<ContactDetails> &getAllContacts() const;

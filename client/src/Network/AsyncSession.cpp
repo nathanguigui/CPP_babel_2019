@@ -13,8 +13,8 @@ void AsyncSession::asyncRegister() {
     emit RegisterRequested();
 }
 
-void AsyncSession::asyncAddFriend(const std::string &name) {
-    emit AddFriendRequested(name);
+void AsyncSession::asyncAddFriend(const ContactDetails details) {
+    emit AddFriendRequested(details);
 }
 
 void AsyncSession::run() {
@@ -25,10 +25,12 @@ void AsyncSession::run() {
     /// Requests signals
     connect(this, SIGNAL(RegisterRequested()), &session, SLOT(Register()));
     connect(this, SIGNAL(UpdateRequested()), &session, SLOT(Update()));
-    connect(this, SIGNAL(AddFriendRequested(const std::string &)), &session, SLOT(AddFriend(const std::string &)));
+    connect(this, SIGNAL(InfoRequested()), &session, SLOT(Info()));
+    connect(this, SIGNAL(AddFriendRequested(const ContactDetails)), &session, SLOT(AddFriend(const ContactDetails)));
     /// Response signals
     connect(&session, SIGNAL(RegisterDone()), this, SIGNAL(RegisterDone()));
     connect(&session, SIGNAL(UpdateDone(std::vector<ContactDetails>)), this, SIGNAL(UpdateDone(std::vector<ContactDetails>)));
+    connect(&session, SIGNAL(InfoDone(std::vector<ContactDetails>)), this, SIGNAL(InfoDone(std::vector<ContactDetails>)));
     this->m_ready = true;
     this->exec();
 }
@@ -46,4 +48,8 @@ void AsyncSession::delayRun(std::string &host, int port, std::string username, s
     this->start();
     while (!this->m_ready)
         msleep(50);
+}
+
+void AsyncSession::asyncInfo() {
+    emit InfoRequested();
 }
