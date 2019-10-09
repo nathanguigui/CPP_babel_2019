@@ -13,8 +13,8 @@ void AsyncSession::asyncRegister() {
     emit RegisterRequested();
 }
 
-void AsyncSession::asyncAddFriend(const ContactDetails details) {
-    emit AddFriendRequested(details);
+void AsyncSession::asyncAddFriend(const std::string &name) {
+    emit AddFriendRequested(name);
 }
 
 void AsyncSession::run() {

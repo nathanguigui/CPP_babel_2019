@@ -72,7 +72,7 @@ public slots:
     /// Send message with Message Request to contact
     void sendMessage(const std::string &message, const std::string &target);
     /// Send AddFriend Request to add a friend
-    void AddFriend(const ContactDetails details);
+    void AddFriend(const std::string &name);
 
 signals:
     /// Signal to tell auth completed

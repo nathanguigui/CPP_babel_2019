@@ -19,7 +19,7 @@ public:
     /// Async Register request
     void asyncRegister();
     /// Async AddFriend request
-    void asyncAddFriend(const ContactDetails details);
+    void asyncAddFriend(const std::string &name);
     /// Async Update request
     void asyncUpdate();
     /// Async Info request
@@ -34,7 +34,7 @@ signals:
     /// Signal to tell auth completed
     void UpdateDone(std::vector<ContactDetails>);
     /// Signal with worker thread
-    void AddFriendRequested(const ContactDetails details);
+    void AddFriendRequested(const std::string &name);
     /// Signal to tell AddFriend succeed
     void AddFriendDone(const ContactDetails details);
     /// Signal with worker thread

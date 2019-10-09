@@ -118,7 +118,7 @@ void SessionManager::Update() {
     this->udpNetwork->sendData(this->createSipPacket(params));
 }
 
-void SessionManager::AddFriend(const ContactDetails details) {
+void SessionManager::AddFriend(const std::string &name) {
     auto requestLine = std::stringstream();
     requestLine << "ADD_FRIEND sip:" << host << " SIP/2.0\r\n";
     auto CSeq = std::stringstream();
@@ -126,7 +126,7 @@ void SessionManager::AddFriend(const ContactDetails details) {
     auto recipientUri = std::stringstream();
     recipientUri << getUsername() << "@" << host << ":" << port;
     auto content = std::stringstream();
-    content << "Message_Waiting: " << details.name;
+    content << "Message_Waiting: " << name.name;
     SipParams params = {requestLine.str(), CSeq.str(), content.str(), getUsername(), recipientUri.str()};
     this->pendingRequest = ADD_FRIEND;
     this->udpNetwork->sendData(this->createSipPacket(params));
