@@ -24,6 +24,8 @@ public:
     void asyncUpdate();
     /// Async Info request
     void asyncInfo();
+    /// Async Bye request
+    void asyncBye();
 signals:
     /// Signal with worker thread
     void RegisterRequested();
@@ -41,6 +43,8 @@ signals:
     void InfoRequested();
     /// Signal to tell Info succeed
     void InfoDone(std::vector<ContactDetails>);
+    /// Signal with worker thread
+    void ByeRequested();
 
 protected:
     void run() override;
