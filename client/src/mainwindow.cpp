@@ -101,6 +101,7 @@ MainWindow::~MainWindow()
    delete button_call_;
    delete list_messages_;
    delete list_;
+   this->asyncSession.quit();
 }
 
 void MainWindow::setName(QListWidgetItem *item)

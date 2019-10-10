@@ -165,6 +165,8 @@ void SessionManager::analyzeParsedMessage(SipParsedMessage &parsedMessage) {
         if (parsedMessage.status == 242) {
             this->parseAllContact(parsedMessage);
             return;
+        } if (parsedMessage.status == 420) {
+            this->parseAllFriends(parsedMessage);
         }
     }
 }
@@ -174,10 +176,10 @@ void SessionManager::handleRegister(SipParsedMessage &parsedMessage) {
         return;
     if (parsedMessage.status == 200) {
         this->registerOk = true;
+        this->Info();
         qDebug() << "regiter ok \n";
         emit RegisterDone();
         this->pendingRequest = NONE;
-        //this->Subscribe();
     }
 }
 
@@ -196,30 +198,8 @@ void SessionManager::parseMultiplePacket(const std::string multiplePacket) {
 }
 
 void SessionManager::parseAllContact(SipParsedMessage &parsedMessage) {
-    this->getMessageContent(parsedMessage);
-    std::vector<std::string> potentialUser;
-    std::vector<std::string> tmpInfos;
-    std::vector<ContactDetails> newAllContacts;
-    int tmpStatus = 0;
-    boost::split(potentialUser, parsedMessage.content, boost::is_any_of(","));
-    for (const auto &elem : potentialUser) {
-        boost::split(tmpInfos, elem, boost::is_any_of(";"));
-        if (tmpInfos.size() == 3) {
-            try {
-                tmpStatus = std::stoi(tmpInfos[2]);
-                newAllContacts.push_back({tmpInfos[0], tmpInfos[1], tmpStatus != 0});
-            } catch (std::invalid_argument) {
-                continue;
-            }
-        }
-    }
-    qDebug() << "Found " << newAllContacts.size() << "contacts\n";
-    for (const auto &contact : newAllContacts) {
-        qDebug() << contact.name.c_str() << " ";
-    }
-    qDebug() << "\n";
-    this->allContacts = newAllContacts;
-    emit UpdateDone(newAllContacts);
+    this->parseContactMessage(parsedMessage, UPDATE);
+    emit UpdateDone(this->allContacts);
 }
 
 void SessionManager::getMessageContent(SipParsedMessage &parsedMessage) {
@@ -251,4 +231,50 @@ void SessionManager::Info() {
     SipParams params = {requestLine.str(), CSeq.str(), "", getUsername(), recipientUri.str()};
     this->pendingRequest = INFO;
     this->udpNetwork->sendData(this->createSipPacket(params));
+}
+
+void SessionManager::Bye() {
+    auto requestLine = std::stringstream();
+    requestLine << "BYE sip:" << host << " SIP/2.0\r\n";
+    auto CSeq = std::stringstream();
+    CSeq << "CSeq: BYE\r\n";
+    auto recipientUri = std::stringstream();
+    recipientUri << getUsername() << "@" << host << ":" << port;
+    SipParams params = {requestLine.str(), CSeq.str(), "", getUsername(), recipientUri.str()};
+    this->pendingRequest = BYE;
+    this->udpNetwork->sendData(this->createSipPacket(params));
+}
+
+void SessionManager::parseContactMessage(SipParsedMessage &parsedMessage, RequestType requestType) {
+    this->getMessageContent(parsedMessage);
+    std::vector<std::string> potentialUser;
+    std::vector<std::string> tmpInfos;
+    std::vector<ContactDetails> newAllContacts;
+    int tmpStatus = 0;
+    boost::split(potentialUser, parsedMessage.content, boost::is_any_of(","));
+    for (const auto &elem : potentialUser) {
+        boost::split(tmpInfos, elem, boost::is_any_of(";"));
+        if (tmpInfos.size() == 3) {
+            try {
+                tmpStatus = std::stoi(tmpInfos[2]);
+                newAllContacts.push_back({tmpInfos[0], tmpInfos[1], tmpStatus != 0});
+            } catch (std::invalid_argument) {
+                continue;
+            }
+        }
+    }
+    qDebug() << "Found " << newAllContacts.size() << "contacts\n";
+    for (const auto &contact : newAllContacts) {
+        qDebug() << contact.name.c_str() << " ";
+    }
+    qDebug() << "\n";
+    if (requestType == UPDATE)
+        this->allContacts = newAllContacts;
+    else if (requestType == INFO)
+        this->allFriends = newAllContacts;
+}
+
+void SessionManager::parseAllFriends(SipParsedMessage &parsedMessage) {
+    this->parseContactMessage(parsedMessage, UPDATE);
+    emit UpdateDone(this->allContacts);
 }

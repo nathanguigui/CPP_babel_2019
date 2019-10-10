@@ -73,6 +73,8 @@ public slots:
     void sendMessage(const std::string &message, const std::string &target);
     /// Send AddFriend Request to add a friend
     void AddFriend(const std::string &name);
+    /// Send Bye Request to tell server the client will disconnect
+    void Bye();
 
 signals:
     /// Signal to tell auth completed
@@ -104,7 +106,9 @@ private:
     void analyzeParsedMessage(SipParsedMessage &parsedMessage);
     void handleRegister(SipParsedMessage &parsedMessage);
     void parseMultiplePacket(const std::string multiplePacket);
+    void parseContactMessage(SipParsedMessage &parsedMessage, RequestType requestType);
     void parseAllContact(SipParsedMessage &parsedMessage);
+    void parseAllFriends(SipParsedMessage &parsedMessage);
     std::string createSipPacket(SipParams &params);
     std::string getConnectedInterface();
     TcpNetwork *udpNetwork;

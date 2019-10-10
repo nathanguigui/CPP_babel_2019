@@ -52,7 +52,6 @@ void ContactWindow::addContact()
 {
     if (contactChosen != NULL) {
         mainwindow->asyncSession.asyncAddFriend(contactChosen.toStdString());
-        mainwindow->asyncSession.asyncInfo();
         QListWidgetItem *it = contactList->takeItem(contactList->currentRow());
         mainwindow->addNewContact(contactChosen.toStdString(), "1.1.1.1", true);
         delete it;
