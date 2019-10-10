@@ -99,6 +99,7 @@ MainWindow::~MainWindow()
    delete list_messages_;
    delete list_;
    this->asyncSession.quit();
+   this->asyncSession.asyncBye();
 }
 
 void MainWindow::setName(QListWidgetItem *item)
@@ -276,7 +277,6 @@ void MainWindow::launchSplashScreen()
    processLabel->setMovie(splash);
    processLabel->show();
    splash->start();
-   //QTimer::singleShot(3500, sound, SLOT(close()));
    QTimer::singleShot(3500, processLabel, SLOT(close()));
    QTimer::singleShot(0, this, SLOT(show()));
 }
