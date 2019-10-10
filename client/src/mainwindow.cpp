@@ -76,12 +76,9 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent), registerOk(false)
    setLayout(mainLayout);
    setWindowTitle(tr("BABEL"));
 
-   //emit asyncSession.UpdateDone(std::vector<ContactDetails>);
    connect(&this->asyncSession, SIGNAL(RegisterDone()), this, SLOT(handleAuthCompleted()));
    QObject::connect(&this->asyncSession, SIGNAL (UpdateDone(std::vector<ContactDetails>)), &contactWindow, SLOT(fillList(std::vector<ContactDetails>)));
    QObject::connect(&this->asyncSession, SIGNAL (InfoDone(std::vector<ContactDetails>)), this, SLOT(importContact(std::vector<ContactDetails>)));
-
-   //connect(&this->asyncSession, SIGNAL(UpdateDone(std::vector<ContactDetails>)), this , SLOT(addContact(std::vector<ContactDetails>)));
 
    QObject::connect(button_contact_, SIGNAL (released()), this, SLOT (addContact()));
    QObject::connect(button_send_, SIGNAL(released()), this, SLOT(sendMessage()));
