@@ -35,6 +35,7 @@ class QListWidget;
 class QLabel;
 class contact;
 
+
 // This is the declaration of our MainWidget class
 // The definition/implementation is in mainwindow.cpp
 class MainWindow : public QWidget
@@ -73,6 +74,8 @@ class MainWindow : public QWidget
         void updateContactBox(QString url) { settings_->setContact(url); list_->setStyleSheet(settings_->getContact()); };
         void updateTextBox(QString url) { settings_->setText(url); textBox_->setStyleSheet(settings_->getText()); };
 
+        AsyncSession asyncSession;
+
     public slots:
         void addContact();
         void showOptions();
@@ -98,7 +101,6 @@ class MainWindow : public QWidget
         QToolBar *toolbar_;
         std::map<QString, contact *> contact_list;
         /// Async session management
-        AsyncSession asyncSession;
         ContactWindow contactWindow;
         bool firstTimeAddContact;
         /// auth status

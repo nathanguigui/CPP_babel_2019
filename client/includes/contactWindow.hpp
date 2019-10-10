@@ -35,6 +35,7 @@ class QListWidget;
 class QStringList;
 
 Q_DECLARE_METATYPE(std::vector<ContactDetails>);
+Q_DECLARE_METATYPE(std::string);
 //Q_DECLARE_METATYPE(std::vector<ContactDetails>);
 
 

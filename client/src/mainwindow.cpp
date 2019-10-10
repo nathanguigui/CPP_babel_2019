@@ -9,6 +9,7 @@
 // Constructor for main widget
 MainWindow::MainWindow(QWidget *parent): QWidget(parent), registerOk(false)
 {
+   qRegisterMetaType<std::vector<ContactDetails>>("stdVectorContact");
 
    //Settings
    settings_ = new UISettings();
@@ -78,6 +79,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent), registerOk(false)
    //emit asyncSession.UpdateDone(std::vector<ContactDetails>);
    connect(&this->asyncSession, SIGNAL(RegisterDone()), this, SLOT(handleAuthCompleted()));
    QObject::connect(&this->asyncSession, SIGNAL (UpdateDone(std::vector<ContactDetails>)), &contactWindow, SLOT(fillList(std::vector<ContactDetails>)));
+   QObject::connect(&this->asyncSession, SIGNAL (InfoDone(std::vector<ContactDetails>)), this, SLOT(importContact(std::vector<ContactDetails>)));
 
    //connect(&this->asyncSession, SIGNAL(UpdateDone(std::vector<ContactDetails>)), this , SLOT(addContact(std::vector<ContactDetails>)));
 
@@ -143,6 +145,7 @@ void MainWindow::addNewContact(std::string login, std::string ip, bool state) {
 
 QString MainWindow::launchlogin()
 {
+   this->asyncSession.asyncInfo();
    QInputDialog *log = new QInputDialog(this);
    log->setLabelText(tr("Enter login: "));
    log->setWindowTitle(tr("Login"));
