@@ -23,12 +23,10 @@ enum request_types {
     UPDATE = 11,
     ADD_FRIEND = 12,
 };
-struct SipParsedMessage {
-  //  MessageType type;
-    std::string request;
-    std::string packet;
-    int status;
-    std::string content;
+struct Friend_Data_Struct{
+    std::string uname;
+    std::string ip_address;
+    std::string status;
 };
 
 class SipManager {
@@ -44,6 +42,7 @@ class SipManager {
         void get_friends(std::string _username);
         void get_all_data_from_db();
         void parsePacket(std::string request);
+        void get_friends_data();
         request_types get_request_types_request(std::string request);
         std::string get_IP_in_request(std::string request);
         std::string get_username_request(std::string request);
@@ -57,9 +56,11 @@ class SipManager {
         void OK_header();
         void notify_header(std::string message);
         void update_header();
+        void info_header();
         void add_friend_header(std::string hearder_recv);
         std::vector<std::string> my_friends;
         std::string response_header;
+        
         std::vector<request_types> get_request_types(){return types;}
         std::string get_ip() {return ip;}
         std::string get_username() {return username;}

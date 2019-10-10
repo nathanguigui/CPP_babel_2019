@@ -96,8 +96,7 @@ int parse_all_data(void *data, int argc, char **argv, char **azColName)
             buff = buff + convertToString(argv[i + 2]);
             my_manager->my_friends.push_back(buff);
         }
-        i = i 
-        + 3;
+        i = i + 3;
     }
     return 0; 
 }
@@ -116,9 +115,8 @@ int parse_friends(void *data, int argc, char **argv, char **azColName)
     std::string buff;
     if (argc >= 1) {
         buff = convertToString(argv[argc - 1]);
-        std::cout << buff <<std::endl;
         //std::cout << buff << "<- Buffer\n";
-        boost::split(my_manager->my_friends, buff, boost::is_any_of(" "));
+        boost::split(my_manager->my_friends, buff, boost::is_any_of(";"));
     }
     return 0;
 }
@@ -137,6 +135,33 @@ void SipManager::get_friends(std::string _username)
 int handler_add_friends(void *data, int argc, char **argv, char **azColName)
 {}
 
+int return_data_friends(void *data, int argc, char **argv, char **azColName)
+{
+    
+}
+void SipManager::get_friends_data()
+{
+    int i = 0;
+    char *data;
+    char *zErrMsg = 0;
+    std::cout << username << std::endl;
+    get_friends(username);
+    std::string sql_request = "SELECT username, ip, state FROM user_db\nWHERE ";
+    std::cout << sql_request << std::endl;
+    if (my_friends.size() >= 2) {
+        for (i = 0; i < my_friends.size() - 2; i++) {
+            sql_request = sql_request + "username == \"";
+            sql_request = sql_request + my_friends[i];
+            sql_request = sql_request + "\" or ";
+        }
+        sql_request = sql_request + "username == \"";
+        sql_request = sql_request + my_friends[i];
+        sql_request = sql_request + "\"";
+    }
+    my_friends.clear();
+    sqlite3_exec(_database, sql_request.c_str(), parse_all_data, this,&zErrMsg);
+}
+
 int SipManager::add_friends(std::string friend_username)
 {
     char *data; 
@@ -146,9 +171,9 @@ int SipManager::add_friends(std::string friend_username)
     my_friends.push_back(friend_username);
     std::string sql_request = "UPDATE user_db SET friend=\"";
     for (int i = 0; i < my_friends.size(); i++) {
-        ////std::cout << "Myfriends " << i << "[" << my_friends[i] << "]" << std::endl;
         sql_request = sql_request + my_friends[i];
-        sql_request = sql_request + " ";
+        if (i != 0)
+            sql_request = sql_request + ";";
     }
     sql_request = sql_request + "\"";
     sql_request = sql_request + "WHERE username==\"";
@@ -162,13 +187,14 @@ int SipManager::add_friends(std::string friend_username)
     sql_request = "UPDATE user_db SET friend=\"";
     for (int i = 0; i < my_friends.size(); i++) {
         sql_request = sql_request + my_friends[i];
-        sql_request = sql_request + " ";
+        std::cout << my_friends[i] << std::endl;
+        if (i != 0)
+            sql_request = sql_request + ";";
     }
     sql_request = sql_request + "\"";
     sql_request = sql_request + "WHERE username==\"";
     sql_request = sql_request + friend_username;
     sql_request = sql_request + "\"";
-//    ////std::cout << sql_request << "Request Send to add FOR MY FRIEnD\n";
     sqlite3_exec(_database, sql_request.c_str(), handler_add_friends, this,&zErrMsg);
     get_friends(username);
 }
@@ -212,7 +238,6 @@ void SipManager::parse_header(const std::string request)
 {
     std::vector<std::string> lines;
     std::vector<std::string> tmp;
-    //SipParsedMessage receivedMessage = {UNKNOWN, "", multiplePacket, -1, ""};
     boost::split(lines, request, boost::is_any_of("\t"));
     for (const auto& elem : lines)
         !elem.empty() ? this->parsePacket(elem) : void();
@@ -377,6 +402,27 @@ void SipManager::add_friend_header(std::string header_recv)
     hdr <<  "\r\nTo: <" << hostname << "@" << server_ip << ">";
     hdr << "\r\nContact: <sip:" << username <<"@" << server_ip; ">";
     hdr << "\r\nCSeq: 243 ADD_FRIEND";
+    response_header = hdr.str();
+}
+
+void SipManager::info_header()
+{
+    int i = 0;
+    auto hdr = std::stringstream();
+    get_friends_data();
+    hdr << "420 INFO\r\n" << hostname << "@" << ip << ":" << port;
+    hdr << "\r\nVia: " << server_ip << ":" << port_server;
+    hdr << "\r\nFrom: \"" << username << "\" <sip:" << username << "@" << ip << ">;tag=" << tag_cli;
+    hdr <<  "\r\nTo: <" << hostname << "@" << server_ip << ">";
+    hdr << "\r\nContact: <sip:" << username <<"@" << server_ip; ">";
+    hdr << "\r\nCSeq: 420 INFO";
+    hdr << "\r\nMessage_Waiting: ";
+    for (i = 0; i < my_friends.size() - 1; i++) {
+        hdr << my_friends[i] << ","; 
+    }
+    hdr << my_friends[i]; 
+    hdr << "\r\n";
+    my_friends.clear();
     response_header = hdr.str();
 }
 

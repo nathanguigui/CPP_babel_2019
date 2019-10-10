@@ -96,6 +96,7 @@ void connection_handler::reply_to_msg(std::string header)
         header_manager.get_request_types().pop_back();
         start();
     } if (header_manager.get_request_types()[header_manager.get_request_types().size() - 1] == request_types::SUBSCRIBE) {
+        std::cout << header_manager.get_request_types()[header_manager.get_request_types().size() - 1] << std::endl;
         header_manager.notify_header("Connected");
         send_it();
         header_manager.OK_header();
@@ -113,7 +114,8 @@ void connection_handler::reply_to_msg(std::string header)
         header_manager.get_request_types().pop_back();
         start();
     } if (header_manager.get_request_types()[header_manager.get_request_types().size() - 1] == request_types::INFO) {
-        std::cout << "Need to return all friends to the client\n" << std::endl;
+        header_manager.info_header();
+        send_it();
         header_manager.get_request_types().pop_back();
         start();
     }
