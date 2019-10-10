@@ -77,6 +77,7 @@ class MainWindow : public QWidget
         AsyncSession asyncSession;
 
     public slots:
+        void reload();
         void addContact();
         void showOptions();
         void call();

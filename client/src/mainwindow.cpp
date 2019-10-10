@@ -31,7 +31,8 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent), registerOk(false)
    contact_name_ = new QLabel();
 
    QAction *quitter = new QAction("&Quit", this);
-   QAction *deconnexion = new QAction("&Disconnect", this);
+    QAction *deconnexion = new QAction("&Disconnect", this);
+    QAction *reload = new QAction("&Reload", this);
    QAction *options = new QAction("&Options", this);
 
 
@@ -39,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent), registerOk(false)
    toolbar_ = new QToolBar();
    toolbar_->addAction(options);
    toolbar_->addAction(deconnexion);
+   toolbar_->addAction(reload);
    toolbar_->addAction(quitter);
    toolbar_->setOrientation(Qt::Horizontal);
    QBoxLayout *toolLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
@@ -49,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent), registerOk(false)
 
    connect(quitter, &QAction::triggered, this, &QApplication::quit);
    connect(deconnexion, &QAction::triggered, this, &MainWindow::launchlogin);
+   connect(reload, &QAction::triggered, this, &MainWindow::reload);
    connect(options, &QAction::triggered, this, &MainWindow::showOptions);
 
    QGridLayout *mainLayout = new QGridLayout;
@@ -103,6 +106,11 @@ void MainWindow::setName(QListWidgetItem *item)
    qDebug() << "Login = " << item->text();
    contact_name_->setText(item->text());
    printAllMessages();
+}
+
+void MainWindow::reload()
+{
+    asyncSession.asyncInfo();
 }
 
 void MainWindow::importContact(std::vector<ContactDetails> details)

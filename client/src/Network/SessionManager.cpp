@@ -276,5 +276,5 @@ void SessionManager::parseContactMessage(SipParsedMessage &parsedMessage, Reques
 
 void SessionManager::parseAllFriends(SipParsedMessage &parsedMessage) {
     this->parseContactMessage(parsedMessage, UPDATE);
-    emit UpdateDone(this->allContacts);
+    emit InfoDone(this->allContacts);
 }
