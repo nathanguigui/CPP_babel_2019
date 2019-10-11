@@ -26,6 +26,7 @@
 #include "Network/AsyncSession.hpp"
 #include "Network/SERVER_IP.hpp"
 #include "contact.hpp"
+#include "callWindow.hpp"
 
 
 class QTextEdit;

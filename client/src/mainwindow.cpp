@@ -6,6 +6,7 @@
 #include "mainWindow.hpp"
 #include "Network/SessionManager.hpp"
 #include "CallManagement/CallManager.hpp"
+#include "callWindow.hpp"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -273,9 +274,13 @@ void MainWindow::call()
 	CallManager *callManager = new CallManager(this->asyncSession);
 	std::string tmp = contact_name_->text().toStdString();
 	callManager->makeCall(tmp);
-    contact_list.find(contact_name_->text())->second->addMessage("Ceci est un message test envoyé",1);
-    updateMessage();
-	incomingCall(contact_name_->text().toStdString());
+	CallWindow *callWindow = new CallWindow();
+	callWindow->setMainWindow(this);
+	callWindow->centerAndResize();
+	callWindow->show();
+    //contact_list.find(contact_name_->text())->second->addMessage("Ceci est un message test envoyé",1);
+    //updateMessage();
+	//incomingCall(contact_name_->text().toStdString());
     qDebug() << "make a call";
 }
 

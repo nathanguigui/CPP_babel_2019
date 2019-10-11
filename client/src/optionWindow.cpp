@@ -3,7 +3,6 @@
 //
 
 #include "optionWindow.hpp"
-#include "mainWindow.hpp"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
