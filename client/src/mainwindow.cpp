@@ -5,6 +5,7 @@
 #include <client/includes/Network/SERVER_IP.hpp>
 #include "mainWindow.hpp"
 #include "Network/SessionManager.hpp"
+#include "CallManagement/CallManager.hpp"
 
 /// Constructor for main widget
 MainWindow::MainWindow(QWidget *parent): QWidget(parent), registerOk(false)
@@ -120,8 +121,13 @@ void MainWindow::importContact(std::vector<ContactDetails> details)
     qDebug() << "Import Contact";
     for (it = details.begin(); it != details.end(); it++) {
         qDebug() << "New Contact : " << QString::fromStdString(it->name);
-        addNewContact(it->name, it->ip, it->connected);
-    }
+		if (contact_list.find(QString::fromStdString(it->name)) == contact_list.end()) {
+        	addNewContact(it->name, it->ip, it->connected);
+		} else {
+			contact_list[QString::fromStdString(it->name)]->setState(it->connected);
+			contact_list[QString::fromStdString(it->name)]->setIp(QString::fromStdString(it->ip));
+		}
+	}
     qDebug() << "End Import";
     setAllContact();
 }
@@ -261,6 +267,9 @@ void MainWindow::call()
 {
    	if (contact_name_->text() == QString::null)
 		return;
+	CallManager *callManager = new CallManager(this->asyncSession);
+	std::string tmp = contact_name_->text().toStdString();
+	callManager->makeCall(tmp);
     contact_list.find(contact_name_->text())->second->addMessage("Ceci est un message test envoyé",1);
     updateMessage();
 	incomingCall(contact_name_->text().toStdString());

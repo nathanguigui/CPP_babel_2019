@@ -68,6 +68,7 @@ class ContactWindow: public QWidget
         UISettings *settings_;
 
         QString contactChosen;
+        bool state;
 
         AsyncSession asyncSession;
 
