@@ -7,6 +7,9 @@
 #include "Network/SessionManager.hpp"
 #include "CallManagement/CallManager.hpp"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 /// Constructor for main widget
 MainWindow::MainWindow(QWidget *parent): QWidget(parent), registerOk(false)
 {
@@ -354,3 +357,5 @@ void MainWindow::handleAuthCompleted() {
     auto tmp = std::string("auth detected in mainwond\n");
     qDebug() << tmp.c_str();
 }
+
+#pragma GCC diagnostic pop

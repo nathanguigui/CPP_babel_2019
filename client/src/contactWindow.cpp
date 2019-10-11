@@ -6,6 +6,9 @@
 #include "mainWindow.hpp"
 #include "optionWindow.hpp"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 ContactWindow::ContactWindow(QWidget *parent): QWidget(parent)
 {
     qRegisterMetaType<std::vector<ContactDetails>>("stdVectorContact");
@@ -93,3 +96,4 @@ void ContactWindow::contactClicked(QListWidgetItem *item)
     contactChosen = item->text();
 }
 
+#pragma GCC diagnostic pop

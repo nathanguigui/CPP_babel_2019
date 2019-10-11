@@ -5,6 +5,9 @@
 #include "optionWindow.hpp"
 #include "mainWindow.hpp"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 OptionWindow::OptionWindow(QWidget *parent): QWidget(parent)
 {
    settings_ = new UISettings();
@@ -271,3 +274,5 @@ void OptionWindow::colorAdd()
       QString qss = QString("background-color: %1;border: 1px solid black; border-radius: 10px; height: 40px; color: white; font-weight: bold;").arg(color.name());
    }
 }
+
+#pragma GCC diagnostic pop
