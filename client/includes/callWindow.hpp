@@ -22,8 +22,9 @@
 #include <QAction>
 #include <QApplication>
 #include <QColorDialog>
-#include "mainWindow.hpp"
 #include "UISettings.hpp"
+//#include "callThread.hpp"
+#include "mainWindow.hpp"
 
 class QPushButton;
 class QTextBrowser;
@@ -39,8 +40,12 @@ class CallWindow: public QWidget
         void centerAndResize();
         int width;
         int height;
+    
+    signals:
+        void endCall();
 
     public slots:
+        void setWindow();
         void quitter();
 
     private:

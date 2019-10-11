@@ -9,6 +9,10 @@
 
 CallWindow::CallWindow(QWidget *parent): QWidget(parent)
 {
+}
+
+void CallWindow::setWindow()
+{
     button_quit = new QPushButton("End call", this);
     picture = new QTextBrowser();
 
@@ -28,12 +32,13 @@ CallWindow::CallWindow(QWidget *parent): QWidget(parent)
 
 CallWindow::~CallWindow()
 {
+    emit endCall();
     delete button_quit;
-}
+}   
 
 void CallWindow::quitter()
 {
-   this->~CallWindow();
+    this->~CallWindow();
 }
 
 void CallWindow::centerAndResize()
