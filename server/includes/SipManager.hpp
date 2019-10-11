@@ -8,7 +8,6 @@
 #include <stack>
 #include <boost/algorithm/string.hpp> 
 
-
 enum request_types {
     INVITE = 1,
     ACK = 2,
@@ -22,11 +21,6 @@ enum request_types {
     MESSAGE = 10,
     UPDATE = 11,
     ADD_FRIEND = 12,
-};
-struct Friend_Data_Struct{
-    std::string uname;
-    std::string ip_address;
-    std::string status;
 };
 
 class SipManager {
@@ -43,6 +37,7 @@ class SipManager {
         void get_all_data_from_db();
         void parsePacket(std::string request);
         void get_friends_data();
+        void change_state();
         request_types get_request_types_request(std::string request);
         std::string get_IP_in_request(std::string request);
         std::string get_username_request(std::string request);
@@ -57,12 +52,14 @@ class SipManager {
         void notify_header(std::string message);
         void update_header();
         void info_header();
+        void invite_header(std::string);
         void add_friend_header(std::string hearder_recv);
         std::vector<std::string> my_friends;
         std::string response_header;
         
         std::vector<request_types> get_request_types(){return types;}
         std::string get_ip() {return ip;}
+        std::string get_server_ip() {return server_ip;}
         std::string get_username() {return username;}
         std::string get_hostname() {return hostname;}
         std::string get_port() {return port;}

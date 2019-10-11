@@ -17,6 +17,12 @@ using boost::asio::ip::tcp;
 class connection_manager;
 std::string convertToString(char* a);
 
+struct Call_Data_Struct{
+    std::string uname;
+    std::string port;
+};
+
+
 class connection_handler : public boost::enable_shared_from_this<connection_handler>
 {
     public:
@@ -28,7 +34,7 @@ class connection_handler : public boost::enable_shared_from_this<connection_hand
             {
               // An error occurred.
             }
-}
+        }
         static pointer create(boost::asio::io_service& io_service){return pointer(new connection_handler(io_service));}
         tcp::socket& socket(){return sock;}
         void start();
@@ -41,6 +47,7 @@ class connection_handler : public boost::enable_shared_from_this<connection_hand
         void handle_write_header(const boost::system::error_code& err, size_t bytes_transferred);
         void wait_for_write();
         void send_it();
+        void send_header_to_cli(std::string);
     private:
         SipManager header_manager;
         tcp::socket sock;
@@ -48,6 +55,8 @@ class connection_handler : public boost::enable_shared_from_this<connection_hand
         enum { max_length = 8192};
         char *data;
 };
+extern std::set<connection_handler::pointer> connections_;
+
 
 class connection_manager {
     public:
@@ -56,7 +65,6 @@ class connection_manager {
         void stop(connection_handler::pointer);
         void stop_all();
     private:
-        std::set<connection_handler::pointer> connections_;
 };
 
 
@@ -69,5 +77,5 @@ class Server {
         boost::asio::io_context& io_context_;
         void start_accept();
         connection_manager manager_;
-
+        
 };
