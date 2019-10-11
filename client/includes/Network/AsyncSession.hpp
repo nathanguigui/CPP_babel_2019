@@ -52,7 +52,7 @@ signals:
     /// Signal with worker thread to call people
     void InviteRequested(const std::string &name, int port);
     /// Signal with worker thread to tell invited friend is ringing
-    void InvitedRinging(const std::string &name);
+    void InvitedRinging(const std::string name, const std::string ip, int port);
     /// Signal with worker thread to tell invited friend accepted
     void InvitedAccepted(const std::string &name);
 

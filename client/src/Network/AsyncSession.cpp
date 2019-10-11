@@ -33,6 +33,7 @@ void AsyncSession::run() {
     connect(&session, SIGNAL(RegisterDone()), this, SIGNAL(RegisterDone()));
     connect(&session, SIGNAL(UpdateDone(std::vector<ContactDetails>)), this, SIGNAL(UpdateDone(std::vector<ContactDetails>)));
     connect(&session, SIGNAL(InfoDone(std::vector<ContactDetails>)), this, SIGNAL(InfoDone(std::vector<ContactDetails>)));
+    connect(&session, SIGNAL(InvitedRinging(const std::string, const std::string, int)), this, SIGNAL(InvitedRinging(const std::string, const std::string, int)));
     this->m_ready = true;
     this->exec();
 }

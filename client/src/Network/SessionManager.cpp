@@ -167,6 +167,8 @@ void SessionManager::analyzeParsedMessage(SipParsedMessage &parsedMessage) {
             return;
         } if (parsedMessage.status == 420) {
             this->parseAllFriends(parsedMessage);
+        } if (parsedMessage.status == 567) {
+            this->parseRingPacket(parsedMessage);
         }
     }
 }
@@ -287,8 +289,14 @@ void SessionManager::Invite(const std::string &name, int listeningPort) {
     auto recipientUri = std::stringstream();
     recipientUri << getUsername() << "@" << host << ":" << listeningPort;
     auto content = std::stringstream();
-    content << "Message_Waiting: " << name << ":" << listeningPort;
+    content << "Message_Waiting: " << name << ":" << listeningPort << ";";
     SipParams params = {requestLine.str(), CSeq.str(), content.str(), getUsername(), recipientUri.str()};
     this->pendingRequest = INVITE;
     this->udpNetwork->sendData(this->createSipPacket(params));
+}
+
+void SessionManager::parseRingPacket(SipParsedMessage &parsedMessage) {
+    this->getMessageContent(parsedMessage);
+    qDebug() << parsedMessage.packet.c_str();
+    emit InvitedRinging("", "", 123);
 }

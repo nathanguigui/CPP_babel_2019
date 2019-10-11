@@ -87,6 +87,8 @@ signals:
     void UpdateDone(std::vector<ContactDetails>);
     /// Signal to tell Info completed
     void InfoDone(std::vector<ContactDetails>);
+    /// Signal to tell someone is calling
+    void InvitedRinging(const std::string name, const std::string ip, int port);
 
 public:
     const std::string &getUsername() const;
@@ -111,6 +113,7 @@ private:
     void parseContactMessage(SipParsedMessage &parsedMessage, RequestType requestType);
     void parseAllContact(SipParsedMessage &parsedMessage);
     void parseAllFriends(SipParsedMessage &parsedMessage);
+    void parseRingPacket(SipParsedMessage &parsedMessage);
     std::string createSipPacket(SipParams &params);
     std::string getConnectedInterface();
     TcpNetwork *udpNetwork;
