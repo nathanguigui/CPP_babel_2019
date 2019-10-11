@@ -8,6 +8,8 @@
 #include "Network/AsyncSession.hpp"
 #include "Network/UdpNetwork.hpp"
 
+Q_DECLARE_METATYPE(int)
+
 class CallManager : public QObject {
     Q_OBJECT
 public:

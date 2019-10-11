@@ -10,6 +10,7 @@
 #include <QWidget>
 #include "IProtoNetwork.hpp"
 
+
 enum UdpNetworkMode {
     NO_MODE,
     SERVER,
@@ -45,12 +46,17 @@ public:
 
     UdpNetworkMode getMode() const;
 
+    int getPort() const;
+
+    void startServer();
+
 signals:
     /// Signal to tell to callManager server ready
     void ServerReady(int port);
 
 public slots:
     void readyReadServer();
+    void readyReadClient();
 
 private slots:
     void handleError(int err);

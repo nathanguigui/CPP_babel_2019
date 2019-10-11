@@ -12,18 +12,20 @@ CallManager::CallManager(AsyncSession &session) : session(session) {
 
 void CallManager::makeCall(std::string &name) {
     if (!this->serverInited) {
+        this->awaitInviteName = name;
         this->socket = new UdpNetwork();
-        this->serverInited = true;
         connect(this->socket, SIGNAL(ServerReady(int)), this, SLOT(asyncServerReady(int)));
+        this->socket->startServer();
+        this->serverInited = true;
         this->mode = SERVER;
         this->isAwaitingInvite = true;
-        this->awaitInviteName = name;
+        this->socket = new UdpNetwork();
     } else
         this->session.asyncInvite(name, this->listeningPort);
 }
 
 void CallManager::asyncServerReady(int port) {
     this->listeningPort = port;
+    qDebug() << "recieved signal\r\n";
     this->session.asyncInvite(this->awaitInviteName, port);
-
 }

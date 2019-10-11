@@ -16,9 +16,6 @@ UdpNetwork::UdpNetwork(std::string &host, int port) {
 UdpNetwork::UdpNetwork() {
     this->socket = new QUdpSocket();
     this->mode = SERVER;
-    socket->bind();
-    connect(socket, SIGNAL(readyRead()), this, SLOT(readyReadServer()));
-    emit ServerReady(this->socket->localPort());
 }
 
 UdpNetwork::~UdpNetwork() {
@@ -76,5 +73,39 @@ UdpNetworkMode UdpNetwork::getMode() const {
 }
 
 void UdpNetwork::readyReadServer() {
+    // when data comes in
+    QByteArray buffer;
+    buffer.resize(socket->pendingDatagramSize());
+
+    QHostAddress sender;
+    quint16 senderPort;
+
+    // qint64 QUdpSocket::readDatagram(char * data, qint64 maxSize,
+    //                 QHostAddress * address = 0, quint16 * port = 0)
+    // Receives a datagram no larger than maxSize bytes and stores it in data.
+    // The sender's host address and port is stored in *address and *port
+    // (unless the pointers are 0).
+
+    socket->readDatagram(buffer.data(), buffer.size(),
+                         &sender, &senderPort);
+
+    qDebug() << "Message from: " << sender.toString();
+    qDebug() << "Message port: " << senderPort;
+    qDebug() << "Message: " << buffer;
+}
+
+void UdpNetwork::readyReadClient() {
+    qDebug() << this->socket->readAll();
+}
+
+int UdpNetwork::getPort() const {
+    return port;
+}
+
+void UdpNetwork::startServer() {
+    socket->bind();
+    connect(socket, SIGNAL(readyRead()), this, SLOT(readyReadServer()));
+    this->port = this->socket->localPort();
+    qDebug() << "ServerReady Signal emited\r\n";
     emit ServerReady(this->port);
 }
