@@ -26,9 +26,9 @@ set(CLIENT_SOURCES
     client/src/contactWindow.cpp
     client/src/Network/SessionManager.cpp
     client/src/Network/TcpNetwork.cpp
-    client/src/Network/UdpNetwork.cpp
+        client/src/Network/UdpNetwork.cpp
     client/src/contact.cpp
-    client/src/Network/AsyncSession.cpp)
+    client/src/Network/AsyncSession.cpp client/src/CallManagement/CallManager.cpp)
 
 set(CLIENT_HEADERS
     client/includes/mainWindow.hpp
@@ -37,10 +37,10 @@ set(CLIENT_HEADERS
     client/includes/contactWindow.hpp
     client/includes/Network/SessionManager.hpp
     client/includes/Network/TcpNetwork.hpp
-    client/includes/Network/UdpNetwork.hpp 
+        client/includes/Network/UdpNetwork.hpp
     client/includes/contact.hpp
     client/includes/Network/SERVER_IP.hpp
-    client/includes/Network/AsyncSession.hpp)
+    client/includes/Network/AsyncSession.hpp client/includes/CallManagement/CallManager.hpp)
 
 set(CLIENT_LIBRARIES
     Qt5::Core
