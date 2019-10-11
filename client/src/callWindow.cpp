@@ -17,8 +17,10 @@ CallWindow::CallWindow(QWidget *parent): QWidget(parent)
     mainLayout->addWidget(button_quit, 1, 0);
     mainLayout->addWidget(picture, 0, 0);
 
+    picture->setStyleSheet("border-image: url(/home/luc4s.p/3_modules/CPP/CPP_babel_2019/client/templates/micro.jpg) 0 0 0 0 stretch stretch");
+
     setLayout(mainLayout);
-    setWindowTitle(tr("In Call"));
+    setWindowTitle(tr("Call"));
 
     QObject::connect(button_quit, SIGNAL (released()), this, SLOT (quitter()));
 
@@ -40,8 +42,8 @@ void CallWindow::centerAndResize()
    int width = availableSize.width();
    int height = availableSize.height();
    qDebug() << "dimensions " << width << "x" << height;
-   width *= 0.15;
-   height *= 0.15;
+   width *= 0.08;
+   height *= 0.12;
    qDebug() << "Computed dimensions" << width << "x" << height;
    QSize newSize( width, height );
 
