@@ -10,7 +10,7 @@
 class CallManager {
 public:
     CallManager(AsyncSession &session);
-    void makeCall(std::string &name, int port);
+    void makeCall(std::string &name);
     ~CallManager() = default;
 
 private:

@@ -8,6 +8,6 @@ CallManager::CallManager(AsyncSession &session) : session(session) {
 
 }
 
-void CallManager::makeCall(std::string &name, int port) {
-    this->session.asyncInvite(name, port);
+void CallManager::makeCall(std::string &name) {
+    this->session.asyncInvite(name, 123);
 }
