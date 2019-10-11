@@ -25,20 +25,21 @@ void CallWindow::setWindow()
 
     setLayout(mainLayout);
     setWindowTitle(tr("Call"));
+    show();
 
     QObject::connect(button_quit, SIGNAL (released()), this, SLOT (quitter()));
 
 }
 
-CallWindow::~CallWindow()
-{
-    emit endCall();
-    delete button_quit;
-}   
+//CallWindow::~CallWindow()
+//{
+//    //emit endCall();
+//    delete button_quit;
+//}   
 
 void CallWindow::quitter()
 {
-    this->~CallWindow();
+    emit endCall();
 }
 
 void CallWindow::centerAndResize()

@@ -5,7 +5,7 @@
 #include "callThread.hpp"
 
 callThread::callThread(QObject *parent): m_ready(false) {
-    start();
+    this->start();
     while(!m_ready) msleep(50);
 }
 

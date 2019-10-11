@@ -76,6 +76,7 @@ class MainWindow : public QWidget
         void updateTextBox(QString url) { settings_->setText(url); textBox_->setStyleSheet(settings_->getText()); };
 
         AsyncSession asyncSession;
+        callThread duringCall;
 
     public slots:
         void reload();

@@ -12,7 +12,9 @@ class callThread : public QThread {
     Q_OBJECT
 
     public:
-        callThread(QObject *parent = 0);
+        explicit callThread(QObject *parent = nullptr);
+        ~callThread() override = default;
+        
         void doCall();
 
     signals:

@@ -273,8 +273,8 @@ void MainWindow::call()
 	CallManager *callManager = new CallManager(this->asyncSession);
 	std::string tmp = contact_name_->text().toStdString();
 	callManager->makeCall(tmp);
-	callThread duringCall;
-	connect(&duringCall, SIGNAL(endCall()), &contactWindow, SLOT (quitter()));
+	duringCall.doCall();
+	//connect(&duringCall, SIGNAL(endCall()), &contactWindow, SLOT (quitter()));
 	//CallWindow *callWindow = new CallWindow();
 	//callWindow->setMainWindow(this);
 	//callWindow->centerAndResize();

@@ -34,7 +34,7 @@ class CallWindow: public QWidget
     Q_OBJECT
     public:
         explicit CallWindow(QWidget *parent = 0);
-        ~CallWindow();
+        //~CallWindow();
 
         void setMainWindow(MainWindow *m) { mainwindow = m; };
         void centerAndResize();
