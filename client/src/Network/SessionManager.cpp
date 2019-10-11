@@ -278,3 +278,17 @@ void SessionManager::parseAllFriends(SipParsedMessage &parsedMessage) {
     this->parseContactMessage(parsedMessage, UPDATE);
     emit InfoDone(this->allContacts);
 }
+
+void SessionManager::Invite(const std::string &name, int listeningPort) {
+    auto requestLine = std::stringstream();
+    requestLine << "ADD_FRIEND sip:" << host << " SIP/2.0\r\n";
+    auto CSeq = std::stringstream();
+    CSeq << "CSeq: ADD_FRIEND\r\n";
+    auto recipientUri = std::stringstream();
+    recipientUri << getUsername() << "@" << host << ":" << listeningPort;
+    auto content = std::stringstream();
+    content << "Message_Waiting: " << name << ":" << listeningPort;
+    SipParams params = {requestLine.str(), CSeq.str(), content.str(), getUsername(), recipientUri.str()};
+    this->pendingRequest = ADD_FRIEND;
+    this->udpNetwork->sendData(this->createSipPacket(params));
+}

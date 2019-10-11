@@ -28,6 +28,7 @@ void AsyncSession::run() {
     connect(this, SIGNAL(InfoRequested()), &session, SLOT(Info()));
     connect(this, SIGNAL(AddFriendRequested(const std::string)), &session, SLOT(AddFriend(const std::string)));
     connect(this, SIGNAL(ByeRequested()), &session, SLOT(Bye()));
+    connect(this, SIGNAL(InviteRequested(const std::string, int)), &session, SLOT(Invite(const std::string, int)));
     /// Response signals
     connect(&session, SIGNAL(RegisterDone()), this, SIGNAL(RegisterDone()));
     connect(&session, SIGNAL(UpdateDone(std::vector<ContactDetails>)), this, SIGNAL(UpdateDone(std::vector<ContactDetails>)));
@@ -57,4 +58,8 @@ void AsyncSession::asyncInfo() {
 
 void AsyncSession::asyncBye() {
     emit ByeRequested();
+}
+
+void AsyncSession::asyncInvite(const std::string &name, int port) {
+    emit InviteRequested(name, port);
 }

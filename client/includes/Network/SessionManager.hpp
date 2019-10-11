@@ -75,6 +75,8 @@ public slots:
     void AddFriend(const std::string &name);
     /// Send Bye Request to tell server the client will disconnect
     void Bye();
+    /// Send Invite Request to make call
+    void Invite(const std::string &name, int listeningPort);
 
 signals:
     /// Signal to tell auth completed

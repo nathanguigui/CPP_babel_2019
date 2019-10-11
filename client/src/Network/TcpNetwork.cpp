@@ -56,11 +56,15 @@ std::string TcpNetwork::getConnectedHostWithDomain() const {
 
 std::string TcpNetwork::getLocalHostWithDomain() const {
     const QHostAddress &localhost = QHostAddress(QHostAddress::LocalHost);
-    for (const QHostAddress &address: QNetworkInterface::allAddresses()) {
-    if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost)
-        return (address.toString().toStdString() + ":" + std::to_string(this->socket->localPort()));
+    auto item = QNetworkInterface::allAddresses();
+    std::string tmp = "127.0.0.1:" + std::to_string(this->socket->localPort());
+    for (const QHostAddress &address: item) {
+        if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost) {
+            tmp = address.toString().toStdString() + ":" + std::to_string(this->socket->localPort());
+        }
+        return tmp;
     }
-    return ("127.0.0.1:" + std::to_string(this->socket->localPort()));
+    return tmp;
 }
 
 quint16 TcpNetwork::getLocalPort() const {

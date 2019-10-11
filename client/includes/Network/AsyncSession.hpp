@@ -26,6 +26,9 @@ public:
     void asyncInfo();
     /// Async Bye request
     void asyncBye();
+    /// Async Invite request
+    void asyncInvite(const std::string &name, int port);
+
 signals:
     /// Signal with worker thread
     void RegisterRequested();
@@ -45,6 +48,13 @@ signals:
     void InfoDone(std::vector<ContactDetails>);
     /// Signal with worker thread
     void ByeRequested();
+
+    /// Signal with worker thread to call people
+    void InviteRequested(const std::string &name, int port);
+    /// Signal with worker thread to tell invited friend is ringing
+    void InvitedRinging(const std::string &name);
+    /// Signal with worker thread to tell invited friend accepted
+    void InvitedAccepted(const std::string &name);
 
 protected:
     void run() override;
