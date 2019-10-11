@@ -18,7 +18,7 @@ void callThread::run()
 {
     CallWindow callWindow;
     connect(this, SIGNAL(launchCall()), &callWindow, SLOT (setWindow()));
-    connect(&callWindow, SIGNAL (endCall()), this, SIGNAL (endCall()));
+    connect(&callWindow, SIGNAL (endCall()), this, SLOT (quit()));
     m_ready = true;
     exec();
 }
