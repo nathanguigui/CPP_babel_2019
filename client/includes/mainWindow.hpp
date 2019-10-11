@@ -84,6 +84,7 @@ class MainWindow : public QWidget
         void sendMessage();
         void setName(QListWidgetItem*);
         void importContact(std::vector<ContactDetails> details);
+        void quit();
 
         /// Async auth completed
         void handleAuthCompleted();
