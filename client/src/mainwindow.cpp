@@ -268,11 +268,11 @@ void MainWindow::addMessageFromContact(std::string login, std::string message)
 
 void MainWindow::call()
 {
-   	if (contact_name_->text() == QString::null)
-		return;
+   	//if (contact_name_->text() == QString::null)
+	//	return;
 	CallManager *callManager = new CallManager(this->asyncSession);
-	std::string tmp = contact_name_->text().toStdString();
-	callManager->makeCall(tmp);
+	//std::string tmp = contact_name_->text().toStdString();
+	//callManager->makeCall(tmp);
 	duringCall.doCall();
 	//connect(&duringCall, SIGNAL(endCall()), &contactWindow, SLOT (quitter()));
 	//CallWindow *callWindow = new CallWindow();

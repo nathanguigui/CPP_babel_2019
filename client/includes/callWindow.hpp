@@ -24,7 +24,7 @@
 #include <QColorDialog>
 #include "UISettings.hpp"
 //#include "callThread.hpp"
-#include "mainWindow.hpp"
+//#include "mainWindow.hpp"
 
 class QPushButton;
 class QTextBrowser;
@@ -36,7 +36,7 @@ class CallWindow: public QWidget
         explicit CallWindow(QWidget *parent = 0);
         //~CallWindow();
 
-        void setMainWindow(MainWindow *m) { mainwindow = m; };
+        //void setMainWindow(MainWindow *m) { mainwindow = m; };
         void centerAndResize();
         int width;
         int height;
@@ -50,7 +50,7 @@ class CallWindow: public QWidget
 
     private:
         QTextBrowser *picture;
-        MainWindow *mainwindow;
+        //MainWindow *mainwindow;
         QPushButton *button_quit;
 };
 
