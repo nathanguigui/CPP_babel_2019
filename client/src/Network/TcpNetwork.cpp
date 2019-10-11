@@ -61,8 +61,8 @@ std::string TcpNetwork::getLocalHostWithDomain() const {
     for (const QHostAddress &address: item) {
         if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost) {
             tmp = address.toString().toStdString() + ":" + std::to_string(this->socket->localPort());
+            return tmp;
         }
-        return tmp;
     }
     return tmp;
 }
