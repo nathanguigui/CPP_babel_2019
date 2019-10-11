@@ -5,8 +5,8 @@
 #ifndef CALLTHREAD_H_
 #define CALLTHREAD_H_
 
-#include "callWindow.hpp"
 #include <QThread>
+#include "callWindow.hpp"
 
 class callThread : public QThread {
     Q_OBJECT
@@ -23,7 +23,6 @@ class callThread : public QThread {
         void run() override;
 
     private:
-        CallWindow callwindow;
         bool m_ready;
 };
 

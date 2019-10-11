@@ -3,7 +3,6 @@
 //
 
 #include "callThread.hpp"
-#include <QMetaType>
 
 callThread::callThread(QObject *parent): m_ready(false) {
     start();
@@ -17,9 +16,9 @@ void callThread::doCall()
 
 void callThread::run()
 {
-    CallWindow wdw();
-    connect(this, SIGNAL(launchCall()), &callwindow, SLOT (setWindow()));
-    connect(&wdw; SIGNAL (endCall()), this, SIGNAL (endCall()));
+    CallWindow callWindow;
+    connect(this, SIGNAL(launchCall()), &callWindow, SLOT (setWindow()));
+    connect(&callWindow, SIGNAL (endCall()), this, SIGNAL (endCall()));
     m_ready = true;
     exec();
 }
