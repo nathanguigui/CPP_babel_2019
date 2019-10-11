@@ -8,7 +8,17 @@
 
 UdpNetwork::UdpNetwork(std::string &host, int port) {
     this->socket = new QUdpSocket();
+    this->mode = CLIENT;
     socket->connectToHost(host.c_str(), port);
+    connect(socket, SIGNAL(readyRead()), this, SLOT(readyReadClient()));
+}
+
+UdpNetwork::UdpNetwork() {
+    this->socket = new QUdpSocket();
+    this->mode = SERVER;
+    socket->bind();
+    connect(socket, SIGNAL(readyRead()), this, SLOT(readyReadServer()));
+    emit ServerReady(this->socket->localPort());
 }
 
 UdpNetwork::~UdpNetwork() {
@@ -59,4 +69,12 @@ std::string UdpNetwork::getLocalHostWithDomain() const {
     auto ss = std::stringstream();
     ss << getLocalIp() << ":" << getLocalPort();
     return ss.str();
+}
+
+UdpNetworkMode UdpNetwork::getMode() const {
+    return mode;
+}
+
+void UdpNetwork::readyReadServer() {
+    emit ServerReady(this->port);
 }
