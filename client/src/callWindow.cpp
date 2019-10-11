@@ -31,11 +31,11 @@ void CallWindow::setWindow()
 
 }
 
-//CallWindow::~CallWindow()
-//{
-//    //emit endCall();
-//    delete button_quit;
-//}   
+CallWindow::~CallWindow()
+{
+    //emit endCall();
+    delete button_quit;
+}   
 
 void CallWindow::quitter()
 {
