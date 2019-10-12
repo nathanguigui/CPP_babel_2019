@@ -86,7 +86,7 @@ class MainWindow : public QWidget
         void setName(QListWidgetItem*);
         void importContact(std::vector<ContactDetails> details);
         void quit();
-        void incomingCall(std::string stdlogin, std::string ip, int port);
+        void incomingCall(std::string, std::string, int);
 
         /// Async auth completed
         void handleAuthCompleted();

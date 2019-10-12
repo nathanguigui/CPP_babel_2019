@@ -86,7 +86,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent), registerOk(false)
 	connect(&this->asyncSession, SIGNAL(RegisterDone()), this, SLOT(handleAuthCompleted()));
 	QObject::connect(&this->asyncSession, SIGNAL (UpdateDone(std::vector<ContactDetails>)), &contactWindow, SLOT(fillList(std::vector<ContactDetails>)));
 	QObject::connect(&this->asyncSession, SIGNAL (InfoDone(std::vector<ContactDetails>)), this, SLOT(importContact(std::vector<ContactDetails>)));	
-	QObject::connect(&this->asyncSession, SIGNAL (InvitedRinging(const std::string name, const std::string ip, int port)), this, SLOT (incomingCall(std::string stdlogin, std::string ip, int port)));
+	QObject::connect(&this->asyncSession, SIGNAL (InvitedRinging(std::string, std::string, int)), this, SLOT (incomingCall(std::string, std::string, int)));
 
 	QObject::connect(button_contact_, SIGNAL (released()), this, SLOT (addContact()));
 	QObject::connect(button_send_, SIGNAL(released()), this, SLOT(sendMessage()));
@@ -204,10 +204,10 @@ void MainWindow::callPopup(QString login)
 		return;
 }
 
-void MainWindow::incomingCall(std::string stdlogin, std::string ip, int port)
+void MainWindow::incomingCall(std::string name, std::string ip, int port)
 {
-	qDebug() << "appel entrant";
-    QString login = QString::fromStdString(stdlogin);
+	//qDebug() << "appel entrant";
+    QString login = QString::fromStdString(name);
    	QMessageBox *incoming = new QMessageBox();
    	QString message = QString("%1 is calling you ").arg(login);
    	incoming->setText(message);
@@ -219,7 +219,8 @@ void MainWindow::incomingCall(std::string stdlogin, std::string ip, int port)
    	switch (ret) {
       	case QMessageBox::Yes:
 		  	emit InvitedAccepted(login.toStdString());
-			callPopup(login);
+			//callPopup(login);
+			call();
          	return;
       	case QMessageBox::Ignore:
          	return;
