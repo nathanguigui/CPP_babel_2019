@@ -15,6 +15,8 @@ class CallManager : public QObject {
 public:
     CallManager(AsyncSession &session);
     void makeCall(std::string &name);
+    void joinCall(std::string &name, std::string &ip, int port);
+    void declineCall(std::string &name);
     ~CallManager() = default;
 
 public slots:

@@ -29,3 +29,11 @@ void CallManager::asyncServerReady(int port) {
     qDebug() << "recieved signal\r\n";
     this->session.asyncInvite(this->awaitInviteName, port);
 }
+
+void CallManager::joinCall(std::string &name, std::string &ip, int port) {
+    this->session.asyncAck(name);
+}
+
+void CallManager::declineCall(std::string &name) {
+    this->session.asyncCancel(name);
+}

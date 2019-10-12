@@ -10,7 +10,7 @@ set(CMAKE_AUTOUIC ON)
 if (WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread -lboost_thread -lclient/dependencies/libs/portaudio_x86 -lclient/dependencies/libs/celt -lclient/dependencies/libs/opus -lclient/dependencies/libs/silk_common -lclient/dependencies/libs/silk_fixed -lclient/dependencies/libs/silk_float")
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread -lboost_thread -Lclient/dependencies -lopus -lportaudio")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread -lboost_thread -Lbuild/ -lopus -lportaudio")
 endif()
 
 include_directories(

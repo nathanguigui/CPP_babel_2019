@@ -169,6 +169,10 @@ void SessionManager::analyzeParsedMessage(SipParsedMessage &parsedMessage) {
             this->parseAllFriends(parsedMessage);
         } if (parsedMessage.status == 567) {
             this->parseRingPacket(parsedMessage);
+        } if (parsedMessage.status == 123) {
+            // TODO handle ack
+        } if (parsedMessage.status == 321) {
+            // TODO handle cancel
         }
     }
 }
