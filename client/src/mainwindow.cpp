@@ -219,10 +219,12 @@ void MainWindow::incomingCall(std::string name, std::string ip, int port)
    	switch (ret) {
       	case QMessageBox::Yes:
 		  	emit InvitedAccepted(login.toStdString());
+			this->asyncSession.asyncAck(login.toStdString());
+			duringCall.doCall();
 			//callPopup(login);
-			call();
          	return;
       	case QMessageBox::Ignore:
+		  	this->asyncSession.asyncCancel(login.toStdString());
          	return;
    }
 }
@@ -274,8 +276,8 @@ void MainWindow::addMessageFromContact(std::string login, std::string message)
 
 void MainWindow::call()
 {
-   	//if (contact_name_->text() == QString::null)
-	//	return;
+   	if (contact_name_->text() == QString::null)
+		return;
 	CallManager *callManager = new CallManager(this->asyncSession);
 	std::string tmp = contact_name_->text().toStdString();
 	callManager->makeCall(tmp);
