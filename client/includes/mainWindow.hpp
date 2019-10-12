@@ -57,8 +57,6 @@ class MainWindow : public QWidget
         void updateMessage();
         void addMessageFromContact(std::string login, std::string message);
 
-        void callPopup(QString login);
-
         //UPDATE
         void updateMainColor(QString color) { settings_->setMainColor(color); contact_name_->setStyleSheet(settings_->getLabel()); this->setStyleSheet(settings_->getMainWindow()); };
         void updateFont(QString font) { /* NEX UPDATE  */ };
