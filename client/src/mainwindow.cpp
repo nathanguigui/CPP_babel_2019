@@ -191,19 +191,6 @@ QString MainWindow::launchlogin()
    	return login;
 }
 
-void MainWindow::callPopup(QString login)
-{
-   	QMessageBox *call = new QMessageBox();
-   	QString message = QString("in call with %1").arg(login);
-   	call->setText(message);
-   	call->setStandardButtons(QMessageBox::Close);
-   	call->setStyleSheet("border-image: url(../templates/micro.png) 0 0 0 0 stretch stretch");
-   	int ret = call->exec();
-
-   	if (ret == QMessageBox::Close)
-		return;
-}
-
 void MainWindow::incomingCall(std::string name, std::string ip, int port)
 {
 	//qDebug() << "appel entrant";
@@ -215,16 +202,16 @@ void MainWindow::incomingCall(std::string name, std::string ip, int port)
    	incoming->setDefaultButton(QMessageBox::Yes);
 
    	int ret = incoming->exec();
+	CallManager *callManager = new CallManager(this->asyncSession);
 
    	switch (ret) {
       	case QMessageBox::Yes:
 		  	emit InvitedAccepted(login.toStdString());
-			this->asyncSession.asyncAck(login.toStdString());
 			duringCall.doCall();
-			//callPopup(login);
+			callManager->joinCall(name, ip, port);
          	return;
       	case QMessageBox::Ignore:
-		  	this->asyncSession.asyncCancel(login.toStdString());
+			callManager->declineCall(name);
          	return;
    }
 }
@@ -276,7 +263,8 @@ void MainWindow::addMessageFromContact(std::string login, std::string message)
 
 void MainWindow::call()
 {
-   	if (contact_name_->text() == QString::null)
+
+   	if (contact_name_->text() == QString::null || contact_list[contact_name_->text()]->getState() == false)
 		return;
 	CallManager *callManager = new CallManager(this->asyncSession);
 	std::string tmp = contact_name_->text().toStdString();
