@@ -215,16 +215,17 @@ void MainWindow::incomingCall(std::string name, std::string ip, int port)
    	incoming->setDefaultButton(QMessageBox::Yes);
 
    	int ret = incoming->exec();
+	CallManager *callManager = new CallManager(this->asyncSession);
 
    	switch (ret) {
       	case QMessageBox::Yes:
 		  	emit InvitedAccepted(login.toStdString());
-			this->asyncSession.asyncAck(login.toStdString());
 			duringCall.doCall();
+			callManager->joinCall(name, ip, port);
 			//callPopup(login);
          	return;
       	case QMessageBox::Ignore:
-		  	this->asyncSession.asyncCancel(login.toStdString());
+			callManager->declineCall(name);
          	return;
    }
 }
