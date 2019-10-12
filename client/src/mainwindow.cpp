@@ -5,7 +5,6 @@
 #include <client/includes/Network/SERVER_IP.hpp>
 #include "mainWindow.hpp"
 #include "Network/SessionManager.hpp"
-#include "CallManagement/CallManager.hpp"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -88,6 +87,8 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent), registerOk(false)
 	QObject::connect(&this->asyncSession, SIGNAL (InfoDone(std::vector<ContactDetails>)), this, SLOT(importContact(std::vector<ContactDetails>)));	
 	QObject::connect(&this->asyncSession, SIGNAL (InvitedRinging(std::string, std::string, int)), this, SLOT (incomingCall(std::string, std::string, int)));
 
+	QObject::connect(callManager, SIGNAL (callTerminated()), &this->duringCall, SLOT (stop()));
+
 	QObject::connect(button_contact_, SIGNAL (released()), this, SLOT (addContact()));
 	QObject::connect(button_send_, SIGNAL(released()), this, SLOT(sendMessage()));
 	QObject::connect(button_call_, SIGNAL(released()), this, SLOT(call()));
@@ -164,7 +165,9 @@ void MainWindow::addNewContact(std::string login, std::string ip, bool state) {
 
 void MainWindow::quit()
 {
-	this->asyncSession.asyncBye();   
+	this->asyncSession.asyncBye();
+	this->asyncSession.quit();
+	this->duringCall.quit();   
 	qApp->quit();
 }
 
@@ -202,7 +205,7 @@ void MainWindow::incomingCall(std::string name, std::string ip, int port)
    	incoming->setDefaultButton(QMessageBox::Yes);
 
    	int ret = incoming->exec();
-	CallManager *callManager = new CallManager(this->asyncSession);
+	callManager = new CallManager(this->asyncSession);
 
    	switch (ret) {
       	case QMessageBox::Yes:

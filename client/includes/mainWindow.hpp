@@ -27,6 +27,7 @@
 #include "Network/SERVER_IP.hpp"
 #include "contact.hpp"
 #include "callThread.hpp"
+#include "CallManagement/CallManager.hpp"
 
 
 class QTextEdit;
@@ -35,7 +36,6 @@ class QTextBrowser;
 class QListWidget;
 class QLabel;
 class contact;
-
 
 // This is the declaration of our MainWidget class
 // The definition/implementation is in mainwindow.cpp
@@ -109,5 +109,7 @@ class MainWindow : public QWidget
         bool firstTimeAddContact;
         /// auth status
         bool registerOk;
+
+        CallManager *callManager;
 };
 #endif // MAINWINDOW_H
