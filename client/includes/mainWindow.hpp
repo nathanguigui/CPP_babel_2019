@@ -57,7 +57,6 @@ class MainWindow : public QWidget
         void updateMessage();
         void addMessageFromContact(std::string login, std::string message);
 
-        void incomingCall(std::string stdlogin);
         void callPopup(QString login);
 
         //UPDATE
@@ -87,9 +86,12 @@ class MainWindow : public QWidget
         void setName(QListWidgetItem*);
         void importContact(std::vector<ContactDetails> details);
         void quit();
+        void incomingCall(std::string stdlogin, std::string ip, int port);
 
         /// Async auth completed
         void handleAuthCompleted();
+    signals:
+        void InvitedAccepted(const std::string &name);
         
     private:
         UISettings *settings_;

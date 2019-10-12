@@ -14,6 +14,7 @@
 MainWindow::MainWindow(QWidget *parent): QWidget(parent), registerOk(false)
 {
 	qRegisterMetaType<std::vector<ContactDetails>>("stdVectorContact");
+	qRegisterMetaType<std::string>("stdString");
 
 	/// Settings
 	settings_ = new UISettings();
@@ -85,6 +86,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent), registerOk(false)
 	connect(&this->asyncSession, SIGNAL(RegisterDone()), this, SLOT(handleAuthCompleted()));
 	QObject::connect(&this->asyncSession, SIGNAL (UpdateDone(std::vector<ContactDetails>)), &contactWindow, SLOT(fillList(std::vector<ContactDetails>)));
 	QObject::connect(&this->asyncSession, SIGNAL (InfoDone(std::vector<ContactDetails>)), this, SLOT(importContact(std::vector<ContactDetails>)));	
+	QObject::connect(&this->asyncSession, SIGNAL (InvitedRinging(const std::string name, const std::string ip, int port)), this, SLOT (incomingCall(std::string stdlogin, std::string ip, int port)));
 
 	QObject::connect(button_contact_, SIGNAL (released()), this, SLOT (addContact()));
 	QObject::connect(button_send_, SIGNAL(released()), this, SLOT(sendMessage()));
@@ -103,6 +105,7 @@ MainWindow::~MainWindow()
 	delete button_call_;
 	delete list_messages_;
 	delete list_;
+	//this->duringCall.quit();
 	this->asyncSession.quit();
 }
 
@@ -201,7 +204,7 @@ void MainWindow::callPopup(QString login)
 		return;
 }
 
-void MainWindow::incomingCall(std::string stdlogin)
+void MainWindow::incomingCall(std::string stdlogin, std::string ip, int port)
 {
     QString login = QString::fromStdString(stdlogin);
    	QMessageBox *incoming = new QMessageBox();
@@ -214,6 +217,7 @@ void MainWindow::incomingCall(std::string stdlogin)
 
    	switch (ret) {
       	case QMessageBox::Yes:
+		  	emit InvitedAccepted(login.toStdString());
 			callPopup(login);
          	return;
       	case QMessageBox::Ignore:
@@ -271,8 +275,8 @@ void MainWindow::call()
    	//if (contact_name_->text() == QString::null)
 	//	return;
 	CallManager *callManager = new CallManager(this->asyncSession);
-	//std::string tmp = contact_name_->text().toStdString();
-	//callManager->makeCall(tmp);
+	std::string tmp = contact_name_->text().toStdString();
+	callManager->makeCall(tmp);
 	duringCall.doCall();
 	//connect(&duringCall, SIGNAL(endCall()), &contactWindow, SLOT (quitter()));
 	//CallWindow *callWindow = new CallWindow();
