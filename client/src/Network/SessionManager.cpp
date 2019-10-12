@@ -247,6 +247,24 @@ void SessionManager::Bye() {
     this->udpNetwork->sendData(this->createSipPacket(params));
 }
 
+void SessionManager::parseRingPacket(SipParsedMessage &parsedMessage) {
+    this->getMessageContent(parsedMessage);
+    std::vector<std::string> tmpInfos;
+    boost::split(tmpInfos, parsedMessage.content, boost::is_any_of(";"));
+    if (tmpInfos.size() != 3)
+        return;
+    std::string name = tmpInfos[0];
+    std::string ip = tmpInfos[1];
+    int friendPort;
+    try {
+        friendPort = std::stoi(tmpInfos[2]);
+    } catch (std::invalid_argument) {
+        return;
+    }
+    qDebug() << parsedMessage.packet.c_str();
+    emit InvitedRinging(name, ip, friendPort);
+}
+
 void SessionManager::parseContactMessage(SipParsedMessage &parsedMessage, RequestType requestType) {
     this->getMessageContent(parsedMessage);
     std::vector<std::string> potentialUser;
@@ -295,8 +313,32 @@ void SessionManager::Invite(const std::string &name, int listeningPort) {
     this->udpNetwork->sendData(this->createSipPacket(params));
 }
 
-void SessionManager::parseRingPacket(SipParsedMessage &parsedMessage) {
-    this->getMessageContent(parsedMessage);
-    qDebug() << parsedMessage.packet.c_str();
-    emit InvitedRinging("", "", 123);
+void SessionManager::Ack(const std::string &name) {
+    int listeningPort = 0;
+    auto requestLine = std::stringstream();
+    requestLine << "ACK sip:" << host << " SIP/2.0\r\n";
+    auto CSeq = std::stringstream();
+    CSeq << "CSeq: ACK\r\n";
+    auto recipientUri = std::stringstream();
+    recipientUri << getUsername() << "@" << host << ":" << listeningPort;
+    auto content = std::stringstream();
+    content << "Message_Waiting: " << name << ":" << listeningPort << ";";
+    SipParams params = {requestLine.str(), CSeq.str(), content.str(), getUsername(), recipientUri.str()};
+    this->pendingRequest = ACK;
+    this->udpNetwork->sendData(this->createSipPacket(params));
+}
+
+void SessionManager::Cancel(const std::string &name) {
+    int listeningPort = 0;
+    auto requestLine = std::stringstream();
+    requestLine << "CANCEL sip:" << host << " SIP/2.0\r\n";
+    auto CSeq = std::stringstream();
+    CSeq << "CSeq: CANCEL\r\n";
+    auto recipientUri = std::stringstream();
+    recipientUri << getUsername() << "@" << host << ":" << listeningPort;
+    auto content = std::stringstream();
+    content << "Message_Waiting: " << name << ":" << listeningPort << ";";
+    SipParams params = {requestLine.str(), CSeq.str(), content.str(), getUsername(), recipientUri.str()};
+    this->pendingRequest = CANCEL;
+    this->udpNetwork->sendData(this->createSipPacket(params));
 }

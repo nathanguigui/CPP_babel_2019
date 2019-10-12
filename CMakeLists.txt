@@ -7,7 +7,11 @@ INCLUDE_DIRECTORIES(${CONAN_INCLUDE_DIRS})
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread -lboost_thread")
+if (WIN32)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread -lboost_thread -lclient/dependencies/libs/portaudio_x86 -lclient/dependencies/libs/celt -lclient/dependencies/libs/opus -lclient/dependencies/libs/silk_common -lclient/dependencies/libs/silk_fixed -lclient/dependencies/libs/silk_float")
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread -lboost_thread -Lclient/dependencies -lopus -lportaudio")
+endif()
 
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
@@ -31,6 +35,10 @@ set(CLIENT_SOURCES
     client/src/contact.cpp
     client/src/Network/AsyncSession.cpp 
     client/src/CallManagement/CallManager.cpp
+    client/src/Audio/AudioException.cpp
+    client/src/Audio/OutputDevice.cpp
+    client/src/Audio/RecordingDevice.cpp
+    client/src/Audio/SoundManager.cpp
     client/src/callThread.cpp)
 
 set(CLIENT_HEADERS
@@ -46,7 +54,14 @@ set(CLIENT_HEADERS
     client/includes/Network/SERVER_IP.hpp
     client/includes/Network/AsyncSession.hpp
     client/includes/CallManagement/CallManager.hpp
-    client/includes/callThread.hpp)
+    client/includes/Audio/AudioException.hpp
+    client/includes/Audio/AudioSettings.hpp
+    client/includes/Audio/IAudioDevice.hpp
+    client/includes/Audio/OutputDevice.hpp
+    client/includes/Audio/RecordingDevice.hpp
+    client/includes/Audio/SoundManager.hpp
+    client/includes/callThread.hpp
+    client/includes/portaudio.h)
 
 set(CLIENT_LIBRARIES
     Qt5::Core

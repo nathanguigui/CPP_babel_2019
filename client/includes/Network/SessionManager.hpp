@@ -77,6 +77,10 @@ public slots:
     void Bye();
     /// Send Invite Request to make call
     void Invite(const std::string &name, int listeningPort);
+    /// Send Ack Request to accept a call
+    void Ack(const std::string &name);
+    /// Send Cancel Request to refuse a call
+    void Cancel(const std::string &name);
 
 signals:
     /// Signal to tell auth completed

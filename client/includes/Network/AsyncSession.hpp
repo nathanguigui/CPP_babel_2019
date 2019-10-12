@@ -28,6 +28,10 @@ public:
     void asyncBye();
     /// Async Invite request
     void asyncInvite(const std::string &name, int port);
+    /// Async Ack request
+    void asyncAck(const std::string &name);
+    /// Async Cancel request
+    void asyncCancel(const std::string &name);
 
 signals:
     /// Signal with worker thread
@@ -55,6 +59,10 @@ signals:
     void InvitedRinging(const std::string name, const std::string ip, int port);
     /// Signal with worker thread to tell invited friend accepted
     void InvitedAccepted(const std::string &name);
+    /// Signal with worker thread to tell call accepted
+    void AckRequested(const std::string &name);
+    /// Signal with worker thread to tell call refused
+    void CancelRequested(const std::string &name);
 
 protected:
     void run() override;
