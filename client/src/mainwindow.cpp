@@ -206,6 +206,7 @@ void MainWindow::callPopup(QString login)
 
 void MainWindow::incomingCall(std::string stdlogin, std::string ip, int port)
 {
+	qDebug() << "appel entrant";
     QString login = QString::fromStdString(stdlogin);
    	QMessageBox *incoming = new QMessageBox();
    	QString message = QString("%1 is calling you ").arg(login);

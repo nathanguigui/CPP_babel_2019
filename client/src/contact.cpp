@@ -29,5 +29,5 @@ contact::~contact() {
 
 void contact::incomingCall()
 {
-    mainWindow_->incomingCall(loginName_.toStdString());
+    mainWindow_->incomingCall(loginName_.toStdString(), "1.1.1.1", 3000);
 }
