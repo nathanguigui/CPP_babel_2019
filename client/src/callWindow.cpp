@@ -9,10 +9,6 @@
 
 CallWindow::CallWindow(QWidget *parent): QWidget(parent)
 {
-}
-
-void CallWindow::setWindow()
-{
     button_quit = new QPushButton("End call", this);
     picture = new QTextBrowser();
 
@@ -25,10 +21,13 @@ void CallWindow::setWindow()
 
     setLayout(mainLayout);
     setWindowTitle(tr("Call"));
-    show();
 
     QObject::connect(button_quit, SIGNAL (released()), this, SLOT (quitter()));
+}
 
+void CallWindow::setWindow()
+{
+    this->show();
 }
 
 CallWindow::~CallWindow()
@@ -40,6 +39,8 @@ CallWindow::~CallWindow()
 void CallWindow::quitter()
 {
     emit endCall();
+    this->hide();
+
 }
 
 void CallWindow::centerAndResize()
