@@ -20,7 +20,15 @@ public:
     ~CallManager() = default;
 
 public slots:
+    /// Async function to send port to invited
     void asyncServerReady(int port);
+    /// Handle people join
+    void handlePeopleJoin(std::string &name);
+    /// Handle people left
+    void handlePeopleRefuse(std::string &name);
+
+signals:
+    void callTerminated();
 
 private:
     AsyncSession &session;
@@ -30,6 +38,8 @@ private:
     UdpNetwork *socket;
     UdpNetworkMode mode;
     int listeningPort;
+    int friendsInCall = 0;
+    int friendsPendingResponse = 0;
 };
 
 #endif //CPP_BABEL_2019_CALLMANAGER_HPP

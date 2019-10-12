@@ -170,9 +170,9 @@ void SessionManager::analyzeParsedMessage(SipParsedMessage &parsedMessage) {
         } if (parsedMessage.status == 567) {
             this->parseRingPacket(parsedMessage);
         } if (parsedMessage.status == 123) {
-            // TODO handle ack
+            this->handleCallJoin(parsedMessage);
         } if (parsedMessage.status == 321) {
-            // TODO handle cancel
+            this->handleCallLeft(parsedMessage);
         }
     }
 }
@@ -345,4 +345,14 @@ void SessionManager::Cancel(const std::string &name) {
     SipParams params = {requestLine.str(), CSeq.str(), content.str(), getUsername(), recipientUri.str()};
     this->pendingRequest = CANCEL;
     this->udpNetwork->sendData(this->createSipPacket(params));
+}
+
+void SessionManager::handleCallLeft(SipParsedMessage &parsedMessage) {
+    this->getMessageContent(parsedMessage);
+    emit InvitedLeft(parsedMessage.content);
+}
+
+void SessionManager::handleCallJoin(SipParsedMessage &parsedMessage) {
+    this->getMessageContent(parsedMessage);
+    emit InvitedJoin(parsedMessage.content);
 }
