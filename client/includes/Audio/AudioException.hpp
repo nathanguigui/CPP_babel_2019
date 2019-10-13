@@ -2,6 +2,8 @@
 // Created by guigui on 9/25/19.
 //
 
+#ifndef CPP_BABEL_2019_AUDIOEXCEPTION_HPP
+#define CPP_BABEL_2019_AUDIOEXCEPTION_HPP
 #include <stdexcept>
 
 class AudioException : public std::runtime_error {
@@ -18,3 +20,5 @@ public:
 private:
     std::string message;
 };
+
+#endif

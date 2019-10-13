@@ -7,8 +7,9 @@
 
 #include "IAudioDevice.hpp"
 #include <portaudio.h>
-#include <QMutex>
+#include "client/includes/Mutex/Mutex.hpp"
 #include "AudioException.hpp"
+#include "client/includes/Mutex/ScopedLock.hpp"
 
 class RecordingDevice : public IAudioDevice {
 public:
@@ -27,7 +28,7 @@ private:
     std::list<AudioSettings::Decoded> soundBuffer;
     PaStreamParameters streamParameters;
     PaStream *stream;
-    QMutex mutex;
+    Mutex mutex;
     bool isRunning;
     IAudioDevice::listeningDevice *listeningDevice;
 };

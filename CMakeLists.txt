@@ -39,7 +39,7 @@ set(CLIENT_SOURCES
     client/src/Audio/OutputDevice.cpp
     client/src/Audio/RecordingDevice.cpp
     client/src/Audio/SoundManager.cpp
-    client/src/callThread.cpp)
+    client/src/callThread.cpp client/src/Mutex/Mutex.cpp client/src/Mutex/ScopedLock.cpp client/src/Audio/EncodeManager.cpp)
 
 set(CLIENT_HEADERS
     client/includes/mainWindow.hpp
@@ -61,7 +61,7 @@ set(CLIENT_HEADERS
     client/includes/Audio/RecordingDevice.hpp
     client/includes/Audio/SoundManager.hpp
     client/includes/callThread.hpp
-    client/includes/portaudio.h)
+    client/includes/portaudio.h client/includes/Mutex/IMutex.hpp client/includes/Mutex/Mutex.hpp client/includes/Mutex/ScopedLock.hpp client/includes/Audio/EncodeManager.hpp)
 
 set(CLIENT_LIBRARIES
     Qt5::Core

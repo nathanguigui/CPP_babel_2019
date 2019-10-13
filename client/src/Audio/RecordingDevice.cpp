@@ -44,7 +44,7 @@ void RecordingDevice::stopStream() {
 int	RecordingDevice::callback(const void *inputBuffer, void *, unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo *, PaStreamCallbackFlags, void *data) {
     RecordingDevice *obj = reinterpret_cast<RecordingDevice *>(data);
     {
-        obj->mutex.lock();
+        ScopedLock scopedLock(&obj->mutex);
         AudioSettings::Decoded sound;
         sound.size = framesPerBuffer * AudioSettings::NB_CHANNELS;
         sound.buffer.assign(reinterpret_cast<const float *>(inputBuffer), reinterpret_cast<const float *>(inputBuffer) + framesPerBuffer * AudioSettings::NB_CHANNELS);
@@ -64,7 +64,7 @@ IAudioDevice &RecordingDevice::operator<<(const AudioSettings::Decoded &soundBuf
 }
 
 IAudioDevice &RecordingDevice::operator>>(AudioSettings::Decoded &soundBuffer) {
-    this->mutex.lock();
+    ScopedLock scopedLock(&this->mutex);
 
     if (!this->soundBuffer.empty()) {
         AudioSettings::Decoded audioCpy = this->soundBuffer.front();

@@ -36,6 +36,7 @@ void CallManager::asyncServerReady(int port) {
 }
 
 void CallManager::joinCall(std::string &name, std::string &ip, int port) {
+    this->socket = new UdpNetwork(ip, port);
     // TODO voice transmission
     this->session.asyncAck(name);
 }
