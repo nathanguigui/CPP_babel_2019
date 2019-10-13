@@ -8,8 +8,8 @@ CallManager::CallManager(AsyncSession &session) : session(session) {
     this->isAwaitingInvite = false;
     this->mode = NO_MODE;
     this->listeningPort = -1;
-    connect(&this->session, SIGNAL(InvitedLeft(std::string)), this, SLOT(handlePeopleRefuse(std::string)));
-    connect(&this->session, SIGNAL(InvitedJoin(std::string)), this, SLOT(handlePeopleJoin(std::string)));
+    connect(&this->session, SIGNAL(InvitedLeftDone(const std::string)), this, SLOT(handlePeopleRefuse(const std::string)));
+    connect(&this->session, SIGNAL(InvitedJoinDone(const std::string)), this, SLOT(handlePeopleJoin(const std::string)));
 }
 
 void CallManager::makeCall(std::string &name) {
@@ -37,6 +37,7 @@ void CallManager::asyncServerReady(int port) {
 
 void CallManager::joinCall(std::string &name, std::string &ip, int port) {
     this->socket = new UdpNetwork(ip, port);
+    qDebug() << name.c_str() << "@" << ip.c_str() << ":" << port << " call joined\r\n";
     // TODO voice transmission
     this->session.asyncAck(name);
 }
@@ -45,14 +46,14 @@ void CallManager::declineCall(std::string &name) {
     this->session.asyncCancel(name);
 }
 
-void CallManager::handlePeopleRefuse(std::string &name) {
+void CallManager::handlePeopleRefuse(const std::string &name) {
     qDebug() << name.c_str() << " refused the call\r\n";
     this->friendsPendingResponse --;
     if (this->friendsPendingResponse == 0 && this->friendsInCall == 0)
         emit callTerminated();
 }
 
-void CallManager::handlePeopleJoin(std::string &name) {
+void CallManager::handlePeopleJoin(const std::string &name) {
     qDebug() << name.c_str() << " join the call \r\n";
     this->friendsInCall ++;
     this->friendsPendingResponse --;

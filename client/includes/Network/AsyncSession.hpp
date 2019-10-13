@@ -33,6 +33,12 @@ public:
     /// Async Cancel request
     void asyncCancel(const std::string &name);
 
+public slots:
+    /// Async handle people join the call
+    void handleJoin(const std::string &name);
+    /// Async handle people left the call
+    void handleLeft(const std::string &name);
+
 signals:
     /// Signal with worker thread
     void RegisterRequested();
@@ -63,6 +69,10 @@ signals:
     void AckRequested(const std::string &name);
     /// Signal with worker thread to tell call refused
     void CancelRequested(const std::string &name);
+    /// Signal to tell someone join the call
+    void InvitedJoinDone(const std::string &name);
+    /// Signal to tell someone left the call
+    void InvitedLeftDone(const std::string &name);
 
 protected:
     void run() override;

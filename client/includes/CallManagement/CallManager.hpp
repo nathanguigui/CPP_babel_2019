@@ -23,9 +23,9 @@ public slots:
     /// Async function to send port to invited
     void asyncServerReady(int port);
     /// Handle people join
-    void handlePeopleJoin(std::string &name);
+    void handlePeopleJoin(const std::string &name);
     /// Handle people left
-    void handlePeopleRefuse(std::string &name);
+    void handlePeopleRefuse(const std::string &name);
 
 signals:
     void callTerminated();

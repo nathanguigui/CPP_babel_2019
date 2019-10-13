@@ -36,6 +36,8 @@ void AsyncSession::run() {
     connect(&session, SIGNAL(UpdateDone(std::vector<ContactDetails>)), this, SIGNAL(UpdateDone(std::vector<ContactDetails>)));
     connect(&session, SIGNAL(InfoDone(std::vector<ContactDetails>)), this, SIGNAL(InfoDone(std::vector<ContactDetails>)));
     connect(&session, SIGNAL(InvitedRinging(const std::string, const std::string, int)), this, SIGNAL(InvitedRinging(const std::string, const std::string, int)));
+    connect(&session, SIGNAL(InvitedLeft(const std::string)), this, SLOT(handleLeft(const std::string)));
+    connect(&session, SIGNAL(InvitedJoin(const std::string)), this, SLOT(handleJoin(const std::string)));
     this->m_ready = true;
     this->exec();
 }
@@ -73,4 +75,13 @@ void AsyncSession::asyncAck(const std::string &name) {
 
 void AsyncSession::asyncCancel(const std::string &name) {
     emit CancelRequested(name);
+}
+
+void AsyncSession::handleJoin(const std::string &name) {
+    qDebug() << name.c_str() << " accepted the call and detected in async session\r\n";
+    emit InvitedJoinDone(name);
+}
+
+void AsyncSession::handleLeft(const std::string &name) {
+    emit InvitedLeftDone(name);
 }

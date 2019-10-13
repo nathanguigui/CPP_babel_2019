@@ -354,5 +354,6 @@ void SessionManager::handleCallLeft(SipParsedMessage &parsedMessage) {
 
 void SessionManager::handleCallJoin(SipParsedMessage &parsedMessage) {
     this->getMessageContent(parsedMessage);
+    qDebug() << parsedMessage.content.c_str() << " accepted the call\r\n";
     emit InvitedJoin(parsedMessage.content);
 }
