@@ -171,7 +171,7 @@ void MainWindow::quit()
 	qApp->quit();
 }
 
-QString MainWindow::disconnectLogin()
+void MainWindow::disconnectLogin()
 {
 	this->asyncSession.asyncBye();
 }
@@ -277,6 +277,15 @@ void MainWindow::call()
 	CallManager *callManager = new CallManager(this->asyncSession);
 	std::string tmp = contact_name_->text().toStdString();
 	callManager->makeCall(tmp);
+
+	QMessageBox *log = new QMessageBox(this);
+	log->setText(tr("%1 is ringing").arg(contact_name_->text()));
+	log->setWindowTitle(tr("salle d'attente"));
+	log->adjustSize();
+	log->setStyleSheet("background-color: rgb(255, 255, 255);");
+	log->move(QApplication::desktop()->screen()->rect().center() - log->rect().center());
+	
+	connect(&this->asyncSession, SIGNAL(InvitedJoinDone(std::string)), &this->duringCall, SLOT (doCall()));
 	duringCall.doCall();
 	//connect(&duringCall, SIGNAL(endCall()), &contactWindow, SLOT (quitter()));
 	//CallWindow *callWindow = new CallWindow();

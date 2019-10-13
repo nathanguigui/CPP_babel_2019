@@ -15,14 +15,13 @@ class callThread : public QThread {
         explicit callThread(QObject *parent = nullptr);
         ~callThread() override = default;
         
-        void doCall();
-
     signals:
         void launchCall();
         void endCall();
 
     public slots:
         void quit();
+        void doCall();
 
     protected:
         void run() override;

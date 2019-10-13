@@ -48,7 +48,7 @@ class MainWindow : public QWidget
 
         void centerAndResize();
         QString launchlogin();
-        QString disconnectLogin();
+        void disconnectLogin();
         void launchSplashScreen();
 
         void setAllContact();
