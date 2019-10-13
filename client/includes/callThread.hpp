@@ -21,6 +21,9 @@ class callThread : public QThread {
         void launchCall();
         void endCall();
 
+    public slots:
+        void quit();
+
     protected:
         void run() override;
 

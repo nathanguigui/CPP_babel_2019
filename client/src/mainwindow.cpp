@@ -87,7 +87,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent), registerOk(false)
 	QObject::connect(&this->asyncSession, SIGNAL (InfoDone(std::vector<ContactDetails>)), this, SLOT(importContact(std::vector<ContactDetails>)));	
 	QObject::connect(&this->asyncSession, SIGNAL (InvitedRinging(std::string, std::string, int)), this, SLOT (incomingCall(std::string, std::string, int)));
 
-	QObject::connect(callManager, SIGNAL (callTerminated()), &this->duringCall, SLOT (stop()));
+	//QObject::connect(callManager, SIGNAL (callTerminated()), &this->duringCall, SLOT (stop()));
 
 	QObject::connect(button_contact_, SIGNAL (released()), this, SLOT (addContact()));
 	QObject::connect(button_send_, SIGNAL(released()), this, SLOT(sendMessage()));
