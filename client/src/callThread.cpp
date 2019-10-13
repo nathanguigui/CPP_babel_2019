@@ -25,6 +25,6 @@ void callThread::run()
 
 void callThread::quit()
 {
-    this->terminate();
+    this->exit();
 }
 
