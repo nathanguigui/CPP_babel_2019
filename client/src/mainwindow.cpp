@@ -53,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent), registerOk(false)
 	setAllContact();
 
 	connect(quitter, &QAction::triggered, this, &MainWindow::quit);
-	connect(deconnexion, &QAction::triggered, this, &MainWindow::launchlogin);
+	connect(deconnexion, &QAction::triggered, this, &MainWindow::disconnectLogin);
 	connect(reload, &QAction::triggered, this, &MainWindow::reload);
 	connect(options, &QAction::triggered, this, &MainWindow::showOptions);
 
@@ -171,6 +171,11 @@ void MainWindow::quit()
 	qApp->quit();
 }
 
+QString MainWindow::disconnectLogin()
+{
+	this->asyncSession.asyncBye();
+}
+
 QString MainWindow::launchlogin()
 {
 	this->asyncSession.asyncInfo();
@@ -210,8 +215,8 @@ void MainWindow::incomingCall(std::string name, std::string ip, int port)
    	switch (ret) {
       	case QMessageBox::Yes:
 		  	emit InvitedAccepted(login.toStdString());
-			duringCall.doCall();
 			callManager->joinCall(name, ip, port);
+			duringCall.doCall();
          	return;
       	case QMessageBox::Ignore:
 			callManager->declineCall(name);
