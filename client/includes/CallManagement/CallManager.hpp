@@ -26,7 +26,11 @@ public:
     void makeCall(std::string &name);
     void joinCall(std::string &name, std::string &ip, int port);
     void declineCall(std::string &name);
-    static void manageAudioPacketParsing(std::string input, CallManager *session);
+    static void manageAudioPacketParsing(const std::string& input, CallManager *session);
+    void startCall();
+
+    bool isInCall() const;
+
     ~CallManager() = default;
 
 public slots:
@@ -47,6 +51,7 @@ private:
     std::string awaitInviteName;
     bool isAwaitingInvite;
     bool serverInited;
+    bool inCall = false;
     UdpNetwork *socket;
     UdpNetworkMode mode;
     int listeningPort;
