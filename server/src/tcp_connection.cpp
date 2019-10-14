@@ -104,8 +104,50 @@ void connection_handler::send_header_to_cli(std::string packet)
     hdr << "\r\nCSeq: 567 INVITE";
     hdr << "\r\nMessage_Waiting: ";
     for (auto it:connections_) {
-        if (it->header_manager.get_username() == cli_data.uname) {
+        if (it->header_manager.get_username() == cli_data.uname && it->sock.is_open()) {
             hdr << header_manager.get_username() << ";" << header_manager.get_ip() << ";" << cli_data.port;
+            it->header_manager.response_header = hdr.str();
+            it->send_it();
+            //std::cout << "trouver une correspondance\n";
+        }
+    }
+}
+
+void connection_handler::send_ack_to_cli(std::string packet)
+{
+    Call_Data_Struct cli_data = get_cli_from_packet(packet);
+    auto hdr = std::stringstream();
+    hdr << "123 ACK sip:" <<  header_manager.get_ip() << "SIP/2.0";
+    hdr << "\r\nVia: " << header_manager.get_ip() << ":" << cli_data.port;
+    hdr << "\r\nFrom: \"" << header_manager.get_username() << "\" <sip:" << header_manager.get_username() << "@" <<header_manager.get_ip() << ">;tag=" << header_manager.get_tag_cli();
+    hdr <<  "\r\nTo: <" << header_manager.get_hostname() << "@" << header_manager.get_server_ip() << ">";
+    hdr << "\r\nContact: <sip:" << header_manager.get_username() <<"@" << header_manager.get_server_ip() << ">";
+    hdr << "\r\nCSeq: 123 ACK";
+    hdr << "\r\nMessage_Waiting: ";
+    for (auto it:connections_) {
+        if (it->header_manager.get_username() == cli_data.uname && it->sock.is_open()) {
+            hdr << header_manager.get_username() << ";";
+            it->header_manager.response_header = hdr.str();
+            it->send_it();
+            //std::cout << "trouver une correspondance\n";
+        }
+    }
+}
+
+void connection_handler::send_cancel_to_cli(std::string packet)
+{
+    Call_Data_Struct cli_data = get_cli_from_packet(packet);
+    auto hdr = std::stringstream();
+    hdr << "321 CANCEL sip:" <<  header_manager.get_ip() << "SIP/2.0";
+    hdr << "\r\nVia: " << header_manager.get_ip() << ":" << cli_data.port;
+    hdr << "\r\nFrom: \"" << header_manager.get_username() << "\" <sip:" << header_manager.get_username() << "@" <<header_manager.get_ip() << ">;tag=" << header_manager.get_tag_cli();
+    hdr <<  "\r\nTo: <" << header_manager.get_hostname() << "@" << header_manager.get_server_ip() << ">";
+    hdr << "\r\nContact: <sip:" << header_manager.get_username() <<"@" << header_manager.get_server_ip() << ">";
+    hdr << "\r\nCSeq: 321 CANCEL";
+    hdr << "\r\nMessage_Waiting: ";
+    for (auto it:connections_) {
+        if (it->header_manager.get_username() == cli_data.uname && it->sock.is_open()) {
+            hdr << header_manager.get_username() << ";";
             it->header_manager.response_header = hdr.str();
             it->send_it();
             //std::cout << "trouver une correspondance\n";
@@ -123,7 +165,12 @@ void connection_handler::reply_to_msg(std::string header)
         send_it();
         header_manager.notify_header("Connected");
         send_it();
-        header_manager.check_account_existing();
+        if (header_manager.check_account_existing() == 1) {
+            for (auto it:connections_) {
+                it->header_manager.info_header();
+                it->send_it();
+            }
+        }
         header_manager.get_request_types().pop_back();
         start();
     } if (header_manager.get_request_types()[header_manager.get_request_types().size() - 1] == request_types::SUBSCRIBE) {
@@ -151,11 +198,20 @@ void connection_handler::reply_to_msg(std::string header)
         start();
     } if (header_manager.get_request_types()[header_manager.get_request_types().size() - 1] == request_types::BYE) {
         header_manager.change_state();
+        for (auto it:connections_) {
+            it->header_manager.info_header();
+            it->send_it();
+        }
         sock.close();
     } if (header_manager.get_request_types()[header_manager.get_request_types().size() - 1] == request_types::INVITE) {
         send_header_to_cli(header);
-        header_manager.invite_header(header);
-        send_it();
         header_manager.get_request_types().pop_back();
+    } 
+    if (header_manager.get_request_types()[header_manager.get_request_types().size() - 1] == request_types::ACK) {
+        send_ack_to_cli(header);
+
+    } if (header_manager.get_request_types()[header_manager.get_request_types().size() - 1] == request_types::CANCEL) {
+        send_cancel_to_cli(header);
+
     }
 }

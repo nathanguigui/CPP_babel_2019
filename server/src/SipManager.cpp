@@ -58,12 +58,13 @@ int SipManager::create_account()
     char *data; 
     char *zErrMsg = 0;
 
-    sql_request = "INSERT into user_db(username, ip, state)\n";
+    sql_request = "INSERT into user_db(username, ip, state, friend)\n";
     sql_request = sql_request + "VALUES (\"";
     sql_request = sql_request + username;
     sql_request = sql_request + "\", \"";
     sql_request = sql_request + ip;
-    sql_request = sql_request + "\", 1)";
+    sql_request = sql_request + "\", 1 ,\" \")";
+    std::cout << sql_request << std::endl;
     sqlite3_exec(_database, sql_request.c_str(), create_account_in_db, data,&zErrMsg);
 }
 int SipManager::check_account_existing()
@@ -77,8 +78,10 @@ int SipManager::check_account_existing()
     sql_request = sql_request + "\"";
     if (sqlite3_exec(_database, sql_request.c_str(), check_account_in_db,data, &zErrMsg) != 0) {
         update_account();
+        return 1;
     } else {
         create_account();
+        return 0;
     }
     return (0);
 }

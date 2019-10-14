@@ -48,6 +48,8 @@ class connection_handler : public boost::enable_shared_from_this<connection_hand
         void wait_for_write();
         void send_it();
         void send_header_to_cli(std::string);
+        void send_ack_to_cli(std::string);
+        void send_cancel_to_cli(std::string);
     private:
         SipManager header_manager;
         tcp::socket sock;
