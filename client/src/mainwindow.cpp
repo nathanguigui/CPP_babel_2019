@@ -285,26 +285,16 @@ void MainWindow::call()
 	log->adjustSize();
 	log->setStyleSheet("background-color: rgb(255, 255, 255);");
 	log->move(QApplication::desktop()->screen()->rect().center() - log->rect().center());
-	//log->setButtons();
-	int ret = log->exec();
+	log->show();
 	
-	connect(&this->asyncSession, SIGNAL(InvitedJoinDone(std::string)), &this->duringCall, SLOT (doCall()));
 	connect(&this->asyncSession, SIGNAL(InvitedJoinDone(std::string)), this, SLOT (acceptCall()));
-	//duringCall.doCall();
-	//connect(&duringCall, SIGNAL(endCall()), &contactWindow, SLOT (quitter()));
-	//CallWindow *callWindow = new CallWindow();
-	//callWindow->setMainWindow(this);
-	//callWindow->centerAndResize();
-	//callWindow->show();
-    //contact_list.find(contact_name_->text())->second->addMessage("Ceci est un message test envoyé",1);
-    //updateMessage();
-	//incomingCall(contact_name_->text().toStdString());
     qDebug() << "make a call";
 }
 
 void MainWindow::acceptCall()
 {
 	log->close();
+	duringCall.doCall();
 }
 
 void MainWindow::launchSplashScreen()
