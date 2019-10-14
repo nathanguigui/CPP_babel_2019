@@ -102,11 +102,11 @@ void UdpNetwork::startServer() {
 }
 
 void UdpNetwork::connectedClient() {
-    this->readCallback("", this->manager);
+    qDebug() << "call connectted to peer\r\n";
 }
 
 void UdpNetwork::connectedServer() {
-    this->readCallback("", this->manager);
+    qDebug() << "friend join P2P UDP server\r\n";
 }
 
 std::string UdpNetwork::readDatagram() {
