@@ -87,8 +87,6 @@ void UdpNetwork::readyReadServer() {
     AudioSettings::Encoded encoded;
     qDebug() << packet.c_str();
     /// send data to encode manager then to audio manager
-    if (!this->firstMessageDone)
-        this->sendData("hello world");
     if (packet.size() >= sizeof(SoundPacket)) {
         std::memcpy(&soundPacket, packet.c_str(), packet.size());
         if (soundPacket.magic_code == 0x150407CA && soundPacket.timestamp >= this->currentTimestamp) {

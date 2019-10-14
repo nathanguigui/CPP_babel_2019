@@ -8,13 +8,15 @@ CallManager::CallManager(AsyncSession &session) : session(session), serverInited
     this->isAwaitingInvite = false;
     this->mode = NO_MODE;
     this->listeningPort = -1;
+    qDebug() << "pas encore crash dans le call manager";
     qRegisterMetaType<AudioSettings::Encoded>("encoded_audio");
     connect(&this->session, SIGNAL(InvitedLeftDone(const std::string)), this, SLOT(handlePeopleRefuse(const std::string)));
     connect(&this->session, SIGNAL(InvitedJoinDone(const std::string)), this, SLOT(handlePeopleJoin(const std::string)));
     /// Connect encoded recorded sound to network
     connect(&this->soundManager, SIGNAL(soundAvailable(const AudioSettings::Encoded)), this, SLOT(sendSound(const AudioSettings::Encoded)));
     /// Connect received encoded sound to EncodeManager then to Output Device
-    connect(this->socket, SIGNAL(PacketRecieved(const AudioSettings::Encoded)), &this->soundManager, SLOT(playSound(const AudioSettings::Encoded)));
+    //connect(this->socket, SIGNAL(PacketRecieved(const AudioSettings::Encoded)), &this->soundManager, SLOT(playSound(const AudioSettings::Encoded)));
+    qDebug() << "pas encore crash dans le call manager";
 }
 
 void CallManager::makeCall(std::string &name) {
@@ -64,7 +66,7 @@ void CallManager::handlePeopleRefuse(const std::string &name) {
 void CallManager::handlePeopleJoin(const std::string &name) {
     qDebug() << name.c_str() << " join the call \r\n";
     // TODO start voice transmission when you are the host
-    //this->soundManager.startRecording();
+    this->soundManager.startRecording();
     this->soundManager.startPlaying();
     this->friendsInCall ++;
     this->friendsPendingResponse --;

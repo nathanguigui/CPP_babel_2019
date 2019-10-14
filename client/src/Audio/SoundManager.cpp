@@ -2,9 +2,11 @@
 // Created by guigui on 9/25/19.
 //
 
+#include <iostream>
 #include "Audio/SoundManager.hpp"
 
 SoundManager::SoundManager() : inputDevice(nullptr), outputDevice(nullptr), recordEnabled(false), playEnabled(false) {
+    qRegisterMetaType<AudioSettings::Encoded>("encoded_audio");
     this->inputDevice = new RecordingDevice;
     this->inputDevice->setListeningDevice(this);
     this->outputDevice = new OutputDevice;
