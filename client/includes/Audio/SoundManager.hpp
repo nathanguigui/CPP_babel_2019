@@ -11,11 +11,17 @@
 #include "IAudioDevice.hpp"
 #include "EncodeManager.hpp"
 
+Q_DECLARE_METATYPE(IAudioDevice*)
+
 class SoundManager : public QObject, public IAudioDevice::listeningDevice {
     Q_OBJECT
 public:
     SoundManager();
     ~SoundManager() override;
+    void startRecording();
+    void stopRecording();
+    void startPlaying();
+    void stopPlaying();
 
 public slots:
     void playSound(const AudioSettings::Encoded &sound);
@@ -27,10 +33,6 @@ signals:
 private:
     SoundManager(const SoundManager &) : QObject() {}
     const SoundManager &operator=(const SoundManager &) {return *this;}
-    void startRecording();
-    void stopRecording();
-    void startPlaying();
-    void stopPlaying();
 
     RecordingDevice *inputDevice;
     OutputDevice *outputDevice;

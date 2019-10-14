@@ -8,7 +8,11 @@
 #include <QtCore/QTextStream>
 #include <QUdpSocket>
 #include <QWidget>
+#include <client/includes/Audio/AudioSettings.hpp>
 #include "IProtoNetwork.hpp"
+#include <iostream>
+#include <cstdint>
+#include <cstring>
 
 class CallManager;
 
@@ -20,6 +24,14 @@ enum UdpNetworkMode {
 
 class UdpNetwork : public QWidget, public IProtoNetwork {
     Q_OBJECT
+
+    struct SoundPacket {
+        int magic_code;
+        int64_t timestamp;
+        int soundSize;
+        char sound[500];
+    };
+
 public:
     /// Create Udp Client
     UdpNetwork(std::string &host, int port, void (*callback)(std::string, CallManager *), CallManager *manager);
@@ -54,6 +66,8 @@ public:
 signals:
     /// Signal to tell to callManager server ready
     void ServerReady(int port);
+    /// Signal to tell packet from good host are coming
+    void PacketRecieved(const AudioSettings::Encoded packet);
 
 public slots:
     void readyReadServer();
@@ -72,6 +86,8 @@ private:
     UdpNetworkMode mode;
     CallManager *manager;
     void (*readCallback)(std::string, CallManager *manager);
+    bool firstMessageDone;
+    long currentTimestamp = 0;
 };
 
 #endif //CPP_BABEL_2019_UDPNETWORK_HPP

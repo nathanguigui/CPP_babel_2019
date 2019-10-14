@@ -8,9 +8,13 @@ CallManager::CallManager(AsyncSession &session) : session(session), serverInited
     this->isAwaitingInvite = false;
     this->mode = NO_MODE;
     this->listeningPort = -1;
+    qRegisterMetaType<AudioSettings::Encoded>("encoded_audio");
     connect(&this->session, SIGNAL(InvitedLeftDone(const std::string)), this, SLOT(handlePeopleRefuse(const std::string)));
     connect(&this->session, SIGNAL(InvitedJoinDone(const std::string)), this, SLOT(handlePeopleJoin(const std::string)));
+    /// Connect encoded recorded sound to network
     connect(&this->soundManager, SIGNAL(soundAvailable(const AudioSettings::Encoded)), this, SLOT(sendSound(const AudioSettings::Encoded)));
+    /// Connect received encoded sound to EncodeManager then to Output Device
+    connect(this->socket, SIGNAL(PacketRecieved(const AudioSettings::Encoded)), &this->soundManager, SLOT(playSound(const AudioSettings::Encoded)));
 }
 
 void CallManager::makeCall(std::string &name) {
@@ -39,8 +43,10 @@ void CallManager::asyncServerReady(int port) {
 void CallManager::joinCall(std::string &name, std::string &ip, int port) {
     this->socket = new UdpNetwork(ip, port, nullptr, nullptr);
     qDebug() << name.c_str() << "@" << ip.c_str() << ":" << port << " call joined\r\n";
-    // TODO voice transmission
-    this->socket->sendData("client connected in P2P\r\n");
+    this->socket->sendData("hello world");
+    // TODO start voice transmission
+    this->soundManager.startRecording();
+    this->soundManager.startPlaying();
     this->session.asyncAck(name);
 }
 
@@ -57,6 +63,9 @@ void CallManager::handlePeopleRefuse(const std::string &name) {
 
 void CallManager::handlePeopleJoin(const std::string &name) {
     qDebug() << name.c_str() << " join the call \r\n";
+    // TODO start voice transmission
+    this->soundManager.startRecording();
+    this->soundManager.startPlaying();
     this->friendsInCall ++;
     this->friendsPendingResponse --;
 }

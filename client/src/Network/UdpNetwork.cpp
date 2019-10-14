@@ -7,7 +7,7 @@
 #include "Network/UdpNetwork.hpp"
 
 UdpNetwork::UdpNetwork(std::string &host, int port, void (*callback)(std::string, CallManager *),
-                       CallManager *manager) : readCallback(callback), manager(manager) {
+                       CallManager *manager) : readCallback(callback), manager(manager), host(host), port(port), firstMessageDone(false) {
     this->socket = new QUdpSocket();
     this->mode = CLIENT;
     this->socket->setSocketOption(QAbstractSocket::LowDelayOption, true);
@@ -33,8 +33,8 @@ UdpNetwork::~UdpNetwork() {
 }
 
 void UdpNetwork::sendData(std::string data) {
-    QTextStream os(this->socket);
-    os << data.c_str();
+    auto tmp = QHostAddress(QString(this->host.c_str()));
+    this->socket->writeDatagram(data.c_str(), data.size(), tmp, this->port);
 }
 
 void UdpNetwork::closeConnection() {
@@ -82,11 +82,41 @@ UdpNetworkMode UdpNetwork::getMode() const {
 }
 
 void UdpNetwork::readyReadServer() {
-    this->readDatagram();
+    auto packet = this->readDatagram();
+    UdpNetwork::SoundPacket soundPacket;
+    AudioSettings::Encoded encoded;
+    qDebug() << packet.c_str();
+    /// send data to encode manager then to audio manager
+    if (!this->firstMessageDone)
+        this->sendData("hello world");
+    if (packet.size() >= sizeof(SoundPacket)) {
+        std::memcpy(&soundPacket, packet.c_str(), packet.size());
+        if (soundPacket.magic_code == 0x150407CA && soundPacket.timestamp >= this->currentTimestamp) {
+            encoded.buffer.assign(soundPacket.sound, soundPacket.sound + sizeof(soundPacket.sound));
+            encoded.size = soundPacket.soundSize;
+            this->currentTimestamp = soundPacket.timestamp;
+            emit PacketRecieved(encoded);
+        }
+    }
 }
 
 void UdpNetwork::readyReadClient() {
-    this->readDatagram();
+    auto packet = this->readDatagram();
+    UdpNetwork::SoundPacket soundPacket;
+    AudioSettings::Encoded encoded;
+    qDebug() << packet.c_str();
+    /// send data to encode manager then to audio manager
+    if (!this->firstMessageDone)
+        this->sendData("hello world");
+    if (packet.size() >= sizeof(SoundPacket)) {
+        std::memcpy(&soundPacket, packet.c_str(), packet.size());
+        if (soundPacket.magic_code == 0x150407CA && soundPacket.timestamp >= this->currentTimestamp) {
+            encoded.buffer.assign(soundPacket.sound, soundPacket.sound + sizeof(soundPacket.sound));
+            encoded.size = soundPacket.soundSize;
+            this->currentTimestamp = soundPacket.timestamp;
+            emit PacketRecieved(encoded);
+        }
+    }
 }
 
 int UdpNetwork::getPort() const {
@@ -110,24 +140,20 @@ void UdpNetwork::connectedServer() {
 }
 
 std::string UdpNetwork::readDatagram() {
-    // when data comes in
     QByteArray buffer;
     buffer.resize(socket->pendingDatagramSize());
-
     QHostAddress sender;
     quint16 senderPort;
-
-    // qint64 QUdpSocket::readDatagram(char * data, qint64 maxSize,
-    //                 QHostAddress * address = 0, quint16 * port = 0)
-    // Receives a datagram no larger than maxSize bytes and stores it in data.
-    // The sender's host address and port is stored in *address and *port
-    // (unless the pointers are 0).
-
-    socket->readDatagram(buffer.data(), buffer.size(),
-                         &sender, &senderPort);
-
-    qDebug() << "Message from: " << sender.toString();
-    qDebug() << "Message port: " << senderPort;
-    qDebug() << "Message: " << buffer;
-    return buffer.toStdString();
+    socket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
+    if (!this->firstMessageDone && buffer.toStdString() == "hello world") {
+        qDebug() << "Message from: " << sender.toString();
+        qDebug() << "Message port: " << senderPort;
+        qDebug() << "Message: " << buffer;
+        this->firstMessageDone = true;
+        this->host = sender.toString().toStdString();
+        this->port = senderPort;
+    } else if (this->firstMessageDone && sender.toString().toStdString() == this->host)
+        return buffer.toStdString();
+    qDebug() << "message: " << buffer;
+    return "";
 }
