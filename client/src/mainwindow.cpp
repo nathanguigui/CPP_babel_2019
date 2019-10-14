@@ -279,7 +279,7 @@ void MainWindow::call()
 	std::string tmp = contact_name_->text().toStdString();
 	callManager->makeCall(tmp);
 
-	QMessageBox *log = new QMessageBox(this);
+	log = new QMessageBox(this);
 	log->setText(tr("%1 is ringing").arg(contact_name_->text()));
 	log->setWindowTitle(tr("salle d'attente"));
 	log->adjustSize();
@@ -289,6 +289,7 @@ void MainWindow::call()
 	int ret = log->exec();
 	
 	connect(&this->asyncSession, SIGNAL(InvitedJoinDone(std::string)), &this->duringCall, SLOT (doCall()));
+	connect(&this->asyncSession, SIGNAL(InvitedJoinDone(std::string)), this, SLOT (acceptCall()));
 	//duringCall.doCall();
 	//connect(&duringCall, SIGNAL(endCall()), &contactWindow, SLOT (quitter()));
 	//CallWindow *callWindow = new CallWindow();
@@ -299,6 +300,11 @@ void MainWindow::call()
     //updateMessage();
 	//incomingCall(contact_name_->text().toStdString());
     qDebug() << "make a call";
+}
+
+void MainWindow::acceptCall()
+{
+	log->close();
 }
 
 void MainWindow::launchSplashScreen()
