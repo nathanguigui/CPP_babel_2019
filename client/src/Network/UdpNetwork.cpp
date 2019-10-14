@@ -92,7 +92,6 @@ void UdpNetwork::readyReadServer() {
             encoded.buffer.assign(soundPacket.sound, soundPacket.sound + sizeof(soundPacket.sound));
             encoded.size = soundPacket.soundSize;
             this->currentTimestamp = soundPacket.timestamp;
-            qDebug() << "emiting packetreieved signal";
             emit PacketRecieved(encoded);
         }
     }
@@ -142,14 +141,14 @@ std::string UdpNetwork::readDatagram() {
     QHostAddress sender;
     quint16 senderPort;
     socket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
-    /*if (!this->firstMessageDone && buffer.toStdString() == "hello world") {
+    if (!this->firstMessageDone && buffer.toStdString() == "hello world") {
         qDebug() << "Message from: " << sender.toString();
         qDebug() << "Message port: " << senderPort;
         qDebug() << "Message: " << buffer;
         this->firstMessageDone = true;
         this->host = sender.toString().toStdString();
         this->port = senderPort;
-    } else if (this->firstMessageDone && sender.toString().toStdString() == this->host)*/
+    }
     return buffer.toStdString();
     return "";
 }

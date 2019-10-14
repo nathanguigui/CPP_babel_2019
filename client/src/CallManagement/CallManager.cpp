@@ -47,9 +47,8 @@ void CallManager::joinCall(std::string &name, std::string &ip, int port) {
     connect(this->socket, SIGNAL(PacketRecieved(const AudioSettings::Encoded)), this, SLOT(playSound(const AudioSettings::Encoded)));
     qDebug() << name.c_str() << "@" << ip.c_str() << ":" << port << " call joined\r\n";
     this->socket->sendData("hello world");
-    // TODO start voice transmission when you connect to the host
     this->soundManager.startRecording();
-    //this->soundManager.startPlaying();
+    this->soundManager.startPlaying();
     this->session.asyncAck(name);
 }
 
@@ -66,7 +65,6 @@ void CallManager::handlePeopleRefuse(const std::string &name) {
 
 void CallManager::handlePeopleJoin(const std::string &name) {
     qDebug() << name.c_str() << " join the call \r\n";
-    // TODO start voice transmission when you are the host
     this->soundManager.startRecording();
     this->soundManager.startPlaying();
     this->friendsInCall ++;
@@ -85,6 +83,5 @@ void CallManager::sendSound(const AudioSettings::Encoded &sound) {
 }
 
 void CallManager::playSound(const AudioSettings::Encoded sound) {
-    qDebug() << "playing sound";
     this->soundManager.playSound(sound);
 }

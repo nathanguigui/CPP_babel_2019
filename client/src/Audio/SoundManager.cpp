@@ -29,6 +29,7 @@ void SoundManager::onSoundAvailable(IAudioDevice *device) {
 }
 
 void SoundManager::startRecording() {
+    std::cout << "startRecording";
     this->inputDevice->startStream();
 }
 
