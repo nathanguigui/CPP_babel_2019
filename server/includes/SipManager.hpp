@@ -56,7 +56,7 @@ class SipManager {
         void add_friend_header(std::string hearder_recv);
         std::vector<std::string> my_friends;
         std::string response_header;
-        
+        std::string friend_str;
         std::vector<request_types> get_request_types(){return types;}
         std::string get_ip() {return ip;}
         std::string get_server_ip() {return server_ip;}
@@ -66,6 +66,8 @@ class SipManager {
         std::string get_tag_cli() {return tag_cli;}
         std::string get_tag_server() {return tag_server;}
         std::string get_call_id() {return call_id;}
+        void get_friends_in_str(std::string username);
+
     private:
         std::vector<request_types> types;
         std::string ip;

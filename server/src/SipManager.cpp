@@ -156,7 +156,11 @@ int handler_add_friends(void *data, int argc, char **argv, char **azColName)
 
 int return_data_friends(void *data, int argc, char **argv, char **azColName)
 {
-    
+    SipManager *my_manager = static_cast<SipManager*>(data);
+    if (argc >= 1) {
+        my_manager->friend_str = convertToString(argv[argc - 1]);
+    }
+    return 0;
 }
 void SipManager::get_friends_data()
 {
@@ -182,36 +186,42 @@ void SipManager::get_friends_data()
     }
 }
 
+
+
+void SipManager::get_friends_in_str(std::string _username)
+{
+    char *data; 
+    char *zErrMsg = 0;
+    std::string sql_request = "SELECT friend FROM user_db\nWHERE username == \"";
+    sql_request = sql_request + _username;
+    sql_request = sql_request + "\"";
+    //std::cout << sql_request << "Request Send to add my_friend\n";
+    sqlite3_exec(_database, sql_request.c_str(), return_data_friends, this,&zErrMsg);
+}
+
 int SipManager::add_friends(std::string friend_username)
 {
     int i = 0;
     char *data; 
     char *zErrMsg = 0;
 
-    get_friends(username);
-    my_friends.push_back(friend_username);
+    get_friends_in_str(username);
+    std::cout << friend_str << std::endl;
     std::string sql_request = "UPDATE user_db SET friend=\"";
-    for (i = 0; i < my_friends.size(); i++) {
-        sql_request = sql_request + my_friends[i];
-        if (i > 0)
-            sql_request = sql_request + ";";
-    }
-    sql_request = sql_request + "\"";
+    sql_request = sql_request + friend_str;
+    sql_request = sql_request + friend_username;
+    sql_request = sql_request + ";\"";
     sql_request = sql_request + "WHERE username==\"";
     sql_request = sql_request + username;
     sql_request = sql_request + "\"";
+    std::cout << sql_request << std::endl;
     sqlite3_exec(_database, sql_request.c_str(), handler_add_friends, this,&zErrMsg);
-    my_friends.clear();
     sql_request.erase(0, std::string::npos);
-    get_friends(friend_username);
-    my_friends.push_back(username);
+    get_friends_in_str(friend_username);
     sql_request = "UPDATE user_db SET friend=\"";
-    for (i = 0; i < my_friends.size(); i++) {
-        sql_request = sql_request + my_friends[i];
-        if (i > 0)
-            sql_request = sql_request + ";";
-    }
-    sql_request = sql_request + "\"";
+    sql_request = sql_request + friend_str;
+    sql_request = sql_request + username;
+    sql_request = sql_request + ";\"";
     sql_request = sql_request + "WHERE username==\"";
     sql_request = sql_request + friend_username;
     sql_request = sql_request + "\"";
@@ -312,8 +322,8 @@ request_types SipManager::get_request_types_request(std::string request)
 
 std::string SipManager::get_IP_in_request(std::string request)
 {
-    request.erase(0, request.find("SIP/2.0/TCP") + 11);
-    return (request.substr(0, request.find("\r\n") - 2));
+    request.erase(0, request.find("SIP/2.0/TCP") + 12);
+    return (request.substr(0, request.find(":")));
 }
 
 std::string SipManager::get_username_request(std::string request)

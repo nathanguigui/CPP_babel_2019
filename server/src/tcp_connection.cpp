@@ -126,7 +126,7 @@ void connection_handler::send_ack_to_cli(std::string packet)
     hdr << "\r\nMessage_Waiting: ";
     for (auto it:connections_) {
         if (it->header_manager.get_username() == cli_data.uname && it->sock.is_open()) {
-            hdr << header_manager.get_username() << ";";
+            hdr << header_manager.get_username() << "\r\n";
             it->header_manager.response_header = hdr.str();
             it->send_it();
             //std::cout << "trouver une correspondance\n";
@@ -147,7 +147,7 @@ void connection_handler::send_cancel_to_cli(std::string packet)
     hdr << "\r\nMessage_Waiting: ";
     for (auto it:connections_) {
         if (it->header_manager.get_username() == cli_data.uname && it->sock.is_open()) {
-            hdr << header_manager.get_username() << ";";
+            hdr << header_manager.get_username() << "\r\n";
             it->header_manager.response_header = hdr.str();
             it->send_it();
             //std::cout << "trouver une correspondance\n";
@@ -206,12 +206,13 @@ void connection_handler::reply_to_msg(std::string header)
     } if (header_manager.get_request_types()[header_manager.get_request_types().size() - 1] == request_types::INVITE) {
         send_header_to_cli(header);
         header_manager.get_request_types().pop_back();
+        start();
     } 
     if (header_manager.get_request_types()[header_manager.get_request_types().size() - 1] == request_types::ACK) {
         send_ack_to_cli(header);
-
+        start();
     } if (header_manager.get_request_types()[header_manager.get_request_types().size() - 1] == request_types::CANCEL) {
         send_cancel_to_cli(header);
-
+        start();
     }
 }
