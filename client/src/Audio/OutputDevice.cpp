@@ -65,6 +65,7 @@ int OutputDevice::callback(const void *inputBuffer, void *outputBuffer, unsigned
                            void *userData) {
     auto *obj = reinterpret_cast<OutputDevice *>(userData);
     ScopedLock scopedLock(&obj->mutex);
+    // manage buffering here
     if (obj->buffers.empty())
         return paContinue;
     AudioSettings::Decoded sound = obj->buffers.front();

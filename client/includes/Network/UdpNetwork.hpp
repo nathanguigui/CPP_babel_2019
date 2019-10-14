@@ -10,6 +10,7 @@
 #include <QWidget>
 #include "IProtoNetwork.hpp"
 
+class CallManager;
 
 enum UdpNetworkMode {
     NO_MODE,
@@ -21,7 +22,7 @@ class UdpNetwork : public QWidget, public IProtoNetwork {
     Q_OBJECT
 public:
     /// Create Udp Client
-    UdpNetwork(std::string &host, int port);
+    UdpNetwork(std::string &host, int port, void (*callback)(std::string, CallManager *), CallManager *manager);
     /// Create Udp Server
     UdpNetwork();
     ~UdpNetwork() override;
@@ -57,14 +58,20 @@ signals:
 public slots:
     void readyReadServer();
     void readyReadClient();
+    void connectedClient();
+    void connectedServer();
 
 private slots:
     void handleError(int err);
 private:
+    std::string readDatagram();
+
     QUdpSocket *socket;
     std::string host;
     int port;
     UdpNetworkMode mode;
+    CallManager *manager;
+    void (*readCallback)(std::string, CallManager *manager);
 };
 
 #endif //CPP_BABEL_2019_UDPNETWORK_HPP

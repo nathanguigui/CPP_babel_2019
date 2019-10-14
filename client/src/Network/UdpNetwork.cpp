@@ -6,15 +6,24 @@
 #include <sstream>
 #include "Network/UdpNetwork.hpp"
 
-UdpNetwork::UdpNetwork(std::string &host, int port) {
+UdpNetwork::UdpNetwork(std::string &host, int port, void (*callback)(std::string, CallManager *),
+                       CallManager *manager) : readCallback(callback), manager(manager) {
     this->socket = new QUdpSocket();
     this->mode = CLIENT;
-    socket->connectToHost(host.c_str(), port);
+    this->socket->setSocketOption(QAbstractSocket::LowDelayOption, true);
+    connect(socket, SIGNAL(connected()), this, SLOT(connectedClient()));
     connect(socket, SIGNAL(readyRead()), this, SLOT(readyReadClient()));
+    qDebug() << "connecting to peer in UDP\r\n";
+    socket->connectToHost(host.c_str(), port);
+    if (!socket->waitForConnected(3000))
+        qDebug() << "connection timeout\n";
 }
 
 UdpNetwork::UdpNetwork() {
     this->socket = new QUdpSocket();
+    this->socket->setSocketOption(QAbstractSocket::LowDelayOption, true);
+    connect(socket, SIGNAL(connected()), this, SLOT(connectedServer()));
+    connect(socket, SIGNAL(readyRead()), this, SLOT(readyReadServer()));
     this->mode = SERVER;
 }
 
@@ -73,6 +82,34 @@ UdpNetworkMode UdpNetwork::getMode() const {
 }
 
 void UdpNetwork::readyReadServer() {
+    this->readDatagram();
+}
+
+void UdpNetwork::readyReadClient() {
+    this->readDatagram();
+}
+
+int UdpNetwork::getPort() const {
+    return port;
+}
+
+void UdpNetwork::startServer() {
+    socket->bind();
+    connect(socket, SIGNAL(readyRead()), this, SLOT(readyReadServer()));
+    this->port = this->socket->localPort();
+    qDebug() << "ServerReady Signal emited\r\n";
+    emit ServerReady(this->port);
+}
+
+void UdpNetwork::connectedClient() {
+    qDebug() << "call connectted to peer\r\n";
+}
+
+void UdpNetwork::connectedServer() {
+    qDebug() << "friend join P2P UDP server\r\n";
+}
+
+std::string UdpNetwork::readDatagram() {
     // when data comes in
     QByteArray buffer;
     buffer.resize(socket->pendingDatagramSize());
@@ -92,20 +129,5 @@ void UdpNetwork::readyReadServer() {
     qDebug() << "Message from: " << sender.toString();
     qDebug() << "Message port: " << senderPort;
     qDebug() << "Message: " << buffer;
-}
-
-void UdpNetwork::readyReadClient() {
-    qDebug() << this->socket->readAll();
-}
-
-int UdpNetwork::getPort() const {
-    return port;
-}
-
-void UdpNetwork::startServer() {
-    socket->bind();
-    connect(socket, SIGNAL(readyRead()), this, SLOT(readyReadServer()));
-    this->port = this->socket->localPort();
-    qDebug() << "ServerReady Signal emited\r\n";
-    emit ServerReady(this->port);
+    return buffer.toStdString();
 }
