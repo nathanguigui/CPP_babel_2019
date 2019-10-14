@@ -22,10 +22,12 @@
 #include <QAction>
 #include <QApplication>
 #include <QColorDialog>
+//#include <contact.hpp>
 //#include "mainWindow.hpp"
 #include "UISettings.hpp"
 #include "Network/AsyncSession.hpp"
 
+class contact;
 class QTextEdit;
 class QPushButton;
 class MainWindow;
@@ -46,6 +48,7 @@ class ContactWindow: public QWidget
         explicit ContactWindow(QWidget *parent = 0);
         ~ContactWindow();
 
+        void setContactList(std::map<QString, contact *> list);
         void setMainWindow(MainWindow *m) { mainwindow = m; };
         void centerAndResize();
         void fillContact();
@@ -60,6 +63,7 @@ class ContactWindow: public QWidget
     private:
         MainWindow *mainwindow;
 
+        std::map<QString, contact *> contacts;
         QPushButton *buttonAdd;
         QPushButton *buttonQuit;
 

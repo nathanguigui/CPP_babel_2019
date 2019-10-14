@@ -40,6 +40,11 @@ ContactWindow::ContactWindow(QWidget *parent): QWidget(parent)
     QObject::connect(buttonAdd, SIGNAL(released()), this, SLOT (addContact()));
 }
 
+void ContactWindow::setContactList(std::map<QString, contact *> list)
+{
+    contacts = list;
+}
+
 ContactWindow::~ContactWindow()
 {
     delete buttonAdd;
@@ -86,7 +91,8 @@ void ContactWindow::fillList(std::vector<ContactDetails> details)
     contactList->clear();
     for (it = details.begin(); it != details.end(); it++) {
         std::cout << "New Contact : " << it->name;
-        contactList->addItem(QString::fromStdString(it->name));
+        if (contacts.find(QString::fromStdString(it->name)) == contacts.end())
+            contactList->addItem(QString::fromStdString(it->name));
         }
     QObject::connect(contactList, SIGNAL (itemClicked(QListWidgetItem*)), this, SLOT (contactClicked(QListWidgetItem*)));
 }

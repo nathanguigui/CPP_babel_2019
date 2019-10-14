@@ -227,6 +227,7 @@ void MainWindow::incomingCall(std::string name, std::string ip, int port)
 void MainWindow::addContact()
 {
    	contactWindow.setMainWindow(this);
+   	contactWindow.setContactList(contact_list);
    	contactWindow.centerAndResize();
    	this->asyncSession.asyncUpdate();
    	contactWindow.show();
