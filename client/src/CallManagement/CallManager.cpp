@@ -71,3 +71,22 @@ void CallManager::sendSound(const AudioSettings::Encoded &sound) {
     std::string tmpMsg(reinterpret_cast<char *>(&soundPacket), reinterpret_cast<char *>(&soundPacket + 1));
     this->socket->sendData(tmpMsg);
 }
+
+void CallManager::manageAudioPacketParsing(const std::string& input, CallManager *session) {
+    if (!session->isInCall())
+        session->startCall();
+}
+
+void CallManager::startCall() {
+    this->inCall = true;
+    try {
+        this->soundManager.startRecording();
+        this->soundManager.startPlaying();
+    } catch (const AudioException&) {
+        qDebug() << "try catch startcall error\r\n";
+    }
+}
+
+bool CallManager::isInCall() const {
+    return inCall;
+}
