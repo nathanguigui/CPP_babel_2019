@@ -214,9 +214,10 @@ void MainWindow::incomingCall(std::string name, std::string ip, int port)
 
    	switch (ret) {
       	case QMessageBox::Yes:
+			duringCall.doCall();
 		  	emit InvitedAccepted(login.toStdString());
 			callManager->joinCall(name, ip, port);
-			duringCall.doCall();
+
          	return;
       	case QMessageBox::Ignore:
 			callManager->declineCall(name);
