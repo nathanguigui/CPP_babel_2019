@@ -284,9 +284,11 @@ void MainWindow::call()
 	log->adjustSize();
 	log->setStyleSheet("background-color: rgb(255, 255, 255);");
 	log->move(QApplication::desktop()->screen()->rect().center() - log->rect().center());
+	//log->setButtons();
+	int ret = log->exec();
 	
 	connect(&this->asyncSession, SIGNAL(InvitedJoinDone(std::string)), &this->duringCall, SLOT (doCall()));
-	duringCall.doCall();
+	//duringCall.doCall();
 	//connect(&duringCall, SIGNAL(endCall()), &contactWindow, SLOT (quitter()));
 	//CallWindow *callWindow = new CallWindow();
 	//callWindow->setMainWindow(this);
