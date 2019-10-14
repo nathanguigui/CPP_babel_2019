@@ -89,6 +89,7 @@ class MainWindow : public QWidget
 
         /// Async auth completed
         void handleAuthCompleted();
+        void acceptCall();
     signals:
         void InvitedAccepted(const std::string &name);
         
@@ -112,5 +113,6 @@ class MainWindow : public QWidget
         bool registerOk;
 
         CallManager *callManager;
+        QMessageBox *log;
 };
 #endif // MAINWINDOW_H
