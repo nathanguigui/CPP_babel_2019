@@ -303,17 +303,18 @@ void MainWindow::launchSplashScreen()
    	QSize availableSize = qApp->desktop()->availableGeometry().size();
    	int width = availableSize.width();
    	int height = availableSize.height();
-   	QMovie *splash = new QMovie("../templates/cube.gif");
+   	QMovie *splash = new QMovie("../client/templates/cube.gif");
    	QLabel *processLabel = new QLabel(this);
    	if (!splash->isValid())
       	std::cout << "file error" << std::endl;
-   	processLabel->resize(width * float(settings_->getWidth() * 10.0), height * float(settings_->getHeight()) * 10.0);
+   	processLabel->resize(980, 580);
+	   //processLabel->resize(width * float(settings_->getWidth() * 10.0), height * float(settings_->getHeight()) * 10.0);
    	processLabel->setStyleSheet("background-color: rgb(38,38,38);");
+   	processLabel->setMovie(splash);
    	processLabel->setWindowFlags(Qt::FramelessWindowHint);
    	processLabel->setAlignment(Qt::AlignCenter);
-   	processLabel->setMovie(splash);
-   	processLabel->show();
    	splash->start();
+   	processLabel->show();
    	QTimer::singleShot(3500, processLabel, SLOT(close()));
    	QTimer::singleShot(0, this, SLOT(show()));
 }
