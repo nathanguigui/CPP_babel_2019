@@ -68,6 +68,8 @@ set(CLIENT_LIBRARIES
     Qt5::Widgets
     Qt5::Network)
 
+configure_file(client/templates/micro.png micro.png COPYONLY)
+
 include_directories(babel_client client/includes)
 
 add_executable(babel_client ${CLIENT_SOURCES} ${CLIENT_HEADERS})
