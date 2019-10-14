@@ -17,7 +17,7 @@ CallWindow::CallWindow(QWidget *parent): QWidget(parent)
     mainLayout->addWidget(button_quit, 1, 0);
     mainLayout->addWidget(picture, 0, 0);
 
-    picture->setStyleSheet("border-image: url(/home/luc4s.p/3_modules/CPP/CPP_babel_2019/client/templates/micro.jpg) 0 0 0 0 stretch stretch");
+    picture->setStyleSheet("border-image: url(micro.png) 0 0 0 0 stretch stretch");
 
     setLayout(mainLayout);
     setWindowTitle(tr("Call"));
