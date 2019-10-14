@@ -210,17 +210,20 @@ void MainWindow::incomingCall(std::string name, std::string ip, int port)
    	incoming->setDefaultButton(QMessageBox::Yes);
 
    	int ret = incoming->exec();
-	callManager = new CallManager(this->asyncSession);
 
    	switch (ret) {
       	case QMessageBox::Yes:
 			duringCall.doCall();
 		  	emit InvitedAccepted(login.toStdString());
-			callManager->joinCall(name, ip, port);
+			//sender = new CallManager(this->asyncSession);
+			receiver = new CallManager(this->asyncSession);
+			//std::string tmp = contact_name_->text().toStdString();
+			//sender->makeCall(tmp);
+			receiver->joinCall(name, ip, port);
 
          	return;
       	case QMessageBox::Ignore:
-			callManager->declineCall(name);
+			receiver->declineCall(name);
          	return;
    }
 }
@@ -276,9 +279,10 @@ void MainWindow::call()
 
    	if (contact_name_->text() == QString::null || contact_list[contact_name_->text()]->getState() == false)
 		return;
-	CallManager *callManager = new CallManager(this->asyncSession);
+	sender = new CallManager(this->asyncSession);
+
 	std::string tmp = contact_name_->text().toStdString();
-	callManager->makeCall(tmp);
+	sender->makeCall(tmp);
 
 	log = new QMessageBox(this);
 	log->setText(tr("%1 is ringing").arg(contact_name_->text()));
@@ -295,6 +299,8 @@ void MainWindow::call()
 void MainWindow::acceptCall()
 {
 	log->close();
+	//receiver = new CallManager(this->asyncSession);
+	//receiver->joinCall((contact_name_->text()).toStdString(), (contact_list[contact_name_->text()]->getIp()).toStdString(), contact_list[contact_name_->text()]->getState());
 	duringCall.doCall();
 }
 
@@ -303,7 +309,7 @@ void MainWindow::launchSplashScreen()
    	QSize availableSize = qApp->desktop()->availableGeometry().size();
    	int width = availableSize.width();
    	int height = availableSize.height();
-   	QMovie *splash = new QMovie("../client/templates/cube.gif");
+   	QMovie *splash = new QMovie("cube.gif");
    	QLabel *processLabel = new QLabel(this);
    	if (!splash->isValid())
       	std::cout << "file error" << std::endl;

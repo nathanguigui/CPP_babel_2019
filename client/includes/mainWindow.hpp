@@ -112,7 +112,8 @@ class MainWindow : public QWidget
         /// auth status
         bool registerOk;
 
-        CallManager *callManager;
+        CallManager *sender;
+        CallManager *receiver;
         QMessageBox *log;
 };
 #endif // MAINWINDOW_H

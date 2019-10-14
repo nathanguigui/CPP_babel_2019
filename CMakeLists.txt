@@ -69,6 +69,7 @@ set(CLIENT_LIBRARIES
     Qt5::Network)
 
 configure_file(client/templates/micro.png micro.png COPYONLY)
+configure_file(client/templates/cube.gif cube.gif COPYONLY)
 
 include_directories(babel_client client/includes)
 
