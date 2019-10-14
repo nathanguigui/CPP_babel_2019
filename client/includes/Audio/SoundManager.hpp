@@ -10,6 +10,8 @@
 #include <client/includes/Audio/RecordingDevice.hpp>
 #include "IAudioDevice.hpp"
 #include "EncodeManager.hpp"
+#include <QtCore/QTextStream>
+#include <QWidget>
 
 Q_DECLARE_METATYPE(IAudioDevice*)
 
@@ -23,8 +25,8 @@ public:
     void startPlaying();
     void stopPlaying();
 
+    void playSound(AudioSettings::Encoded sound);
 public slots:
-    void playSound(const AudioSettings::Encoded &sound);
     void onSoundAvailable(IAudioDevice *device) override;
 
 signals:

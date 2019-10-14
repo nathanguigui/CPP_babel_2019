@@ -38,6 +38,8 @@ public slots:
     void handlePeopleRefuse(const std::string &name);
     /// Send encoded sound to friend
     void sendSound(const AudioSettings::Encoded &sound);
+    /// Play sound on audio manager
+    void playSound(const AudioSettings::Encoded sound);
 
 signals:
     void callTerminated();

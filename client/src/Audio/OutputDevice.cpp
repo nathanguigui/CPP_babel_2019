@@ -3,6 +3,7 @@
 //
 
 #include <client/includes/Mutex/ScopedLock.hpp>
+#include <iostream>
 #include "Audio/OutputDevice.hpp"
 
 OutputDevice::OutputDevice() : stream(nullptr), isRunning(false) {

@@ -17,7 +17,7 @@ SoundManager::~SoundManager() {
     delete this->outputDevice;
 }
 
-void SoundManager::playSound(const AudioSettings::Encoded &sound) {
+void SoundManager::playSound(AudioSettings::Encoded sound) {
     *this->outputDevice << this->encodeManager.decode(sound);
 }
 

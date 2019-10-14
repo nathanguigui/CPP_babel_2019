@@ -67,7 +67,7 @@ signals:
     /// Signal to tell to callManager server ready
     void ServerReady(int port);
     /// Signal to tell packet from good host are coming
-    void PacketRecieved(const AudioSettings::Encoded packet);
+    void PacketRecieved(const AudioSettings::Encoded);
 
 public slots:
     void readyReadServer();

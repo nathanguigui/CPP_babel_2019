@@ -85,14 +85,14 @@ void UdpNetwork::readyReadServer() {
     auto packet = this->readDatagram();
     UdpNetwork::SoundPacket soundPacket;
     AudioSettings::Encoded encoded;
-    qDebug() << packet.c_str();
     /// send data to encode manager then to audio manager
-    if (packet.size() >= sizeof(SoundPacket)) {
+    if (packet.size() >= 12) {
         std::memcpy(&soundPacket, packet.c_str(), packet.size());
         if (soundPacket.magic_code == 0x150407CA && soundPacket.timestamp >= this->currentTimestamp) {
             encoded.buffer.assign(soundPacket.sound, soundPacket.sound + sizeof(soundPacket.sound));
             encoded.size = soundPacket.soundSize;
             this->currentTimestamp = soundPacket.timestamp;
+            qDebug() << "emiting packetreieved signal";
             emit PacketRecieved(encoded);
         }
     }
@@ -102,11 +102,10 @@ void UdpNetwork::readyReadClient() {
     auto packet = this->readDatagram();
     UdpNetwork::SoundPacket soundPacket;
     AudioSettings::Encoded encoded;
-    qDebug() << packet.c_str();
     /// send data to encode manager then to audio manager
     if (!this->firstMessageDone)
         this->sendData("hello world");
-    if (packet.size() >= sizeof(SoundPacket)) {
+    if (packet.size() >= 12) {
         std::memcpy(&soundPacket, packet.c_str(), packet.size());
         if (soundPacket.magic_code == 0x150407CA && soundPacket.timestamp >= this->currentTimestamp) {
             encoded.buffer.assign(soundPacket.sound, soundPacket.sound + sizeof(soundPacket.sound));
@@ -143,15 +142,14 @@ std::string UdpNetwork::readDatagram() {
     QHostAddress sender;
     quint16 senderPort;
     socket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
-    if (!this->firstMessageDone && buffer.toStdString() == "hello world") {
+    /*if (!this->firstMessageDone && buffer.toStdString() == "hello world") {
         qDebug() << "Message from: " << sender.toString();
         qDebug() << "Message port: " << senderPort;
         qDebug() << "Message: " << buffer;
         this->firstMessageDone = true;
         this->host = sender.toString().toStdString();
         this->port = senderPort;
-    } else if (this->firstMessageDone && sender.toString().toStdString() == this->host)
-        return buffer.toStdString();
-    qDebug() << "message: " << buffer;
+    } else if (this->firstMessageDone && sender.toString().toStdString() == this->host)*/
+    return buffer.toStdString();
     return "";
 }
