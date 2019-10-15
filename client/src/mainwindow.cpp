@@ -218,7 +218,7 @@ void MainWindow::incomingCall(std::string name, std::string ip, int port)
 			duringCall.doCall(login.toStdString());
 		  	emit InvitedAccepted(login.toStdString());
 			callManager = new CallManager(this->asyncSession);
-			QObject::connect(callManager, SIGNAL (callTerminate(std::string)), &this->duringCall, SLOT(quit()));
+			QObject::connect(callManager, SIGNAL (callTerminate(const std::string)), &this->duringCall, SLOT(quit()));
 			QObject::connect(&this->asyncSession, SIGNAL(InvitedJoinDone(std::string)), this, SLOT (acceptCall(std::string)));
 			//sender = new CallManager(this->asyncSession);
 
