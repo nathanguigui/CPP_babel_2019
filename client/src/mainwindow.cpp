@@ -309,7 +309,7 @@ void MainWindow::acceptCall(std::string name)
 	//receiver->joinCall((contact_name_->text()).toStdString(), (contact_list[contact_name_->text()]->getIp()).toStdString(), contact_list[contact_name_->text()]->getState());
 	duringCall.doCall(name);
 	QObject::connect(&this->duringCall, SIGNAL (terminate(std::string)), callManager, SLOT(terminateCall(std::string)));
-	QObject::connect(callManager, SIGNAL (callTerminate(std::string)), &this->duringCall, SLOT(quit()));
+	QObject::connect(callManager, SIGNAL (callTerminated()), &this->duringCall, SLOT(quit()));
 }
 
 void MainWindow::launchSplashScreen()
