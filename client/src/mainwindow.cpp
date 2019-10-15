@@ -298,7 +298,6 @@ void MainWindow::call()
 	log->show();
 	
 	QObject::connect(&this->asyncSession, SIGNAL(InvitedJoinDone(std::string)), this, SLOT (acceptCall(std::string)));
-	QObject::connect(callManager, SIGNAL (callTerminate(std::string)), &this->duringCall, SLOT(quit()));
 
     qDebug() << "make a call";
 }
@@ -309,7 +308,8 @@ void MainWindow::acceptCall(std::string name)
 	//receiver = new CallManager(this->asyncSession);
 	//receiver->joinCall((contact_name_->text()).toStdString(), (contact_list[contact_name_->text()]->getIp()).toStdString(), contact_list[contact_name_->text()]->getState());
 	duringCall.doCall(name);
-	QObject::connect(&this->duringCall, SIGNAL (terminate(std::string)), callManager, SLOT(terminateCall(std::string)));	
+	QObject::connect(&this->duringCall, SIGNAL (terminate(std::string)), callManager, SLOT(terminateCall(std::string)));
+	QObject::connect(callManager, SIGNAL (callTerminate(std::string)), &this->duringCall, SLOT(quit()));
 }
 
 void MainWindow::launchSplashScreen()
