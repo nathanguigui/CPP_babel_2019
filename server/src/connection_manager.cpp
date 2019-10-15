@@ -1,5 +1,7 @@
 #include "../includes/Server.hpp"
 
+std::set<connection_handler::pointer> connections_;
+
 void connection_manager::start(connection_handler::pointer c) 
 {
     connections_.insert(c);

@@ -31,7 +31,7 @@ int check_account_in_db(void *data, int argc, char **argv, char **azColName)
 
 int create_account_in_db(void *data, int argc, char **argv, char **azColName)
 {
-    std::cout << argc << std::endl;
+    //std::cout << argc << std::endl;
     return 1;
 }
 
@@ -58,12 +58,13 @@ int SipManager::create_account()
     char *data; 
     char *zErrMsg = 0;
 
-    sql_request = "INSERT into user_db(username, ip, state)\n";
+    sql_request = "INSERT into user_db(username, ip, state, friend)\n";
     sql_request = sql_request + "VALUES (\"";
     sql_request = sql_request + username;
     sql_request = sql_request + "\", \"";
     sql_request = sql_request + ip;
-    sql_request = sql_request + "\", 1)";
+    sql_request = sql_request + "\", 1 ,\" \")";
+    std::cout << sql_request << std::endl;
     sqlite3_exec(_database, sql_request.c_str(), create_account_in_db, data,&zErrMsg);
 }
 int SipManager::check_account_existing()
@@ -77,8 +78,10 @@ int SipManager::check_account_existing()
     sql_request = sql_request + "\"";
     if (sqlite3_exec(_database, sql_request.c_str(), check_account_in_db,data, &zErrMsg) != 0) {
         update_account();
+        return 1;
     } else {
         create_account();
+        return 0;
     }
     return (0);
 }
@@ -96,8 +99,7 @@ int parse_all_data(void *data, int argc, char **argv, char **azColName)
             buff = buff + convertToString(argv[i + 2]);
             my_manager->my_friends.push_back(buff);
         }
-        i = i 
-        + 3;
+        i = i + 3;
     }
     return 0; 
 }
@@ -114,11 +116,28 @@ int parse_friends(void *data, int argc, char **argv, char **azColName)
 {
     SipManager *my_manager = static_cast<SipManager*>(data);
     std::string buff;
-    if (argc > 1) {
+    if (argc >= 1) {
         buff = convertToString(argv[argc - 1]);
-        boost::split(my_manager->my_friends, buff, boost::is_any_of(" "));
+        //std::cout << buff << "<- Buffer\n";
+        boost::split(my_manager->my_friends, buff, boost::is_any_of(";"));
     }
     return 0;
+}
+
+int set_states(void *data, int argc, char **argv, char **azColName)
+{
+    return 0;
+}
+
+void SipManager::change_state()
+{
+    char *data;
+    char *zErrMsg = 0;
+    std::string sql_request = "UPDATE user_db SET state=0 WHERE username==\"";
+    sql_request = sql_request + username;
+    sql_request = sql_request + "\"";
+    sqlite3_exec(_database, sql_request.c_str(), set_states, this,&zErrMsg);
+
 }
 
 void SipManager::get_friends(std::string _username)
@@ -128,43 +147,86 @@ void SipManager::get_friends(std::string _username)
     std::string sql_request = "SELECT friend FROM user_db\nWHERE username == \"";
     sql_request = sql_request + _username;
     sql_request = sql_request + "\"";
+    //std::cout << sql_request << "Request Send to add my_friend\n";
     sqlite3_exec(_database, sql_request.c_str(), parse_friends, this,&zErrMsg);
 }
 
 int handler_add_friends(void *data, int argc, char **argv, char **azColName)
 {}
 
-int SipManager::add_friends(std::string friend_username)
+int return_data_friends(void *data, int argc, char **argv, char **azColName)
+{
+    SipManager *my_manager = static_cast<SipManager*>(data);
+    if (argc >= 1) {
+        my_manager->friend_str = convertToString(argv[argc - 1]);
+    }
+    return 0;
+}
+void SipManager::get_friends_data()
+{
+    int i = 0;
+    char *data;
+    char *zErrMsg = 0;
+    my_friends.clear();
+    get_friends(username);
+    if (my_friends.size() > 1) {
+        std::string sql_request = "SELECT username, ip, state FROM user_db\nWHERE ";
+        std::cout << sql_request << std::endl;
+        std::cout << my_friends.size() << std::endl;
+        for (i = 0; i < my_friends.size() - 1; i++) {
+            sql_request = sql_request + "username == \"";
+            sql_request = sql_request + my_friends[i];
+            sql_request = sql_request + "\" or ";
+        }
+        sql_request = sql_request + "username == \"";
+        sql_request = sql_request + my_friends[i];
+        sql_request = sql_request + "\"";
+        my_friends.clear();
+        sqlite3_exec(_database, sql_request.c_str(), parse_all_data, this,&zErrMsg);
+    }
+}
+
+
+
+void SipManager::get_friends_in_str(std::string _username)
 {
     char *data; 
     char *zErrMsg = 0;
-
-    get_friends(username);
-    my_friends.push_back(friend_username);
-    std::string sql_request = "UPDATE user_db SET friend=\"";
-    for (int i = 0; i < my_friends.size(); i++) {
-        sql_request = sql_request + my_friends[i];
-        sql_request = sql_request + " ";
-    }
+    std::string sql_request = "SELECT friend FROM user_db\nWHERE username == \"";
+    sql_request = sql_request + _username;
     sql_request = sql_request + "\"";
+    //std::cout << sql_request << "Request Send to add my_friend\n";
+    sqlite3_exec(_database, sql_request.c_str(), return_data_friends, this,&zErrMsg);
+}
+
+int SipManager::add_friends(std::string friend_username)
+{
+    int i = 0;
+    char *data; 
+    char *zErrMsg = 0;
+
+    get_friends_in_str(username);
+    std::cout << friend_str << std::endl;
+    std::string sql_request = "UPDATE user_db SET friend=\"";
+    sql_request = sql_request + friend_str;
+    sql_request = sql_request + friend_username;
+    sql_request = sql_request + ";\"";
     sql_request = sql_request + "WHERE username==\"";
     sql_request = sql_request + username;
     sql_request = sql_request + "\"";
+    std::cout << sql_request << std::endl;
     sqlite3_exec(_database, sql_request.c_str(), handler_add_friends, this,&zErrMsg);
-    my_friends.clear();
-    get_friends(friend_username);
-    my_friends.push_back(username);
+    sql_request.erase(0, std::string::npos);
+    get_friends_in_str(friend_username);
     sql_request = "UPDATE user_db SET friend=\"";
-    for (int i = 0; i < my_friends.size(); i++) {
-        sql_request = sql_request + my_friends[i];
-        sql_request = sql_request + " ";
-    }
-    sql_request = sql_request + "\"";
+    sql_request = sql_request + friend_str;
+    sql_request = sql_request + username;
+    sql_request = sql_request + ";\"";
     sql_request = sql_request + "WHERE username==\"";
     sql_request = sql_request + friend_username;
     sql_request = sql_request + "\"";
     sqlite3_exec(_database, sql_request.c_str(), handler_add_friends, this,&zErrMsg);
-    get_friends(friend_username);
+    get_friends(username);
 }
 
 std::string get_IP_from_iface()
@@ -206,7 +268,6 @@ void SipManager::parse_header(const std::string request)
 {
     std::vector<std::string> lines;
     std::vector<std::string> tmp;
-    //SipParsedMessage receivedMessage = {UNKNOWN, "", multiplePacket, -1, ""};
     boost::split(lines, request, boost::is_any_of("\t"));
     for (const auto& elem : lines)
         !elem.empty() ? this->parsePacket(elem) : void();
@@ -261,8 +322,8 @@ request_types SipManager::get_request_types_request(std::string request)
 
 std::string SipManager::get_IP_in_request(std::string request)
 {
-    request.erase(0, request.find("SIP/2.0/TCP") + 11);
-    return (request.substr(0, request.find("\r\n") - 2));
+    request.erase(0, request.find("SIP/2.0/TCP") + 12);
+    return (request.substr(0, request.find(":")));
 }
 
 std::string SipManager::get_username_request(std::string request)
@@ -338,7 +399,6 @@ void SipManager::update_header()
     auto hdr = std::stringstream();
     int i = 0;
     get_all_data_from_db();
-    std::cout << "First part header\n";
     hdr << "242 UPDATE\r\n" << hostname << "@" << ip << ":" << port;
     hdr << "\r\nVia: " << server_ip << ":" << port_server;
     hdr << "\r\nFrom: \"" << username << "\" <sip:" << username << "@" << ip << ">;tag=" << tag_cli;
@@ -346,7 +406,6 @@ void SipManager::update_header()
     hdr << "\r\nContact: <sip:" << username <<"@" << server_ip; ">";
     hdr << "\r\nCSeq: 242 UPDATE";
     hdr << "\r\nMessage_Waiting: ";
-    std::cout << "Middle part header\n";
     for (i = 0; i < my_friends.size() - 1; i++) {
         hdr << my_friends[i] << ","; 
     }
@@ -354,11 +413,11 @@ void SipManager::update_header()
     hdr << "\r\n";
     my_friends.clear();
     response_header = hdr.str();
-    std::cout << "Middle part header\n";
 }
 std::string SipManager::get_friend_username(std::string header_recv)
 {
-    header_recv.erase(0, header_recv.find("Message_Waiting: " + 17));
+    header_recv.erase(0, header_recv.find("Waiting: ") + 9);
+    header_recv.erase(header_recv.find("\n") - 1, std::string::npos);
     return(header_recv);
 }
 
@@ -366,7 +425,7 @@ void SipManager::add_friend_header(std::string header_recv)
 {
     auto hdr = std::stringstream();
     std::string friend_username = get_friend_username(header_recv);
-    std::cout << "wesh l'equipe:" << friend_username << std::endl;
+    add_friends(friend_username);
     hdr << "243 ADD_FRIEND\r\n" << hostname << "@" << ip << ":" << port;
     hdr << "\r\nVia: " << server_ip << ":" << port_server;
     hdr << "\r\nFrom: \"" << username << "\" <sip:" << username << "@" << ip << ">;tag=" << tag_cli;
@@ -374,6 +433,34 @@ void SipManager::add_friend_header(std::string header_recv)
     hdr << "\r\nContact: <sip:" << username <<"@" << server_ip; ">";
     hdr << "\r\nCSeq: 243 ADD_FRIEND";
     response_header = hdr.str();
+}
+
+void SipManager::info_header()
+{
+    int i = 0;
+    auto hdr = std::stringstream();
+    get_friends_data();
+    hdr << "420 INFO\r\n" << hostname << "@" << ip << ":" << port;
+    hdr << "\r\nVia: " << server_ip << ":" << port_server;
+    hdr << "\r\nFrom: \"" << username << "\" <sip:" << username << "@" << ip << ">;tag=" << tag_cli;
+    hdr <<  "\r\nTo: <" << hostname << "@" << server_ip << ">";
+    hdr << "\r\nContact: <sip:" << username <<"@" << server_ip; ">";
+    hdr << "\r\nCSeq: 420 INFO";
+    hdr << "\r\nMessage_Waiting: ";
+    for (i = 0; i < my_friends.size() - 1; i++) {
+        hdr << my_friends[i] << ","; 
+    }
+    hdr << my_friends[i]; 
+    hdr << "\r\n";
+    my_friends.clear();
+    response_header = hdr.str();
+}
+
+
+
+
+void SipManager::invite_header(std::string packet)
+{
 }
 
 /*std::string get_user_in_request(std::string request, int tag_id)
@@ -413,7 +500,7 @@ std::stringstream SipManager::notify_header(char *old_request)
     auto ss = std::stringstream();
     std::string request = convertToString(old_request);
  
-    std::cout << ss.str() << std::endl;
+    //std::cout << ss.str() << std::endl;
     return (ss);
 }
 */
