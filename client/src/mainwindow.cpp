@@ -125,7 +125,7 @@ void MainWindow::reload()
 void MainWindow::importContact(std::vector<ContactDetails> details)
 {
     std::vector<ContactDetails>::const_iterator it;
-    qDebug() << "Import Contact";
+    qDebug() << "-----Import Contact";
     for (it = details.begin(); it != details.end(); it++) {
         qDebug() << "New Contact : " << QString::fromStdString(it->name);
 		if (contact_list.find(QString::fromStdString(it->name)) == contact_list.end()) {
@@ -135,7 +135,7 @@ void MainWindow::importContact(std::vector<ContactDetails> details)
 			contact_list[QString::fromStdString(it->name)]->setIp(QString::fromStdString(it->ip));
 		}
 	}
-    qDebug() << "End Import";
+    qDebug() << "-----End Import";
     setAllContact();
 }
 
@@ -211,26 +211,29 @@ void MainWindow::incomingCall(std::string name, std::string ip, int port)
 
    	int ret = incoming->exec();
 
-
-
    	switch (ret) {
       	case QMessageBox::Yes:
-			duringCall.doCall(login.toStdString());
+			//duringCall.doCall(login.toStdString());
 		  	emit InvitedAccepted(login.toStdString());
 			callManager = new CallManager(this->asyncSession);
-			QObject::connect(callManager, SIGNAL (callTerminated()), &this->duringCall, SLOT(quit()));
-			QObject::connect(&this->asyncSession, SIGNAL(InvitedJoinDone(std::string)), this, SLOT (acceptCall(std::string)));
-			//sender = new CallManager(this->asyncSession);
+			this->accept(login.toStdString());
+			//QObject::connect(callManager, SIGNAL (callTerminated()), &this->duringCall, SLOT(quit()));
+			//QObject::connect(&this->asyncSession, SIGNAL(InvitedJoinDone(std::string)), this, SLOT (acceptCall(std::string)));
 
-			//std::string tmp = contact_name_->text().toStdString();
-			//sender->makeCall(tmp);
 			callManager->joinCall(name, ip, port);
-
          	return;
+
       	case QMessageBox::Ignore:
 			callManager->declineCall(name);
          	return;
    }
+}
+
+void MainWindow::accept(std::string name)
+{
+	duringCall.doCall(name);
+	QObject::connect(&this->duringCall, SIGNAL (terminate(std::string)), callManager, SLOT(terminateCall(std::string)));
+	QObject::connect(callManager, SIGNAL (callTerminated()), &this->duringCall, SLOT(receiveQuit()));
 }
 
 void MainWindow::addContact()
@@ -291,7 +294,7 @@ void MainWindow::call()
 
 	log = new QMessageBox(this);
 	log->setText(tr("%1 is ringing").arg(contact_name_->text()));
-	log->setWindowTitle(tr("salle d'attente"));
+	log->setWindowTitle(tr("waiting room"));
 	log->adjustSize();
 	log->setStyleSheet("background-color: rgb(255, 255, 255);");
 	log->move(QApplication::desktop()->screen()->rect().center() - log->rect().center());
@@ -305,11 +308,9 @@ void MainWindow::call()
 void MainWindow::acceptCall(std::string name)
 {
 	log->close();
-	//receiver = new CallManager(this->asyncSession);
-	//receiver->joinCall((contact_name_->text()).toStdString(), (contact_list[contact_name_->text()]->getIp()).toStdString(), contact_list[contact_name_->text()]->getState());
 	duringCall.doCall(name);
 	QObject::connect(&this->duringCall, SIGNAL (terminate(std::string)), callManager, SLOT(terminateCall(std::string)));
-	QObject::connect(callManager, SIGNAL (callTerminated()), &this->duringCall, SLOT(quit()));
+	QObject::connect(callManager, SIGNAL (callTerminated()), &this->duringCall, SLOT(receiveQuit()));
 }
 
 void MainWindow::launchSplashScreen()
@@ -322,7 +323,6 @@ void MainWindow::launchSplashScreen()
    	if (!splash->isValid())
       	std::cout << "file error" << std::endl;
    	processLabel->resize(980, 580);
-	   //processLabel->resize(width * float(settings_->getWidth() * 10.0), height * float(settings_->getHeight()) * 10.0);
    	processLabel->setStyleSheet("background-color: rgb(38,38,38);");
    	processLabel->setMovie(splash);
    	processLabel->setWindowFlags(Qt::FramelessWindowHint);

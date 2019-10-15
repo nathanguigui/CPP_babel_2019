@@ -25,8 +25,12 @@ void callThread::run()
 
 void callThread::quit()
 {
-    qDebug() << "quit thread";
     emit terminate(name_);
+    this->exit();
+}
+
+void callThread::receiveQuit()
+{
     this->exit();
 }
 

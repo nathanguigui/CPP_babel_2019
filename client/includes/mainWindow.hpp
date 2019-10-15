@@ -77,6 +77,8 @@ class MainWindow : public QWidget
         callThread duringCall;
         CallManager *callManager;
 
+        void accept(std::string);
+
     public slots:
         void reload();
         void addContact();

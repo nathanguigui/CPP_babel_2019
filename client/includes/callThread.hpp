@@ -25,6 +25,7 @@ class callThread : public QThread {
 
     public slots:
         void quit();
+        void receiveQuit();
 
     protected:
         void run() override;
