@@ -198,11 +198,11 @@ void connection_handler::reply_to_msg(std::string header)
         start();
     } if (header_manager.get_request_types()[header_manager.get_request_types().size() - 1] == request_types::BYE) {
         header_manager.change_state();
+        sock.close();
         for (auto it:connections_) {
             it->header_manager.info_header();
             it->send_it();
         }
-        sock.close();
     } if (header_manager.get_request_types()[header_manager.get_request_types().size() - 1] == request_types::INVITE) {
         send_header_to_cli(header);
         header_manager.get_request_types().pop_back();

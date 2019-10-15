@@ -72,7 +72,7 @@ class connection_manager {
 
 class Server {
     public:
-        Server(boost::asio::io_service& io_service): manager_(),io_context_(io_service), acceptor_(io_service, tcp::endpoint(boost::asio::ip::address::from_string("192.168.1.30"), 25565)){start_accept();}
+        Server(boost::asio::io_service& io_service): manager_(),io_context_(io_service), acceptor_(io_service, tcp::endpoint(boost::asio::ip::address::from_string("192.168.43.136"), 25565)){start_accept();}
         void handle_accept(connection_handler::pointer new_connection, const boost::system::error_code& err);
     private:
         tcp::acceptor acceptor_;
