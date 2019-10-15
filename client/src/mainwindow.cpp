@@ -211,13 +211,17 @@ void MainWindow::incomingCall(std::string name, std::string ip, int port)
 
    	int ret = incoming->exec();
 
+
+
    	switch (ret) {
       	case QMessageBox::Yes:
 			duringCall.doCall(login.toStdString());
 		  	emit InvitedAccepted(login.toStdString());
-			//sender = new CallManager(this->asyncSession);
 			callManager = new CallManager(this->asyncSession);
 			QObject::connect(callManager, SIGNAL (callTerminate(std::string)), &this->duringCall, SLOT(quit()));
+			QObject::connect(&this->asyncSession, SIGNAL(InvitedJoinDone(std::string)), this, SLOT (acceptCall(std::string)));
+			//sender = new CallManager(this->asyncSession);
+
 			//std::string tmp = contact_name_->text().toStdString();
 			//sender->makeCall(tmp);
 			callManager->joinCall(name, ip, port);
@@ -293,7 +297,9 @@ void MainWindow::call()
 	log->move(QApplication::desktop()->screen()->rect().center() - log->rect().center());
 	log->show();
 	
-	connect(&this->asyncSession, SIGNAL(InvitedJoinDone(std::string)), this, SLOT (acceptCall(std::string)));
+	QObject::connect(&this->asyncSession, SIGNAL(InvitedJoinDone(std::string)), this, SLOT (acceptCall(std::string)));
+	QObject::connect(callManager, SIGNAL (callTerminate(std::string)), &this->duringCall, SLOT(quit()));
+
     qDebug() << "make a call";
 }
 
