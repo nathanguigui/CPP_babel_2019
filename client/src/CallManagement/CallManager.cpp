@@ -59,8 +59,11 @@ void CallManager::declineCall(std::string &name) {
 void CallManager::handlePeopleRefuse(const std::string &name) {
     qDebug() << name.c_str() << " refused the call\r\n";
     this->friendsPendingResponse --;
-    if (this->friendsPendingResponse == 0 && this->friendsInCall == 0)
+    if (this->friendsPendingResponse == 0 && this->friendsInCall == 0) {
+        qDebug() << "emiting callTerminated";
         emit callTerminated();
+        this->terminateCall(name);
+    }
 }
 
 void CallManager::handlePeopleJoin(const std::string &name) {
