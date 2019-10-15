@@ -40,7 +40,8 @@ public slots:
     void sendSound(const AudioSettings::Encoded &sound);
     /// Play sound on audio manager
     void playSound(const AudioSettings::Encoded sound);
-
+    /// Terminate the call
+    void terminateCall(std::string &name);
 signals:
     void callTerminated();
 

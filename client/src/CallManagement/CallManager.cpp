@@ -85,3 +85,9 @@ void CallManager::sendSound(const AudioSettings::Encoded &sound) {
 void CallManager::playSound(const AudioSettings::Encoded sound) {
     this->soundManager.playSound(sound);
 }
+
+void CallManager::terminateCall(std::string &name) {
+    this->session.asyncCancel(name);
+    this->soundManager.stopPlaying();
+    this->soundManager.stopRecording();
+}
