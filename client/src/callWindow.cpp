@@ -25,7 +25,7 @@ CallWindow::CallWindow(QWidget *parent): QWidget(parent)
     QObject::connect(button_quit, SIGNAL (released()), this, SLOT (quitter()));
 }
 
-void CallWindow::setWindow()
+void CallWindow::setWindow(std::string)
 {
     this->show();
 }

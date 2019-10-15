@@ -87,7 +87,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent), registerOk(false)
 	QObject::connect(&this->asyncSession, SIGNAL (InfoDone(std::vector<ContactDetails>)), this, SLOT(importContact(std::vector<ContactDetails>)));	
 	QObject::connect(&this->asyncSession, SIGNAL (InvitedRinging(std::string, std::string, int)), this, SLOT (incomingCall(std::string, std::string, int)));
 
-	//QObject::connect(callManager, SIGNAL (callTerminated()), &this->duringCall, SLOT (quit()));
+	//QObject::connect(receiver, SIGNAL (callTerminated()), &this->duringCall, SLOT (quit()));
 
 	QObject::connect(button_contact_, SIGNAL (released()), this, SLOT (addContact()));
 	QObject::connect(button_send_, SIGNAL(released()), this, SLOT(sendMessage()));
@@ -213,17 +213,18 @@ void MainWindow::incomingCall(std::string name, std::string ip, int port)
 
    	switch (ret) {
       	case QMessageBox::Yes:
-			duringCall.doCall();
+			duringCall.doCall(login.toStdString());
 		  	emit InvitedAccepted(login.toStdString());
 			//sender = new CallManager(this->asyncSession);
-			receiver = new CallManager(this->asyncSession);
+			callManager = new CallManager(this->asyncSession);
+			QObject::connect(callManager, SIGNAL (callTerminate(std::string)), &this->duringCall, SLOT(quit()));
 			//std::string tmp = contact_name_->text().toStdString();
 			//sender->makeCall(tmp);
-			receiver->joinCall(name, ip, port);
+			callManager->joinCall(name, ip, port);
 
          	return;
       	case QMessageBox::Ignore:
-			receiver->declineCall(name);
+			callManager->declineCall(name);
          	return;
    }
 }
@@ -279,10 +280,10 @@ void MainWindow::call()
 
    	if (contact_name_->text() == QString::null || contact_list[contact_name_->text()]->getState() == false)
 		return;
-	sender = new CallManager(this->asyncSession);
+	callManager = new CallManager(this->asyncSession);
 
 	std::string tmp = contact_name_->text().toStdString();
-	sender->makeCall(tmp);
+	callManager->makeCall(tmp);
 
 	log = new QMessageBox(this);
 	log->setText(tr("%1 is ringing").arg(contact_name_->text()));
@@ -292,16 +293,17 @@ void MainWindow::call()
 	log->move(QApplication::desktop()->screen()->rect().center() - log->rect().center());
 	log->show();
 	
-	connect(&this->asyncSession, SIGNAL(InvitedJoinDone(std::string)), this, SLOT (acceptCall()));
+	connect(&this->asyncSession, SIGNAL(InvitedJoinDone(std::string)), this, SLOT (acceptCall(std::string)));
     qDebug() << "make a call";
 }
 
-void MainWindow::acceptCall()
+void MainWindow::acceptCall(std::string name)
 {
 	log->close();
 	//receiver = new CallManager(this->asyncSession);
 	//receiver->joinCall((contact_name_->text()).toStdString(), (contact_list[contact_name_->text()]->getIp()).toStdString(), contact_list[contact_name_->text()]->getState());
-	duringCall.doCall();
+	duringCall.doCall(name);
+	QObject::connect(&this->duringCall, SIGNAL (terminate(std::string)), callManager, SLOT(terminateCall(std::string)));	
 }
 
 void MainWindow::launchSplashScreen()

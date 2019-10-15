@@ -14,12 +14,14 @@ class callThread : public QThread {
     public:
         explicit callThread(QObject *parent = nullptr);
         ~callThread() override = default;
-        void doCall();
+        void doCall(std::string);
+        CallWindow callWindow;
         
     signals:
-        void launchCall();
+        void launchCall(std::string);
         void endCall();
         void closeRingWindow();
+        void terminate(std::string);
 
     public slots:
         void quit();
@@ -29,6 +31,7 @@ class callThread : public QThread {
 
     private:
         bool m_ready;
+        std::string name_;
 };
 
 #endif

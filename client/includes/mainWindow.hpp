@@ -75,6 +75,7 @@ class MainWindow : public QWidget
 
         AsyncSession asyncSession;
         callThread duringCall;
+        CallManager *callManager;
 
     public slots:
         void reload();
@@ -89,7 +90,7 @@ class MainWindow : public QWidget
 
         /// Async auth completed
         void handleAuthCompleted();
-        void acceptCall();
+        void acceptCall(std::string);
     signals:
         void InvitedAccepted(const std::string &name);
         
@@ -112,8 +113,6 @@ class MainWindow : public QWidget
         /// auth status
         bool registerOk;
 
-        CallManager *sender;
-        CallManager *receiver;
         QMessageBox *log;
 };
 #endif // MAINWINDOW_H

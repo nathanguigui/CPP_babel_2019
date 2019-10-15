@@ -45,7 +45,7 @@ class CallWindow: public QWidget
         void endCall();
 
     public slots:
-        void setWindow();
+        void setWindow(std::string);
         void quitter();
 
     private:
