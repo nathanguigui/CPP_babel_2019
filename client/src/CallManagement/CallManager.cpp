@@ -61,8 +61,8 @@ void CallManager::handlePeopleRefuse(const std::string &name) {
     this->friendsPendingResponse --;
     if ((this->friendsPendingResponse == 0 && this->friendsInCall == 0) || this->friendsPendingResponse < 0) {
         qDebug() << "emiting callTerminated";
-        emit callTerminated();
         this->terminateCall(name);
+        emit callTerminated();
     }
 }
 
