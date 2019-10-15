@@ -41,7 +41,7 @@ public slots:
     /// Play sound on audio manager
     void playSound(const AudioSettings::Encoded sound);
     /// Terminate the call
-    void terminateCall(std::string &name);
+    void terminateCall(const std::string &name);
 signals:
     void callTerminated();
 

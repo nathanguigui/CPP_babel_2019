@@ -23,7 +23,7 @@ void OutputDevice::initOutputDevice() {
 		throw AudioException("fail Pa_GetDefaultOutputDevice");
 	this->outputParameters.channelCount = AudioSettings::NB_CHANNELS;
 	this->outputParameters.sampleFormat = paFloat32;
-	this->outputParameters.suggestedLatency = Pa_GetDeviceInfo(this->outputParameters.device)->defaultLowOutputLatency;
+	this->outputParameters.suggestedLatency = Pa_GetDeviceInfo(this->outputParameters.device)->defaultHighOutputLatency;
 	this->outputParameters.hostApiSpecificStreamInfo = nullptr;
 }
 
